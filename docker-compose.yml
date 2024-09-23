@@ -1,0 +1,53 @@
+version: '3.8'
+
+services:
+  mysql:
+    image: mysql:8.0
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpassword
+      MYSQL_DATABASE: mydb
+      MYSQL_USER: myuser
+      MYSQL_PASSWORD: mypassword
+    ports:
+      - "127.0.0.1:3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+    networks:
+      - disclone_network
+
+  adminer:
+    image: adminer
+    environment:
+      ADMINER_DEFAULT_SERVER: mysql
+    ports:
+      - "127.0.0.1:8080:8080"
+    networks:
+      - disclone_network
+  
+  backend:
+    build:
+      context: ./backend
+    ports:
+      - "127.0.0.1:3000:3000"
+    env_file:
+      - ./backend/.env
+    command: sh -c "yarn dev:docker"
+    depends_on:
+      - mysql
+    networks:
+      - disclone_network
+
+  frontend:
+    build:
+      context: ./frontend
+    ports:
+      - "127.0.0.1:5173:5173"
+    command: sh -c "yarn dev"
+    networks:
+      - disclone_network
+
+volumes:
+  mysql_data:
+
+networks:
+  disclone_network:

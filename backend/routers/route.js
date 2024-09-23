@@ -2,7 +2,7 @@ import { Router } from 'express';
 import passport from 'passport';
 import jwt from 'jsonwebtoken';
 import { ExtractJwt, Strategy } from 'passport-jwt';
-import bcrypt from 'bcrypt';
+import bcrypt from 'bcryptjs';
 import { userController } from '../controllers/UserController.js';
 
 const router = Router();
