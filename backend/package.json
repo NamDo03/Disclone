@@ -5,15 +5,21 @@
   "license": "MIT",
   "type": "module",
   "scripts": {
-    "dev": "node --watch --env-file=.env index.js",
-    "dev:docker": "node --watch index.js"
+    "dev": "yarn prisma:setup && node --watch --env-file=.env index.js",
+    "dev:docker": "yarn prisma:setup && node --watch index.js",
+    "prisma:setup": "node setupDb.js",
+    "prisma:migrate": "prisma migrate dev --schema=db/prisma/schema.prisma"
   },
   "dependencies": {
+    "@prisma/client": "^5.19.1",
     "bcryptjs": "^2.4.3",
     "cors": "^2.8.5",
     "express": "^4.19.2",
     "jsonwebtoken": "^9.0.2",
     "passport": "^0.7.0",
     "passport-jwt": "^4.0.1"
+  },
+  "devDependencies": {
+    "prisma": "^5.19.1"
   }
 }

@@ -4,10 +4,8 @@ services:
   mysql:
     image: mysql:8.0
     environment:
-      MYSQL_ROOT_PASSWORD: rootpassword
+      MYSQL_ROOT_PASSWORD: password
       MYSQL_DATABASE: mydb
-      MYSQL_USER: myuser
-      MYSQL_PASSWORD: mypassword
     ports:
       - "127.0.0.1:3306:3306"
     volumes:
@@ -27,6 +25,9 @@ services:
   backend:
     build:
       context: ./backend
+    volumes:
+      - ./backend:/app                    # Syncs your local backend folder with the container's app folder
+      - ./backend/db/prisma/migrations:/app/db/prisma/migrations
     ports:
       - "127.0.0.1:3000:3000"
     env_file:
