@@ -8,9 +8,16 @@ import useModal from "../../hooks/useModal";
 import LogoutModal from "../Modal/LogoutModal";
 import servers from "../../fakeApi";
 import { useNavigate } from "react-router-dom";
+import AddServerModal from "../Modal/AddServerModal";
 
 const SideBar = () => {
-  const { isOpenModal, toggleModal } = useModal();
+  const { isOpenModal: isLogoutModalOpen, toggleModal: toggleLogoutModal } =
+    useModal();
+  const {
+    isOpenModal: isAddServerModalOpen,
+    toggleModal: toggleAddServerModal,
+  } = useModal();
+
   const navigate = useNavigate();
   return (
     <div className="h-full w-full flex flex-col justify-between items-center bg-primary-3 text-white shadow-lg py-3">
@@ -41,7 +48,7 @@ const SideBar = () => {
           name="plus"
           content="Add a Server"
           Icon={FaPlus}
-          handleAction={() => console.log("Add a Server")}
+          handleAction={toggleAddServerModal}
         />
       </div>
 
@@ -52,10 +59,14 @@ const SideBar = () => {
           Icon={MdLogout}
           bgColor="group-hover:bg-red-1"
           textColor="text-red-1"
-          handleAction={toggleModal}
+          handleAction={toggleLogoutModal}
         />
       </div>
-      {isOpenModal && <LogoutModal toggleModal={toggleModal} />}
+      {isLogoutModalOpen && <LogoutModal toggleModal={toggleLogoutModal} />}
+
+      {isAddServerModalOpen && (
+        <AddServerModal toggleModal={toggleAddServerModal} />
+      )}
     </div>
   );
 };
