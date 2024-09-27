@@ -1,8 +1,11 @@
 import React from "react";
 import { FaPlus, FaChevronDown, FaChevronRight } from "react-icons/fa6";
 import { Tooltip } from "react-tooltip";
+import AddChannelModal from "../Modal/AddChannelModal";
+import useModal from "../../hooks/useModal";
 
 const ServerSection = ({ name, isExpanded, toggleExpand }) => {
+  const { isOpenModal, toggleModal} = useModal();
   return (
     <div className="flex items-center justify-between py-2 cursor-pointer group">
       <p
@@ -17,6 +20,7 @@ const ServerSection = ({ name, isExpanded, toggleExpand }) => {
         {name}
       </p>
       <button
+        onClick={toggleModal}
         data-tooltip-id="addChannel"
         data-tooltip-content="Create Channel"
         data-tooltip-place="top"
@@ -28,6 +32,7 @@ const ServerSection = ({ name, isExpanded, toggleExpand }) => {
         id="addChannel"
         style={{ backgroundColor: "#111214", color: "#fff" }}
       />
+      {isOpenModal && <AddChannelModal toggleModal={toggleModal}/> }
     </div>
   );
 };
