@@ -46,10 +46,10 @@ const Signin = () => {
               <button className="bg-main rounded p-3 w-full my-3 text-white hover:opacity-65">
                 Sign In
               </button>
-              <div class="relative flex py-2 items-center">
-                <div class="flex-grow border-t border-gray-400"></div>
-                <span class="flex-shrink mx-4 text-gray-400">OR</span>
-                <div class="flex-grow border-t border-gray-400"></div>
+              <div className="relative flex py-2 items-center">
+                <div className="flex-grow border-t border-gray-400"></div>
+                <span className="flex-shrink mx-4 text-gray-400">OR</span>
+                <div className="flex-grow border-t border-gray-400"></div>
               </div>
               <button className="bg-main rounded p-3 w-full mt-3 text-white hover:opacity-65">
                 Guest Mode
