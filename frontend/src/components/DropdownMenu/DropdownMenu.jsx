@@ -3,8 +3,11 @@ import DropdownItem from "./DropdownItem";
 import { FaUserPlus, FaTrashCan } from "react-icons/fa6";
 import { IoMdSettings } from "react-icons/io";
 import { IoPeople } from "react-icons/io5";
+import InviteMember from "../Modal/InviteMember";
+import useModal from "../../hooks/useModal";
 
 const DropdownMenu = ({ isOpen }) => {
+  const { isOpenModal: isOpenInviteModal, toggleModal: toggleInviteModal } = useModal();
   if (!isOpen) return null;
   return (
     <div
@@ -13,7 +16,7 @@ const DropdownMenu = ({ isOpen }) => {
       <div className="w-56 text-xs font-medium text-neutral-400 bg-[#0f0c0d] p-1 rounded">
         <DropdownItem
           label="Invite People"
-          onClick={() => console.log("Invite clicked")}
+          onClick={toggleInviteModal}
           Icon={FaUserPlus}
           color="text-indigo-400"
         />
@@ -35,6 +38,7 @@ const DropdownMenu = ({ isOpen }) => {
           color="text-red-600"
         />
       </div>
+      {isOpenInviteModal&&<InviteMember toggleModal={toggleInviteModal}/>}
     </div>
   );
 };
