@@ -43,6 +43,7 @@ const ServerSideBar = () => {
                 .map((channel) => (
                   <ServerChannel
                     key={channel.id}
+                    id={channel.id}
                     name={channel.name}
                     Icon={PiHashBold}
                   />
@@ -63,6 +64,7 @@ const ServerSideBar = () => {
                 .map((channel) => (
                   <ServerChannel
                     key={channel.id}
+                    id={channel.id}
                     name={channel.name}
                     Icon={BiSolidVolumeFull}
                   />

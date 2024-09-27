@@ -9,6 +9,127 @@ const servers = [
         id: "101",
         name: "general-chat",
         type: "text", // Text Channel
+        messages: [
+          {
+            id: "1",
+            author: {
+              id: "a1",
+              name: "Alice",
+              avatar:
+                "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQTwFFwBmxuGhvLHukLH4hXOT6EsQDhY4CbKw&s",
+            },
+            message: "Hey, does anyone know how to solve this bug?",
+            timestamp: "2024-09-24 10:30",
+          },
+          {
+            id: "2",
+            author: {
+              id: "a2",
+              name: "Bob",
+              avatar: "https://avatarfiles.alphacoders.com/367/367019.png",
+            },
+            message: "Have you checked the logs? They might give a clue.",
+            timestamp: "2024-09-24 10:31",
+          },
+          {
+            id: "3",
+            author: {
+              id: "a3",
+              name: "Charlie",
+              avatar:
+                "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTHG4SnY4acTaYnWLXBJemI76ge-SjSt41mxQ&s",
+            },
+            message: "What bug are you dealing with, Alice?",
+            timestamp: "2024-09-24 10:32",
+          },
+          {
+            id: "4",
+            author: {
+              id: "a1",
+              name: "Alice",
+              avatar:
+                "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQTwFFwBmxuGhvLHukLH4hXOT6EsQDhY4CbKw&s",
+            },
+            message: "It's a null pointer exception in the API response.",
+            timestamp: "2024-09-24 10:33",
+          },
+          {
+            id: "5",
+            author: {
+              id: "a4",
+              name: "David",
+              avatar: "https://i.imgur.com/HS61yNC.png",
+            },
+            message: "Maybe you're missing a null check in your code?",
+            timestamp: "2024-09-24 10:34",
+          },
+          {
+            id: "6",
+            author: {
+              id: "a1",
+              name: "Alice",
+              avatar:
+                "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQTwFFwBmxuGhvLHukLH4hXOT6EsQDhY4CbKw&s",
+            },
+            message: "I did add the check, but the error still happens.",
+            timestamp: "2024-09-24 10:35",
+          },
+          {
+            id: "7",
+            author: {
+              id: "a5",
+              name: "Eve",
+              avatar: "https://avatarfiles.alphacoders.com/367/367020.png",
+            },
+            message:
+              "Have you tried debugging step by step to see where it fails?",
+            timestamp: "2024-09-24 10:36",
+          },
+          {
+            id: "8",
+            author: {
+              id: "a2",
+              name: "Bob",
+              avatar: "https://avatarfiles.alphacoders.com/367/367019.png",
+            },
+            message: "Yeah, sometimes it's helpful to trace the flow.",
+            timestamp: "2024-09-24 10:37",
+          },
+          {
+            id: "9",
+            author: {
+              id: "a1",
+              name: "Alice",
+              avatar:
+                "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQTwFFwBmxuGhvLHukLH4hXOT6EsQDhY4CbKw&s",
+            },
+            message: "Good idea! I'll try debugging and get back to you all.",
+            timestamp: "2024-09-24 10:38",
+          },
+          {
+            id: "10",
+            author: {
+              id: "a6",
+              name: "Frank",
+              avatar:
+                "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRQ1qRM_DFPuIOiEmuIWg9QvJEcj3uBkxsIUg&s",
+            },
+            message:
+              "Also, make sure your API response has valid data before parsing it.",
+            timestamp: "2024-09-24 10:39",
+          },
+          {
+            id: "11",
+            author: {
+              id: "a3",
+              name: "Charlie",
+              avatar:
+                "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTHG4SnY4acTaYnWLXBJemI76ge-SjSt41mxQ&s",
+            },
+            message: "Let us know if you need more help!",
+            timestamp: "2024-09-24 10:40",
+          },
+        ],
       },
       {
         id: "102",

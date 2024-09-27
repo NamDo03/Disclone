@@ -2,11 +2,11 @@ import React from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { Tooltip } from "react-tooltip";
 
-const SideBarItem = ({ id, imgUrl, name }) => {
+const SideBarItem = ({ id, imgUrl, name, channels }) => {
   const params = useParams();
   const navigate = useNavigate();
   const handleNavigation = () => {
-    navigate(`/servers/${id}`);
+    navigate(`/servers/${id}/channels/${channels[0].id}`);
   };
   return (
     <div
