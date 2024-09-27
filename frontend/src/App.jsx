@@ -1,7 +1,7 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import HomePage from "./pages/HomePage";
 import Signin from "./pages/Signin";
-import Signup from "./pages/SignUp";
+import Signup from "./pages/Signup";
 import MainLayout from "./layouts/MainLayout";
 import "react-tooltip/dist/react-tooltip.css";
 import ServerIdPage from "./pages/ServerIdPage";

@@ -2,7 +2,7 @@ import { Router } from 'express';
 import passport from 'passport';
 import jwt from 'jsonwebtoken';
 import { ExtractJwt, Strategy } from 'passport-jwt';
-import bcrypt from 'bcrypt';
+import bcrypt from 'bcryptjs';
 import { userController } from '../controllers/UserController.js';
 
 const router = Router();
@@ -36,7 +36,7 @@ router.post('/signup', async (req, res) => {
   try {
     const { username, password } = req.body;
     const newUser = await userController.createUser(username, password)
-    res.status(200).json({ message: "User created", user: newUser });
+    res.status(200).json({ message: "User created", username: newUser.username });
   } catch (error) {
     return next(error);
   }
