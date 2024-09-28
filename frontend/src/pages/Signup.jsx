@@ -25,7 +25,8 @@ const Signup = () => {
         }),
       });
       if (!res.ok) {
-        console.error("Signup failed");
+        const error = await res.json();
+        throw new Error(error.message || "An error occurred while signup")
       }
       const data = await res.json();
       console.log(data)

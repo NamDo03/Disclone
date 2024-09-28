@@ -22,8 +22,15 @@ const Signin = () => {
         }),
       });
       if (!res.ok) {
-        console.error("Signin failed");
+        if (res.status === 401) {
+          throw new Error("Wrong email or password")
+        } else {
+          const error = await res.json();
+          throw new Error(error.message || "An error occurred while signing in")
+        }
       }
+      const data = await res.json()
+      console.log(data.token)
     } catch (err) {
       console.error("Failed to signin:", err.message);
     }
