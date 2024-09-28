@@ -9,3 +9,24 @@
     scroll-behavior: smooth;
     font-family: "Inter", sans-serif;
 }
+
+/* width */
+::-webkit-scrollbar {
+    width: 12px;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+    background: #2B2D31;
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+    background: #232428;
+    border-radius: 5px;
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+    background: #232428;
+}
