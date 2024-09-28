@@ -77,21 +77,21 @@ router.get('/hello', passport.authenticate('jwt', { session: false }), async (re
   }
 });
 
-router.post('/server/create-channel',passport.authenticate('jwt', { session: false }),async (req, res, next) => {
+router.post('/server/create-channel', passport.authenticate('jwt', { session: false }), async (req, res, next) => {
   try {
     const { userId, name, type } = req.body;
-    const newChanel = await chanelController.createChanel(userId, name,type)
-    res.status(200).json({  message: "Chanel created", chanel: newChanel});
+    const newChanel = await chanelController.createChanel(userId, name, type)
+    res.status(200).json({ message: "Chanel created", chanel: newChanel });
   } catch (error) {
     return next(error);
   }
 });
 
-router.post('/user/create-server',passport.authenticate('jwt', { session: false }),async (req, res, next) => {
+router.post('/user/create-server', passport.authenticate('jwt', { session: false }), async (req, res, next) => {
   try {
     const { userId, name, img_url } = req.body;
-    const newServer = await serverController.createServer(userId, name,img_url)
-    res.status(200).json({  message: "Server created", server: newServer});
+    const newServer = await serverController.createServer(userId, name, img_url)
+    res.status(200).json({ message: "Server created", server: newServer });
   } catch (error) {
     return next(error);
   }
