@@ -77,7 +77,7 @@ router.get('/hello', passport.authenticate('jwt', { session: false }), async (re
   }
 });
 
-router.post('/server/create-channel',passport.authenticate('jwt', { session: false }),async (req, res) => {
+router.post('/server/create-channel',passport.authenticate('jwt', { session: false }),async (req, res, next) => {
   try {
     const { userId, name, type } = req.body;
     const newChanel = await chanelController.createChanel(userId, name,type)
@@ -87,7 +87,7 @@ router.post('/server/create-channel',passport.authenticate('jwt', { session: fal
   }
 });
 
-router.post('/user/create-server',passport.authenticate('jwt', { session: false }),async (req, res) => {
+router.post('/user/create-server',passport.authenticate('jwt', { session: false }),async (req, res, next) => {
   try {
     const { userId, name, img_url } = req.body;
     const newServer = await serverController.createServer(userId, name,img_url)
