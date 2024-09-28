@@ -1,10 +1,10 @@
 import React from "react";
-import { FaTrashCan, FaLock } from "react-icons/fa6";
+import { FaTrashCan } from "react-icons/fa6";
 import { FiEdit } from "react-icons/fi";
 import { useNavigate, useParams } from "react-router-dom";
 import { Tooltip } from "react-tooltip";
 
-const ServerChannel = ({ id, name, Icon }) => {
+const ChannelItem = ({ id, name, Icon }) => {
   const navigate = useNavigate();
   const params = useParams();
   const { serverId } = useParams();
@@ -65,4 +65,4 @@ const ServerChannel = ({ id, name, Icon }) => {
   );
 };
 
-export default ServerChannel;
+export default ChannelItem;

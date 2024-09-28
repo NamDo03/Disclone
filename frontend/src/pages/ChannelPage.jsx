@@ -5,12 +5,12 @@ import { useParams } from "react-router-dom";
 import ChatInput from "../components/Chat/ChatInput";
 import ChatMessages from "../components/Chat/ChatMessages";
 
-const ChannelIdPage = () => {
+const ChannelPage = () => {
   const { serverId, channelId } = useParams();
   const server = servers.find((server) => server.id === serverId);
 
   const channel = server?.channels.find((channel) => channel.id === channelId);
-  
+
   if (!server || !channel) {
     return (
       <div className="bg-primary-1 h-screen text-white flex items-center justify-center">
@@ -31,4 +31,4 @@ const ChannelIdPage = () => {
   );
 };
 
-export default ChannelIdPage;
+export default ChannelPage;
