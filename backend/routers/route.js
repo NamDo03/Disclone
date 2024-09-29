@@ -34,23 +34,22 @@ passport.use(
 
 router.use(passport.initialize());
 
-router.post('/signup', async (req, res) => {
+router.post('/signup', async (req, res, next) => {
   try {
-    const { username, password } = req.body;
-    const newUser = await userController.createUser(username, password)
-    res.status(200).json({ message: "User created", username: newUser.username });
+    const { email, username, password } = req.body;
+    const newUser = await userController.createUser(email, username, password)
+    res.status(200).json({ message: "User created", email: newUser.email });
   } catch (error) {
     return next(error);
   }
 });
 
-
-router.post('/signin', async (req, res) => {
+router.post('/signin', async (req, res, next) => {
   try {
-    const { username, password } = req.body;
+    const { email, password } = req.body;
 
-    const user = await userController.getUserByName(username);
-    console.log(user);
+    const user = await userController.getUserByEmail(email);
+
     if (!user) {
       return res.status(401).json({ message: 'Invalid credentials' });
     }
@@ -63,13 +62,13 @@ router.post('/signin', async (req, res) => {
     const token = jwt.sign({ userId: user.id }, jwtKey, {
       expiresIn: '2h'
     });
-    res.json({ token });
+    res.json({ token: token, userId: user.id});
   } catch (error) {
     return next(error);
   }
 });
 
-router.get('/hello', passport.authenticate('jwt', { session: false }), async (req, res) => {
+router.get('/hello', passport.authenticate('jwt', { session: false }), async (req, res, next) => {
   try {
     res.status(200).json({ message: "hello" });
   } catch (error) {

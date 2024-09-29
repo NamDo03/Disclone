@@ -4,6 +4,8 @@ import Signin from "./pages/Signin";
 import Signup from "./pages/Signup";
 import MainLayout from "./layouts/MainLayout";
 import "react-tooltip/dist/react-tooltip.css";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import ChannelPage from "./pages/ChannelPage";
 
 function App() {
@@ -29,6 +31,18 @@ function App() {
         <Route path="/sign-up" element={<Signup />} />
         <Route path="/sign-in" element={<Signin />} />
       </Routes>
+      <ToastContainer
+        position="top-right"
+        autoClose={3000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover={false}
+        theme="dark"
+      />
     </Router>
   );
 }
