@@ -10,7 +10,6 @@ const Signup = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [username, setUsername] = useState("");
-
   const handleSignup = async (e) => {
     e.preventDefault();
     try {
@@ -33,7 +32,7 @@ const Signup = () => {
       console.log(data)
       navigate("/sign-in", { state: { email } });
     } catch (err) {
-      toast.error("Failed to signup:", err.message);
+      toast.error("Failed to signup: " + err.message);
     }
   }
 

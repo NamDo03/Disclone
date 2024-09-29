@@ -22,7 +22,7 @@ class UserController {
 
   async createUser(email, username, password) {
     try {
-      const user = this.getUserByEmail(email)
+      const user = await this.getUserByEmail(email)
       if (user) {
         throw new Error(`User with email ${email} already exists`);
       }

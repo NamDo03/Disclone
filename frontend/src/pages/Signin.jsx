@@ -34,7 +34,7 @@ const Signin = () => {
       const data = await res.json()
       console.log(data.token)
     } catch (err) {
-      toast.error("Failed to signin:", err.message);
+      toast.error("Failed to signin: "+ err.message);
     }
   }
 
