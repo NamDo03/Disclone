@@ -207,3 +207,59 @@ const servers = [
 ];
 
 export default servers;
+export const listfriend = [
+  {
+    id: "f1",
+    username: "Alice",
+    email: "alice@example.com",
+    avatarUrl: "https://cmsassets.rgpub.io/sanity/images/dsfx7636/news/01f7e1d821b09b9b09eb2621efe22c9068d8756c-200x200.jpg",
+  },
+  {
+    id: "f2",
+    username: "Bob",
+    email: "bob@example.com",
+    avatarUrl: "https://cmsassets.rgpub.io/sanity/images/dsfx7636/news/01f7e1d821b09b9b09eb2621efe22c9068d8756c-200x200.jpg",
+  },
+  {
+    id: "f3",
+    username: "Charlie",
+    email: "charlie@example.com",
+    avatarUrl: "https://cmsassets.rgpub.io/sanity/images/dsfx7636/news/01f7e1d821b09b9b09eb2621efe22c9068d8756c-200x200.jpg",
+  },
+  {
+    id: "f4",
+    username: "Alice",
+    email: "alice@example.com",
+    avatarUrl: "https://cmsassets.rgpub.io/sanity/images/dsfx7636/news/01f7e1d821b09b9b09eb2621efe22c9068d8756c-200x200.jpg",
+  },
+  {
+    id: "f5",
+    username: "Bob",
+    email: "bob@example.com",
+    avatarUrl: "https://cmsassets.rgpub.io/sanity/images/dsfx7636/news/01f7e1d821b09b9b09eb2621efe22c9068d8756c-200x200.jpg",
+  },
+  {
+    id: "f6",
+    username: "Charlie",
+    email: "charlie@example.com",
+    avatarUrl: "https://cmsassets.rgpub.io/sanity/images/dsfx7636/news/01f7e1d821b09b9b09eb2621efe22c9068d8756c-200x200.jpg",
+  },
+  {
+    id: "f7",
+    username: "Alice",
+    email: "alice@example.com",
+    avatarUrl: "https://cmsassets.rgpub.io/sanity/images/dsfx7636/news/01f7e1d821b09b9b09eb2621efe22c9068d8756c-200x200.jpg",
+  },
+  {
+    id: "f8",
+    username: "Bob",
+    email: "bob@example.com",
+    avatarUrl: "https://cmsassets.rgpub.io/sanity/images/dsfx7636/news/01f7e1d821b09b9b09eb2621efe22c9068d8756c-200x200.jpg",
+  },
+  {
+    id: "f9",
+    username: "Charlie",
+    email: "charlie@example.com",
+    avatarUrl: "https://cmsassets.rgpub.io/sanity/images/dsfx7636/news/01f7e1d821b09b9b09eb2621efe22c9068d8756c-200x200.jpg",
+  },
+];
