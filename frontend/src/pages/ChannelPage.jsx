@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import ChatHeader from "../components/Chat/ChatHeader";
 import servers from "../fakeApi";
 import { useParams } from "react-router-dom";
@@ -8,8 +8,9 @@ import MemberList from "../components/MemberList/MemberList";
 
 const ChannelPage = () => {
   const { serverId, channelId } = useParams();
-  const server = servers.find((server) => server.id === serverId);
+  const [showMemberList, setShowMemberList] = useState(false);
 
+  const server = servers.find((server) => server.id === serverId);
   const channel = server?.channels.find((channel) => channel.id === channelId);
 
   if (!server || !channel) {
@@ -22,7 +23,12 @@ const ChannelPage = () => {
   return (
     <div className="bg-primary-1 h-screen text-white flex">
       <div className="flex flex-col flex-grow pr-1">
-        <ChatHeader type={channel.type} name={channel.name} />
+        <ChatHeader
+          type={channel.type}
+          name={channel.name}
+          showMemberList={showMemberList}
+          onToggleMemberList={() => setShowMemberList(!showMemberList)}
+        />
         <ChatMessages
           type={channel.type}
           name={channel.name}
@@ -30,9 +36,11 @@ const ChannelPage = () => {
         />
         <ChatInput type={channel.type} name={channel.name} />
       </div>
-      <div className="w-[240px] bg-[#2B2D31] overflow-y-auto">
-        <MemberList members={server.members} />
-      </div>
+      {showMemberList && (
+        <div className="w-[240px] bg-[#2B2D31] overflow-y-auto transition">
+          <MemberList members={server.members} />
+        </div>
+      )}
     </div>
   );
 };
