@@ -22,21 +22,20 @@ const Signup = () => {
         body: JSON.stringify({
           email: email,
           username: username,
-          password: password,
+          password: password
         }),
       });
       if (!res.ok) {
-        toast.error("Signup failed");
-        return;
+        const error = await res.json();
+        throw new Error(error.message || "An error occurred while signup")
       }
       const data = await res.json();
-      toast.success("Signup success");
+      console.log(data)
       navigate("/sign-in", { state: { email } });
     } catch (err) {
-      toast.error("Failed to signup");
-      console.error("Failed to signup:", err.message);
+      toast.error("Failed to signup:", err.message);
     }
-  };
+  }
 
   return (
     <div className="relative h-screen w-screen">

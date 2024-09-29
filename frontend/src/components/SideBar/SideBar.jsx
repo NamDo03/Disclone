@@ -38,6 +38,7 @@ const SideBar = () => {
               id={server.id}
               name={server.name}
               imgUrl={server.imageUrl}
+              channels={server.channels}
             />
           ))}
         </div>

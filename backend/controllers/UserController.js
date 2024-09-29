@@ -22,6 +22,10 @@ class UserController {
 
   async createUser(email, username, password) {
     try {
+      const user = this.getUserByEmail(email)
+      if (user) {
+        throw new Error(`User with email ${email} already exists`);
+      }
       const hashedPassword = await bcrypt.hash(password, 10);
   
       const newUser = await prisma.user.create({

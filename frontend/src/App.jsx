@@ -4,9 +4,10 @@ import Signin from "./pages/Signin";
 import Signup from "./pages/Signup";
 import MainLayout from "./layouts/MainLayout";
 import "react-tooltip/dist/react-tooltip.css";
-import ServerIdPage from "./pages/ServerIdPage";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import ChannelPage from "./pages/ChannelPage";
+
 function App() {
   return (
     <Router>
@@ -20,10 +21,10 @@ function App() {
           }
         />
         <Route
-          path="/servers/:serverId"
+          path="/servers/:serverId/channels/:channelId"
           element={
             <MainLayout>
-              <ServerIdPage />
+              <ChannelPage />
             </MainLayout>
           }
         />

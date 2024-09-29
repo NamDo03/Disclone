@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from "react";
 import ServerHeader from "./ServerHeader";
 import ServerSection from "./ServerSection";
-import ServerChannel from "./ServerChannel";
 import { PiHashBold } from "react-icons/pi";
 import { BiSolidVolumeFull } from "react-icons/bi";
 import { useParams } from "react-router-dom";
 import servers from "../../fakeApi";
 import UserControls from "./UserControls";
+import ChannelItem from "./ChannelItem";
 
 const ServerSideBar = () => {
   const { serverId } = useParams();
@@ -41,8 +41,9 @@ const ServerSideBar = () => {
               {serverData.channels
                 .filter((channel) => channel.type === "text")
                 .map((channel) => (
-                  <ServerChannel
+                  <ChannelItem
                     key={channel.id}
+                    id={channel.id}
                     name={channel.name}
                     Icon={PiHashBold}
                   />
@@ -61,8 +62,9 @@ const ServerSideBar = () => {
               {serverData.channels
                 .filter((channel) => channel.type === "voice")
                 .map((channel) => (
-                  <ServerChannel
+                  <ChannelItem
                     key={channel.id}
+                    id={channel.id}
                     name={channel.name}
                     Icon={BiSolidVolumeFull}
                   />

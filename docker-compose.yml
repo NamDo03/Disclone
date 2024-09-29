@@ -26,7 +26,7 @@ services:
     build:
       context: ./backend
     volumes:
-      - ./backend:/app                    # Syncs your local backend folder with the container's app folder
+      - ./backend:/app
       - ./backend/db/prisma/migrations:/app/db/prisma/migrations
     ports:
       - "127.0.0.1:3000:3000"

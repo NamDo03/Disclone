@@ -4,6 +4,8 @@ import jwt from 'jsonwebtoken';
 import { ExtractJwt, Strategy } from 'passport-jwt';
 import bcrypt from 'bcryptjs';
 import { userController } from '../controllers/UserController.js';
+import { chanelController } from '../controllers/ChanelController.js';
+import { serverController } from '../controllers/ServerController.js';
 
 const router = Router();
 
@@ -44,7 +46,6 @@ router.post('/signup', async (req, res, next) => {
 
 router.post('/signin', async (req, res, next) => {
   try {
-    console.log(req.body)
     const { email, password } = req.body;
 
     const user = await userController.getUserByEmail(email);
@@ -61,7 +62,7 @@ router.post('/signin', async (req, res, next) => {
     const token = jwt.sign({ userId: user.id }, jwtKey, {
       expiresIn: '2h'
     });
-    res.json({ token });
+    res.json({ token: token, userId: user.id});
   } catch (error) {
     return next(error);
   }
@@ -70,6 +71,26 @@ router.post('/signin', async (req, res, next) => {
 router.get('/hello', passport.authenticate('jwt', { session: false }), async (req, res, next) => {
   try {
     res.status(200).json({ message: "hello" });
+  } catch (error) {
+    return next(error);
+  }
+});
+
+router.post('/server/create-channel', passport.authenticate('jwt', { session: false }), async (req, res, next) => {
+  try {
+    const { userId, name, type } = req.body;
+    const newChanel = await chanelController.createChanel(userId, name, type)
+    res.status(200).json({ message: "Chanel created", chanel: newChanel });
+  } catch (error) {
+    return next(error);
+  }
+});
+
+router.post('/user/create-server', passport.authenticate('jwt', { session: false }), async (req, res, next) => {
+  try {
+    const { userId, name, img_url } = req.body;
+    const newServer = await serverController.createServer(userId, name, img_url)
+    res.status(200).json({ message: "Server created", server: newServer });
   } catch (error) {
     return next(error);
   }

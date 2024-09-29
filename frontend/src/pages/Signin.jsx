@@ -20,19 +20,23 @@ const Signin = () => {
         },
         body: JSON.stringify({
           email: email,
-          password: password,
+          password: password
         }),
       });
       if (!res.ok) {
-        toast.error("Signin failed");
-        return;
+        if (res.status === 401) {
+          throw new Error("Wrong email or password")
+        } else {
+          const error = await res.json();
+          throw new Error(error.message || "An error occurred while signing in")
+        }
       }
-      toast.success("Signin success");
+      const data = await res.json()
+      console.log(data.token)
     } catch (err) {
-      toast.error("Failed to signin");
-      console.error("Failed to signin:", err.message);
+      toast.error("Failed to signin:", err.message);
     }
-  };
+  }
 
   return (
     <div className="relative h-screen w-screen">
