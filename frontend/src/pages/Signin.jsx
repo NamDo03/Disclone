@@ -1,13 +1,15 @@
 import React, { useState } from "react";
 import img from "../assets/bg.webp";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 
 const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || "http://localhost:3000";
 const Signin = () => {
+  const location = useLocation();
   const navigate = useNavigate();
-  const [email, setEmail] = useState("")
-  const [password, setPassword] = useState("")
-
+  const [email, setEmail] = useState(location.state?.email || "");
+  const [password, setPassword] = useState("");
+  
   const handleSignin = async (e) => {
     e.preventDefault();
     try {
@@ -18,16 +20,19 @@ const Signin = () => {
         },
         body: JSON.stringify({
           email: email,
-          password: password
+          password: password,
         }),
       });
       if (!res.ok) {
-        console.error("Signin failed");
+        toast.error("Signin failed");
+        return;
       }
+      toast.success("Signin success");
     } catch (err) {
+      toast.error("Failed to signin");
       console.error("Failed to signin:", err.message);
     }
-  }
+  };
 
   return (
     <div className="relative h-screen w-screen">
@@ -37,7 +42,10 @@ const Signin = () => {
         alt=""
       />
       <div className="absolute min-h-[580px] h-full w-full flex items-center justify-center">
-        <form onSubmit={handleSignin} className=" bg-primary-1 p-8 rounded min-w-[480px] shadow-[rgba(0,_0,_0,_0.24)_0px_3px_8px]">
+        <form
+          onSubmit={handleSignin}
+          className=" bg-primary-1 p-8 rounded min-w-[480px] shadow-[rgba(0,_0,_0,_0.24)_0px_3px_8px]"
+        >
           <div className="flex flex-col justify-center items-center">
             <h1 className="text-white text-xl font-bold cursor-default">
               Welcome back!
@@ -53,6 +61,7 @@ const Signin = () => {
               </label>
               <input
                 type="email"
+                value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 className="p-2 rounded text-base border-none outline-none bg-primary-3 text-white"
                 required
@@ -64,13 +73,17 @@ const Signin = () => {
               </label>
               <input
                 type="password"
+                value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 className="p-2 rounded text-base border-none outline-none bg-primary-3 text-white"
                 required
               />
             </div>
             <div className="flex flex-col gap-2">
-              <button type="submit" className="bg-main rounded p-3 w-full my-3 text-white hover:opacity-65">
+              <button
+                type="submit"
+                className="bg-main rounded p-3 w-full my-3 text-white hover:opacity-65"
+              >
                 Sign In
               </button>
               <div className="relative flex py-2 items-center">

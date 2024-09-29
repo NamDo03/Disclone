@@ -1,14 +1,15 @@
 import React, { useState } from "react";
 import img from "../assets/bg.webp";
 import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 
 const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || "http://localhost:3000";
 const Signup = () => {
   const navigate = useNavigate();
 
-  const [email, setEmail] = useState("")
-  const [password, setPassword] = useState("")
-  const [username, setUsername] = useState("")
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [username, setUsername] = useState("");
 
   const handleSignup = async (e) => {
     e.preventDefault();
@@ -21,19 +22,21 @@ const Signup = () => {
         body: JSON.stringify({
           email: email,
           username: username,
-          password: password
+          password: password,
         }),
       });
       if (!res.ok) {
-        console.error("Signup failed");
+        toast.error("Signup failed");
+        return;
       }
       const data = await res.json();
-      console.log(data)
-      navigate("/sign-in")
+      toast.success("Signup success");
+      navigate("/sign-in", { state: { email } });
     } catch (err) {
+      toast.error("Failed to signup");
       console.error("Failed to signup:", err.message);
     }
-  }
+  };
 
   return (
     <div className="relative h-screen w-screen">
@@ -43,7 +46,10 @@ const Signup = () => {
         alt=""
       />
       <div className="absolute min-h-[580px] h-full w-full flex items-center justify-center">
-        <form onSubmit={handleSignup} className=" bg-primary-1 p-8 rounded min-w-[480px] shadow-[rgba(0,_0,_0,_0.24)_0px_3px_8px]">
+        <form
+          onSubmit={handleSignup}
+          className=" bg-primary-1 p-8 rounded min-w-[480px] shadow-[rgba(0,_0,_0,_0.24)_0px_3px_8px]"
+        >
           <h1 className="text-white text-xl font-bold cursor-default text-center">
             Create an account
           </h1>
