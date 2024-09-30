@@ -147,6 +147,41 @@ const servers = [
         type: "voice", // Voice Channel
       },
     ],
+    members: [
+      {
+        id: "a1",
+        name: "Alice",
+        avatar:
+          "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQTwFFwBmxuGhvLHukLH4hXOT6EsQDhY4CbKw&s",
+      },
+      {
+        id: "a2",
+        name: "Bob",
+        avatar: "https://avatarfiles.alphacoders.com/367/367019.png",
+      },
+      {
+        id: "a3",
+        name: "Charlie",
+        avatar:
+          "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTHG4SnY4acTaYnWLXBJemI76ge-SjSt41mxQ&s",
+      },
+      {
+        id: "a4",
+        name: "David",
+        avatar: "https://i.imgur.com/HS61yNC.png",
+      },
+      {
+        id: "a5",
+        name: "Eve",
+        avatar: "https://avatarfiles.alphacoders.com/367/367020.png",
+      },
+      {
+        id: "a6",
+        name: "Frank",
+        avatar:
+          "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRQ1qRM_DFPuIOiEmuIWg9QvJEcj3uBkxsIUg&s",
+      },
+    ],
   },
   {
     id: "2",

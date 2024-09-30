@@ -47,7 +47,6 @@ const ChatMessages = ({ type, name, messages }) => {
               timestamp={message.timestamp}
             />
           ))}
-        {/* <div ref={messagesEndRef} /> */}
       </div>
     </div>
   );
