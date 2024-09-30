@@ -3,7 +3,7 @@ import { BsEmojiSmile } from "react-icons/bs";
 import { ImAttachment } from "react-icons/im";
 import EmojiPicker from "emoji-picker-react";
 
-const ChatInput = ({ type, name }) => {
+const ChatInput = ({ type, name, socket }) => {
   const [fileName, setFileName] = useState("");
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
   const [message, setMessage] = useState("");
@@ -26,8 +26,19 @@ const ChatInput = ({ type, name }) => {
     }
   };
 
+  const sendMessage = () => {
+    e.preventDefault();
+    const newMessage = {
+      name,
+      content: message,
+    };
+    console.log(newMessage)
+    socket.emit('newMessage', newMessage);
+    setMessage('');
+  };
+
   return (
-    <form className="w-full" onSubmit={(e) => e.preventDefault()}>
+    <form className="w-full" onSubmit={sendMessage}>
       <div className="relative p-4 pb-6">
         <button
           onClick={handleFileClick}
