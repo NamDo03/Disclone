@@ -1,9 +1,20 @@
-import React from "react";
+import React, { useState } from "react";
 import { BsEmojiSmile } from "react-icons/bs";
 import { FaPlus } from "react-icons/fa6";
-const ChatInput = ({ type, name }) => {
+const ChatInput = ({ type, name, socket }) => {
+  const [message, setMessage] = useState('');
+  const sendMessage = () => {
+    e.preventDefault();
+    const newMessage = {
+      name,
+      content: message,
+    };
+    console.log(newMessage)
+    socket.emit('newMessage', newMessage);
+    setMessage('');
+  };
   return (
-    <form className="w-full">
+    <form className="w-full" onSubmit={sendMessage}>
       <div className="relative p-4 pb-6">
         <button
           onClick={() => {}}
@@ -16,6 +27,8 @@ const ChatInput = ({ type, name }) => {
           placeholder={`Message ${type === " text" ? name : "#" + name}`}
           className="w-full px-14 py-3 bg-zinc-700/75 border-none border-0 
           focus-visible:ring-0 focus-visible:ring-offset-0 text-zinc-200 outline-none placeholder-zinc-500"
+          value={message}
+          onChange={(e) => setMessage(e.target.value)}
         />
         <div className="absolute top-7 right-8">
           <BsEmojiSmile size={24} />

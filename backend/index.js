@@ -1,8 +1,17 @@
 import cors from 'cors';
 import express from 'express';
 import { router } from './routers/route.js';
+import { createServer } from 'http';
+import { Server } from "socket.io";
 
 const app = express();
+const server = createServer(app);
+const io = new Server(server, {
+  cors: {
+    origin: '*'
+  },
+});
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cors());
@@ -20,6 +29,22 @@ app.use((err, req, res, next) => {
   });
 });
 
-app.listen(3000, () => {
+io.on('connection', (socket) => {
+  console.log('a user connected:', socket.id);
+  const messages = [{id: 1, name: "A", content: "hihi"}]
+  socket.emit('previousMessages', messages);
+
+  socket.on('newMessage', (msg) => {
+    console.log('message from client:', msg);
+    io.emit('message', msg);
+  });
+
+  // Handle disconnection
+  socket.on('disconnect', () => {
+    console.log('user disconnected');
+  });
+});
+
+server.listen(3000, () => {
   console.log('server is working on port 3000');
 });
