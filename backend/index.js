@@ -31,7 +31,7 @@ app.use((err, req, res, next) => {
 
 io.on('connection', (socket) => {
   console.log('a user connected:', socket.id);
-  const messages = [{id: 1, name: "A", content: "hihi"}]
+  const messages = [{id: 1, name: "A", content: "hihi", timestamp: "hihi", author: {id:1, name:"hihi", avatar: "hihi"}}]
   socket.emit('previousMessages', messages);
 
   socket.on('newMessage', (msg) => {

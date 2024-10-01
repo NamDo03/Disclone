@@ -7,7 +7,7 @@ const ChatItem = ({
   authorName,
   authorAvatar,
   authorId,
-  message,
+  content,
   timestamp,
 }) => {
   const userId = "a1";
@@ -17,7 +17,7 @@ const ChatItem = ({
   const canDeleteMessage = isAdmin || authorId === userId;
 
   const [isEditing, setIsEditing] = useState(false);
-  const [editedMessage, setEditedMessage] = useState(message);
+  const [editedMessage, setEditedMessage] = useState(content);
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -60,7 +60,7 @@ const ChatItem = ({
             </div>
             <span className="text-xs text-zinc-400">{timestamp}</span>
           </div>
-          {!isEditing && <p className="text-sm text-zinc-300">{message}</p>}
+          {!isEditing && <p className="text-sm text-zinc-300">{content}</p>}
           {isEditing && (
             <>
               <form

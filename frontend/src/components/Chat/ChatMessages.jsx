@@ -43,7 +43,7 @@ const ChatMessages = ({ type, name, messages }) => {
               authorId={message.author.id}
               authorName={message.author.name}
               authorAvatar={message.author.avatar}
-              message={message.message}
+              content={message.content}
               timestamp={message.timestamp}
             />
           ))}

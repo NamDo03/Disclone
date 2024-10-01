@@ -6,10 +6,10 @@ import EmojiPicker from "emoji-picker-react";
 const ChatInput = ({ type, name, socket }) => {
   const [fileName, setFileName] = useState("");
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
-  const [message, setMessage] = useState("");
+  const [content, setContent] = useState("");
 
   const handleEmojiClick = (emojiObject) => {
-    setMessage((prevMessage) => prevMessage + emojiObject.emoji);
+    setContent((prevMessage) => prevMessage + emojiObject.emoji);
     setShowEmojiPicker(false);
   };
 
@@ -29,12 +29,14 @@ const ChatInput = ({ type, name, socket }) => {
   const sendMessage = (e) => {
     e.preventDefault();
     const newMessage = {
+      id:Math.random(),
       name,
-      content: message,
+      content,
+      timestamps: "hihi",
+      author: {id: 1, name: "hihi", avatar: "hihi"}
     };
-    console.log(newMessage)
     socket.emit('newMessage', newMessage);
-    setMessage('');
+    setContent('');
   };
 
   return (
@@ -55,8 +57,8 @@ const ChatInput = ({ type, name, socket }) => {
         <input
           type="text"
           placeholder={`Message ${type === "TEXT" ? "#" + name : name}`}
-          value={message}
-          onChange={(e) => setMessage(e.target.value)}
+          value={content}
+          onChange={(e) => setContent(e.target.value)}
           className="w-full px-14 py-3 bg-zinc-700/75 border-none border-0 
           focus-visible:ring-0 focus-visible:ring-offset-0 text-zinc-200 outline-none placeholder-zinc-500"
         />

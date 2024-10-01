@@ -51,13 +51,11 @@ const ChannelPage = () => {
 
   useEffect(() => {
     socket.on('previousMessages', (msgs) => {
-      console.log(msgs)
       setMessages(msgs);
     });
 
     socket.on('message', (msg) => {
-      console.log(msg)
-      setMessages((prevMessages) => [...prevMessages, msg]);
+      setMessages(prevMessages => [msg, ...prevMessages]);
     });
 
     return () => {
@@ -78,7 +76,7 @@ const ChannelPage = () => {
         <ChatMessages
           type={channel.type}
           name={channel.channel_name}
-          // messages={channel.messages}
+          messages={messages}
         />
         <ChatInput type={channel.type} name={channel.channel_name} socket={socket} />
       </div>
