@@ -7,7 +7,7 @@ const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || "http://localhost:3000";
 const Signin = () => {
   const location = useLocation();
   const navigate = useNavigate();
-  const [email, setEmail] = useState(location.state?.email || "");
+  const [email, setEmail] = useState(location.state?.userEmail || "");
   const [password, setPassword] = useState("");
   
   const handleSignin = async (e) => {
@@ -24,15 +24,11 @@ const Signin = () => {
         }),
       });
       if (!res.ok) {
-        if (res.status === 401) {
-          throw new Error("Wrong email or password")
-        } else {
-          const error = await res.json();
-          throw new Error(error.message || "An error occurred while signing in")
-        }
+        const error = await res.json();
+        throw new Error(res.status !== 500 ? error.message : "An error occurred while signup")
       }
       const data = await res.json()
-      console.log(data.token)
+      console.log(data)
     } catch (err) {
       toast.error("Failed to signin: "+ err.message);
     }
