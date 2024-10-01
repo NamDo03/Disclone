@@ -26,7 +26,7 @@ const ChatInput = ({ type, name, socket }) => {
     }
   };
 
-  const sendMessage = () => {
+  const sendMessage = (e) => {
     e.preventDefault();
     const newMessage = {
       name,
