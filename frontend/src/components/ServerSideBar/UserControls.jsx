@@ -21,7 +21,6 @@ const UserControls = () => {
     }
     setHeadphonesOn(!headphonesOn);
   };
-  console.log("Mic:" + micOn + " headphone:" + headphonesOn);
 
   return (
     <div className="px-2 py-3 flex items-center justify-between bg-[#232428]">
@@ -75,17 +74,17 @@ const UserControls = () => {
         </button>
         <Tooltip
           id="microphone"
-          className="text-xs z-[100]"
+          className="text-xs"
           style={{ backgroundColor: "#111214", color: "#fff" }}
         />
         <Tooltip
           id="headphone"
-          className="text-xs z-[100]"
+          className="text-xs"
           style={{ backgroundColor: "#111214", color: "#fff" }}
         />
         <Tooltip
           id="setting"
-          className="text-xs z-[100]"
+          className="text-xs"
           style={{ backgroundColor: "#111214", color: "#fff" }}
         />
       </div>

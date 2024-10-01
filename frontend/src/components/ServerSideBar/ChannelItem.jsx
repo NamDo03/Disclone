@@ -3,15 +3,19 @@ import { FaTrashCan } from "react-icons/fa6";
 import { FiEdit } from "react-icons/fi";
 import { useNavigate, useParams } from "react-router-dom";
 import { Tooltip } from "react-tooltip";
+import useModal from "../../hooks/useModal";
+import EditModal from "../Modal/EditModal";
 
 const ChannelItem = ({ id, name, Icon }) => {
   const navigate = useNavigate();
   const params = useParams();
   const { serverId } = useParams();
+  const { isOpenModal: isOpenEditModal, toggleModal: toggleEditModal } =
+    useModal();
 
   const handleEdit = (event) => {
     event.stopPropagation();
-    console.log("Edit channel:", id);
+    toggleEditModal();
   };
 
   const handleDelete = (event) => {
@@ -61,6 +65,14 @@ const ChannelItem = ({ id, name, Icon }) => {
           style={{ backgroundColor: "#111214", color: "#fff" }}
         />
       </div>
+      {isOpenEditModal && (
+        <EditModal
+          toggleModal={toggleEditModal}
+          type="channel"
+          serverId={serverId}
+          channelId={id}
+        />
+      )}
     </div>
   );
 };
