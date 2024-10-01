@@ -3,7 +3,7 @@ import { BsEmojiSmile } from "react-icons/bs";
 import { FaPlus } from "react-icons/fa6";
 const ChatInput = ({ type, name, socket }) => {
   const [message, setMessage] = useState('');
-  const sendMessage = () => {
+  const sendMessage = (e) => {
     e.preventDefault();
     const newMessage = {
       name,
