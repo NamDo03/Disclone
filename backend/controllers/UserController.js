@@ -41,6 +41,17 @@ class UserController {
       throw new Error(`Failed to create new user: ${error.message}`);
     }
   }
+
+  async updateLastLogin(userId, lastLoginAt) {
+    try {
+      return await prisma.user.update({
+        where: { id: userId },
+        data: { last_login_at: lastLoginAt }
+      });
+    } catch (error) {
+      throw new Error(`Failed to update last login time: ${error.message}`);
+    }
+  }  
 }
 
 export const userController = new UserController()

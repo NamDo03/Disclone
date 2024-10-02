@@ -8,8 +8,67 @@ datasource db {
 }
 
 model User {
-  id    Int    @id @default(autoincrement())
-  email String @unique
-  username  String @unique
-  password String
+  id          Int       @id @default(autoincrement())
+  username    String    @unique
+  email       String    @unique
+  password    String
+  avatar_url  String?
+  created_at  DateTime  @default(now())
+  last_login_at DateTime?
+
+  messages    Message[]
+  serverMemberships ServerMember[]
+  ownedServers   Server[] @relation("UserServers")
+}
+
+model Server {
+  id          Int       @id @default(autoincrement())
+  server_name String
+  image_url    String?
+  user_id     Int
+  created_at  DateTime  @default(now())
+
+  owner       User          @relation("UserServers", fields: [user_id], references: [id], onDelete: Cascade)
+  channels    Channel[]
+  members     ServerMember[]
+}
+
+model Channel {
+  id           Int      @id @default(autoincrement())
+  channel_name String
+  type         ChannelType
+  server_id    Int
+  created_at   DateTime @default(now())
+
+  server       Server        @relation(fields: [server_id], references: [id], onDelete: Cascade)
+  messages     Message[]
+}
+
+model Message {
+  id         Int       @id @default(autoincrement())
+  content    String
+  edited_at  DateTime?
+  channel_id Int
+  user_id    Int
+  created_at DateTime  @default(now())
+
+  channel    Channel   @relation(fields: [channel_id], references: [id], onDelete: Cascade)
+  user       User      @relation(fields: [user_id], references: [id], onDelete: Cascade)
+}
+
+model ServerMember {
+  id        Int       @id @default(autoincrement())
+  server_id Int
+  user_id   Int
+  joined_at DateTime  @default(now())
+
+  server    Server    @relation(fields: [server_id], references: [id], onDelete: Cascade)
+  user      User      @relation(fields: [user_id], references: [id])
+
+  @@unique([server_id, user_id])
+}
+
+enum ChannelType {
+  TEXT
+  VOICE
 }

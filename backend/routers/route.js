@@ -48,7 +48,7 @@ router.post('/signin', async (req, res, next) => {
   try {
     const { email, password } = req.body;
 
-    const user = await userController.getUserByEmail(email);
+    let user = await userController.getUserByEmail(email);
 
     if (!user) {
       return res.status(401).json({ message: 'Invalid credentials' });
@@ -59,10 +59,20 @@ router.post('/signin', async (req, res, next) => {
       return res.status(401).json({ message: 'Invalid credentials' });
     }
 
+    user = await userController.updateLastLogin(user.id, new Date());
     const token = jwt.sign({ userId: user.id }, jwtKey, {
       expiresIn: '2h'
     });
-    res.json({ token: token, userId: user.id});
+    res.json({ 
+      token, 
+      user: {
+        id: user.id, 
+        email: user.email, 
+        username: user.username, 
+        avatar_url: user.avatar_url,
+        last_login_at: user.last_login_at
+      }
+    });
   } catch (error) {
     return next(error);
   }

@@ -26,11 +26,11 @@ const Signup = () => {
       });
       if (!res.ok) {
         const error = await res.json();
-        throw new Error(error.message || "An error occurred while signup")
+        throw new Error(res.status !== 500 ? error.message : "An error occurred while signup")
       }
       const data = await res.json();
-      console.log(data)
-      navigate("/sign-in", { state: { email } });
+      const userEmail = data.email
+      navigate("/sign-in", { state: { userEmail } });
     } catch (err) {
       toast.error("Failed to signup: " + err.message);
     }
