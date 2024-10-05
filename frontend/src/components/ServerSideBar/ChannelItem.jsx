@@ -5,12 +5,15 @@ import { useNavigate, useParams } from "react-router-dom";
 import { Tooltip } from "react-tooltip";
 import useModal from "../../hooks/useModal";
 import EditModal from "../Modal/EditModal";
+import DeleteModal from "../Modal/DeleteModal";
 
 const ChannelItem = ({ id, name, Icon }) => {
   const navigate = useNavigate();
   const params = useParams();
   const { serverId } = useParams();
   const { isOpenModal: isOpenEditModal, toggleModal: toggleEditModal } =
+    useModal();
+    const { isOpenModal: isOpenDeleteModal, toggleModal: toggleDeleteModel } =
     useModal();
 
   const handleEdit = (event) => {
@@ -20,7 +23,7 @@ const ChannelItem = ({ id, name, Icon }) => {
 
   const handleDelete = (event) => {
     event.stopPropagation();
-    console.log("Delete channel:", id);
+    toggleDeleteModel();
   };
   return (
     <div
@@ -71,6 +74,14 @@ const ChannelItem = ({ id, name, Icon }) => {
           type="channel"
           serverId={serverId}
           channelId={id}
+        />
+      )}
+      {isOpenDeleteModal && (
+        <DeleteModal
+        toggleModal={toggleDeleteModel}
+        type="channel"
+        serverId={serverId}
+        channelId={id}
         />
       )}
     </div>

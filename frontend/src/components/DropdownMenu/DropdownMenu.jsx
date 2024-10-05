@@ -6,7 +6,9 @@ import { IoPeople } from "react-icons/io5";
 import InviteMember from "../Modal/InviteMember";
 import useModal from "../../hooks/useModal";
 import EditModal from "../Modal/EditModal";
+import DeleteModal from "../Modal/DeleteModal";
 import { useParams } from "react-router-dom";
+
 
 const DropdownMenu = () => {
   const { serverId } = useParams();
@@ -14,7 +16,8 @@ const DropdownMenu = () => {
     useModal();
   const { isOpenModal: isOpenEditServer, toggleModal: toggleEditServer } =
     useModal();
-
+  const { isOpenModal: isOpenDeleteModal, toggleModal: toggleDeleteModel } =
+    useModal();
   return (
     <div className="flex justify-center items-center absolute top-full left-0 w-full">
       <div className="w-56 text-xs font-medium text-neutral-400 bg-[#0f0c0d] p-1 rounded">
@@ -37,7 +40,7 @@ const DropdownMenu = () => {
         <div className="border-b-[1px] mx-2 my-1 border-neutral-700"></div>
         <DropdownItem
           label="Delete Server"
-          onClick={() => console.log("Manage Members clicked")}
+          onClick={toggleDeleteModel}
           Icon={FaTrashCan}
           color="text-red-600"
         />
@@ -48,6 +51,13 @@ const DropdownMenu = () => {
           toggleModal={toggleEditServer}
           type="server"
           serverId={serverId}
+        />
+      )}
+      {isOpenDeleteModal && (
+        <DeleteModal
+        toggleModal={toggleDeleteModel}
+        type="server"
+        serverId={serverId}
         />
       )}
     </div>
