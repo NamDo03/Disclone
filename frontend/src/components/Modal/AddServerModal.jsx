@@ -1,12 +1,9 @@
 import React, { useRef, useState } from "react";
 import { IoClose } from "react-icons/io5";
 import { HiMiniCamera } from "react-icons/hi2";
-import useClickOutside from "../../hooks/useClickOutside";
+
 const AddServerModal = ({ toggleModal }) => {
   const inputRef = useRef();
-  const ref = useClickOutside(() => {
-    toggleModal(), console.log("click");
-  });
 
   const [image, setImage] = useState("");
   const [serverName, setServerName] = useState("");
@@ -40,7 +37,7 @@ const AddServerModal = ({ toggleModal }) => {
 
   return (
     <div className="fixed inset-0 bg-black/70 flex justify-center items-center">
-      <div ref={ref} className="max-w-[580px] bg-primary-1 rounded-md">
+      <div className="max-w-[580px] bg-primary-1 rounded-md">
         <div className="p-4 rounded-t-md">
           <button
             onClick={toggleModal}

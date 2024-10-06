@@ -34,7 +34,7 @@ const SideBarItem = ({ id, imgUrl, name, channels }) => {
       </button>
       <Tooltip
         id={id}
-        className="font-semibold z-[100]"
+        className="font-semibold"
         style={{ backgroundColor: "#111214", color: "#fff" }}
       />
     </div>

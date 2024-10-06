@@ -27,8 +27,9 @@ const Signin = () => {
         const error = await res.json();
         throw new Error(res.status !== 500 ? error.message : "An error occurred while signup")
       }
-      const data = await res.json()
-      console.log(data)
+      const data = await res.json();
+      localStorage.setItem("token", data.token);
+      localStorage.setItem("userId", data.user.id);
     } catch (err) {
       toast.error("Failed to signin: "+ err.message);
     }
@@ -65,6 +66,7 @@ const Signin = () => {
                 onChange={(e) => setEmail(e.target.value)}
                 className="p-2 rounded text-base border-none outline-none bg-primary-3 text-white"
                 required
+                autoComplete="current-password"
               />
             </div>
             <div className="flex flex-col gap-2">
@@ -77,6 +79,7 @@ const Signin = () => {
                 onChange={(e) => setPassword(e.target.value)}
                 className="p-2 rounded text-base border-none outline-none bg-primary-3 text-white"
                 required
+                autoComplete="current-password"
               />
             </div>
             <div className="flex flex-col gap-2">
