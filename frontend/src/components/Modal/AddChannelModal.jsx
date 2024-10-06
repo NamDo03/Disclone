@@ -2,14 +2,15 @@ import React, { useState } from "react";
 import { IoClose } from "react-icons/io5";
 import { PiHashBold } from "react-icons/pi";
 import { BiSolidVolumeFull } from "react-icons/bi";
+import { createPortal } from "react-dom";
 
 
 const AddChannelModal = ({ toggleModal }) => {
     const[serverType, setServerType] = useState("text");
     const[serverName, setServerName] = useState("");
     const handleAddServer = () => {console.log(serverType,serverName)}
-  return (
-    <div className="fixed inset-0 bg-black/70 flex justify-center items-center">
+  return createPortal(
+    <div className="fixed inset-0 bg-black/70 flex justify-center items-center z-[999]">
       <div className="max-w-[400px] w-full bg-primary-1 rounded-md">
         <div className="p-4 rounded-t-md">
           <div className="flex justify-between items-center">
@@ -26,10 +27,10 @@ const AddChannelModal = ({ toggleModal }) => {
                 <p className="text-zinc-400 text-xs mt-4 mb-2 uppercase font-semibold">
                 Channel Type
                 </p>
-                <div className={`flex gap-x-3 items-center justify-between px-3 py-[10px]  rounded-[4px] hover:bg-[#393c41] mb-1 ${serverType==="text" ? " bg-zinc-700":"bg-primary-2"}`}>
-                    <PiHashBold size={24}/>
+                <div  onClick={() => setServerType("text")} className={`cursor-pointer flex gap-x-3 items-center justify-between px-3 py-[10px]  rounded-[4px] hover:bg-[#393c41] mb-1 ${serverType==="text" ? " bg-zinc-700":"bg-primary-2"}`}>
+                    <PiHashBold className="text-white" size={24}/>
                     <div>
-                        <h2 className="text-sm">Text</h2>
+                        <h2 className="text-sm text-white">Text</h2>
                         <p className="text-xs text-zinc-400">Send messages, images, GIFs, emoji and opinions</p>
                     </div>
                     <div className="inline-flex items-center">
@@ -47,10 +48,10 @@ const AddChannelModal = ({ toggleModal }) => {
                         </label>
                     </div>
                 </div>
-                <div className={`flex gap-x-3 items-center justify-between px-3 py-[10px]  rounded-[4px] hover:bg-[#393c41] mb-1 ${serverType==="voice" ? " bg-zinc-700":"bg-primary-2"}`}>
-                    <BiSolidVolumeFull size={24}/>
+                <div  onClick={() => setServerType("voice")} className={`cursor-pointer flex gap-x-3 items-center justify-between px-3 py-[10px]  rounded-[4px] hover:bg-[#393c41] mb-1 ${serverType==="voice" ? " bg-zinc-700":"bg-primary-2"}`}>
+                    <BiSolidVolumeFull className="text-white" size={24}/>
                     <div>
-                        <h2 className="text-sm">Voice</h2>
+                        <h2 className="text-sm text-white">Voice</h2>
                         <p className="text-xs text-zinc-400">Hangout together with voice, video and scree share</p>
                     </div>
                     <div className="inline-flex items-center">
@@ -94,7 +95,8 @@ const AddChannelModal = ({ toggleModal }) => {
           </button>
         </div>
       </div>
-    </div>
+    </div>,
+    document.getElementById("root")
   );
 };
 
