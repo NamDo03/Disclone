@@ -1,23 +1,33 @@
 import prisma from "../db/prismaClient.js";
 
 class ServerController {
-    servers;
-    constructor() {
-        this.servers = [
-            { id: 1, userId: 1, name: 'Server 1', img_url: 'https://example.com/img1.png' },
-            { id: 2, userId: 1, name: 'Server 2', img_url: 'https://example.com/img2.png' },
-            { id: 3, userId: 2, name: 'Server 3', img_url: 'https://example.com/img3.png' },
-        ];
-    }
-
     async createServer(userId, name, img_url) {
-        const server = { userId: userId, name: name, img_url: img_url }
-        return server;
+        try {
+            const server = await prisma.server.create({
+                data: {
+                    server_name: name,
+                    image_url: img_url,
+                    user_id: userId,
+                }
+            });
+            return server;
+        } catch (error) {
+            throw new Error(`Failed to create new server: ${error.message}`)
+        }
     }
 
     async getListOfServers(userId) {
-        const userServers = this.servers.filter(server => server.userId === parseInt(userId));
-        return userServers;
+        try {
+            const servers = await prisma.server.findMany({
+                where: {
+                    user_id: userId,
+                }
+            });
+
+            return servers;
+        } catch (error) {
+            throw new Error(`Failed to retrieve servers: ${error.message}`);
+        }
     }
 
     async deleteServerById(id) {

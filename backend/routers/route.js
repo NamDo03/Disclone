@@ -78,19 +78,31 @@ router.post('/signin', async (req, res, next) => {
   }
 });
 
-router.post('/server/create-channel', passport.authenticate('jwt', { session: false }), async (req, res, next) => {
+router.post('/server/create-channel', async (req, res, next) => {
   try {
-    const { userId, name, type } = req.body;
-    const newChanel = await channelController.createChanel(userId, name, type)
-    res.status(200).json({ message: "Channel created", chanel: newChanel });
+    const {serverId, name, type } = req.body;
+    if (!serverId) {
+      res.status(400).json({ message: "Missing server id!"})
+    }
+    if (!name || !type) {
+      res.status(400).json({ message: "Missing channel name or channel type!"})
+    }
+    const newChannel = await channelController.createChannel(serverId, name, type)
+    res.status(200).json({ message: "Channel created", channel: newChannel });
   } catch (error) {
     return next(error);
   }
 });
 
-router.post('/user/create-server', passport.authenticate('jwt', { session: false }), async (req, res, next) => {
+router.post('/user/create-server', async (req, res, next) => {
   try {
     const { userId, name, img_url } = req.body;
+    if (!userId) {
+      res.status(400).json({ message: "Missing user id of server owner!"})
+    }
+    if (!name || !img_url) {
+      res.status(400).json({ message: "Missing server name or server banner!"})
+    }
     const newServer = await serverController.createServer(userId, name, img_url)
     res.status(200).json({ message: "Server created", server: newServer });
   } catch (error) {
@@ -98,9 +110,12 @@ router.post('/user/create-server', passport.authenticate('jwt', { session: false
   }
 });
 
-router.post('/server/edit', passport.authenticate('jwt', { session: false }), async (req, res, next) => {
+router.post('/server/edit', async (req, res, next) => {
   try {
-    const { serverId,name, img_url, userId } = req.body;
+    const { serverId, name, img_url, userId } = req.body;
+    if (!userId || !serverId) {
+      res.status(400).json({ message: "Missing user id or server id!"})
+    }
     if (!name || !img_url) {
       return res.status(400).json({ message: 'Missing required fields' });
     }
@@ -114,17 +129,40 @@ router.post('/server/edit', passport.authenticate('jwt', { session: false }), as
   }
 });
 
-router.post('/channel/edit', passport.authenticate('jwt', { session: false }), async (req, res, next) => {
+router.post('/channel/edit', async (req, res, next) => {
   try {
     const { channelId, name, userId } = req.body;
+    if (!userId || !channelId) {
+      res.status(400).json({ message: "Missing user id or channel id!"})
+    }
     if (!name) {
       return res.status(400).json({ message: 'Missing required fields' });
     }
     const updatedChannel = await channelController.updateChannel(channelId, userId, name );
     res.status(200).json({
       message: 'Channel updated successfully',
-      chanel: updatedChannel
+      channel: updatedChannel
     });
+  } catch (error) {
+    return next(error);
+  }
+});
+
+router.get('/user/:id/list-server', async (req, res, next) => {
+  try {
+    const { userId } = req.params;
+    const servers = await serverController.getListOfServers(userId);
+    res.status(200).json({ servers });
+  } catch (error) {
+    return next(error);
+  }
+});
+
+router.get('/server/:id/list-channel', async (req, res, next) => {
+  try {
+    const { serverId } = req.params;
+    const channels = await channelController.getListOfChannels(serverId);
+    res.status(200).json({ channels });
   } catch (error) {
     return next(error);
   }
@@ -135,16 +173,6 @@ router.delete('/server/:id/delete', passport.authenticate('jwt', { session: fals
     const { id } = req.params;
     await serverController.deleteServerById(parseInt(id));  
     res.status(200).json({ message: `Delete server suscessful` });
-  } catch (error) {
-    return next(error);
-  }
-});
-
-router.get('/user/:id/list-server', passport.authenticate('jwt', { session: false }), async (req, res, next) => {
-  try {
-    const { id } = req.params;
-    const servers = await serverController.getListOfServers(id);
-    res.status(200).json({ servers });
   } catch (error) {
     return next(error);
   }
@@ -165,17 +193,6 @@ router.delete('/user/:id/delete', async (req, res, next) => {
     const { id } = req.params;
     await userController.deleteUserById(parseInt(id));  
     res.status(200).json({ message: `Delete user suscessful` });
-  } catch (error) {
-    return next(error);
-  }
-});
-
-
-router.get('/server/:id/list-channel', passport.authenticate('jwt', { session: false }), async (req, res, next) => {
-  try {
-    const { id } = req.params;
-    const channels = await chanelController.getListOfChannels(id);
-    res.status(200).json({ channels });
   } catch (error) {
     return next(error);
   }

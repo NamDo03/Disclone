@@ -1,23 +1,32 @@
 import prisma from "../db/prismaClient.js";
 
 class ChannelController {
-    channels;
-    constructor() {
-        this.channels = [
-            { id: 1, serverId: 1, name: 'General Chat', type: 'text' },
-            { id: 2, serverId: 1, name: 'Voice Room 1', type: 'voice' },
-            { id: 3, serverId: 2, name: 'Announcements', type: 'text' },
-        ];
-    }
-
-    async createChanel(userId, name, type) {
-        const chanel = { userId: userId, name: name, type: type }
-        return chanel;
+    async createChannel(serverId, name, type) {
+        try {
+            const channel = await prisma.channel.create({
+                data: {
+                    server_id: serverId,
+                    channel_name: name,
+                    type,
+                }
+            });
+            return channel;
+        } catch (error) {
+            throw new Error(`Failed to create new channel: ${error.message}`);
+        }
     }
 
     async getListOfChannels(serverId) {
-        const serverChannels = this.channels.filter(channel => channel.serverId === parseInt(serverId));
-        return serverChannels;
+        try {
+            const channels = await prisma.channel.findMany({
+                where: {
+                    server_id: serverId,
+                }
+            });
+            return channels;
+        } catch (error) {
+            throw new Error(`Failed to retrieve channels: ${error.message}`);
+        }
     }
 
     async deleteChannelById(id) {
