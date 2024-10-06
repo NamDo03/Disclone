@@ -1,10 +1,18 @@
 import prisma from "../db/prismaClient.js";
 
-class ChanelController {
+class ChannelController {
   async createChanel(userId, name, type) {
     const chanel = { userId: userId, name: name, type: type }
     return chanel;
   }
+
+  async deleteChannelById(id) {
+    try {
+        await prisma.channel.delete({ where: { id } });
+    } catch (error) {
+        throw new Error(`Failed to delete channel ${id}: ${error.message}`);
+    }
+  }   
 
   async updateChannel(channelId, userId, channel_name) {
     try {
@@ -37,4 +45,4 @@ class ChanelController {
   }
 }
 
-export const chanelController = new ChanelController();
+export const channelController = new ChannelController();
