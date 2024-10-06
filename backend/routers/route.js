@@ -138,4 +138,33 @@ router.post('/channel/edit', passport.authenticate('jwt', { session: false }), a
   }
 });
 
+router.delete('/server/delete', passport.authenticate('jwt', { session: false }), async (req, res, next) => {
+  try {
+    const { id } = req.body;
+    await serverController.deleteServerById(id);  
+    res.status(200).json({ message: `Delete suscessful` });
+  } catch (error) {
+    return next(error);
+  }
+});
+
+router.delete('/channel/delete', passport.authenticate('jwt', { session: false }), async (req, res, next) => {
+  try {
+    const { id } = req.body;   
+    await chanelController.deleteChannelById(id);   
+    res.status(200).json({ message: `Delete suscessful` });
+  } catch (error) {
+    return next(error);
+  }
+});
+
+router.delete('/user/delete', passport.authenticate('jwt', { session: false }), async (req, res, next) => {
+  try {
+    const { id } = req.body;
+    await userController.deleteUserById(id);  
+    res.status(200).json({ message: `Delete suscessful` });
+  } catch (error) {
+    return next(error);
+  }
+});
 export { router };

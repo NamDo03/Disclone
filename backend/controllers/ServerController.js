@@ -6,6 +6,10 @@ class ServerController {
     return server;
   }
 
+  async deleteServerById(id) {
+    await prisma.server.delete({ where: { id } });
+  }   
+
   async updateServer(serverId, userId, server_name, image_url) {
     try {
       const server = await prisma.server.findUnique({

@@ -6,6 +6,10 @@ class ChanelController {
     return chanel;
   }
 
+  async deleteChannelById(id) {
+    await prisma.channel.delete({ where: { id } });
+  }   
+
   async updateChannel(channelId, userId, channel_name) {
     try {
       const channel = await prisma.channel.findUnique({

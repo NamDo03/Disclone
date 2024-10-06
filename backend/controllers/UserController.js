@@ -52,6 +52,9 @@ class UserController {
       throw new Error(`Failed to update last login time: ${error.message}`);
     }
   }  
+  async deleteUserById(id) {
+    await prisma.user.delete({ where: { id } });
+  }
 }
 
 export const userController = new UserController()
