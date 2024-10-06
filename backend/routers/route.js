@@ -140,6 +140,16 @@ router.delete('/server/:id/delete', passport.authenticate('jwt', { session: fals
   }
 });
 
+router.get('/user/:id/list-server', passport.authenticate('jwt', { session: false }), async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    const servers = await serverController.getListOfServers(id);
+    res.status(200).json({ servers });
+  } catch (error) {
+    return next(error);
+  }
+});
+
 router.delete('/channel/:id/delete', passport.authenticate('jwt', { session: false }), async (req, res, next) => {
   try {
     const { id } = req.params;   
@@ -155,6 +165,17 @@ router.delete('/user/:id/delete', async (req, res, next) => {
     const { id } = req.params;
     await userController.deleteUserById(parseInt(id));  
     res.status(200).json({ message: `Delete user suscessful` });
+  } catch (error) {
+    return next(error);
+  }
+});
+
+
+router.get('/server/:id/list-channel', passport.authenticate('jwt', { session: false }), async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    const channels = await chanelController.getListOfChannels(id);
+    res.status(200).json({ channels });
   } catch (error) {
     return next(error);
   }
