@@ -106,4 +106,36 @@ router.post('/user/create-server', passport.authenticate('jwt', { session: false
   }
 });
 
+router.post('/server/edit', passport.authenticate('jwt', { session: false }), async (req, res, next) => {
+  try {
+    const { serverId,name, img_url, userId } = req.body;
+    if (!name || !img_url) {
+      return res.status(400).json({ message: 'Missing required fields' });
+    }
+    const updatedServer = await serverController.updateServer(serverId, userId, name, img_url ,);
+    res.status(200).json({
+      message: 'Server updated successfully',
+      server: updatedServer
+    });
+  } catch (error) {
+    return next(error);
+  }
+});
+
+router.post('/channel/edit', passport.authenticate('jwt', { session: false }), async (req, res, next) => {
+  try {
+    const { channelId, name, userId } = req.body;
+    if (!name) {
+      return res.status(400).json({ message: 'Missing required fields' });
+    }
+    const updatedChannel = await chanelController.updateChannel(channelId, userId, name );
+    res.status(200).json({
+      message: 'Channel updated successfully',
+      chanel: updatedChannel
+    });
+  } catch (error) {
+    return next(error);
+  }
+});
+
 export { router };

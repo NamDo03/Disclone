@@ -4,11 +4,18 @@ import { HiMiniCamera } from "react-icons/hi2";
 import { PiHashBold } from "react-icons/pi";
 import servers from "../../fakeApi";
 import { createPortal } from "react-dom";
+import { updateChannel } from "../../api/channelService";
+import { updateServer } from "../../api/serverService";
+import { toast } from "react-toastify";
 
 const EditModal = ({ type, toggleModal, serverId, channelId }) => {
+  const token = localStorage.getItem("token");
+  const userId = localStorage.getItem("userId");
+
   const inputRef = useRef();
   const [image, setImage] = useState("");
   const [name, setName] = useState("");
+  const [loading, setLoading] = useState(false);
 
   const server = servers.find((s) => s.id === serverId);
   const channel = server
@@ -40,12 +47,28 @@ const EditModal = ({ type, toggleModal, serverId, channelId }) => {
     setImage("");
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    if (type.toLowerCase() === "server" && name && image) {
-      console.log("Creating server with name:", name, "and image:", image);
-    } else if (type.toLowerCase() === "channel" && name) {
-      console.log("Updating channel name to:", name);
+    setLoading(true);
+    const channelId = 1;
+
+    try {
+      if (type.toLowerCase() === "server") {
+        await updateServer(serverId, name, image, userId, token);
+        toast.success("Server updated successfully");
+      } else if (type.toLowerCase() === "channel") {
+        await updateChannel(channelId, name, userId, token);
+        toast.success("Channel updated successfully");
+      }
+      setTimeout(() => {
+        setLoading(toggleModal());
+      }, 1000);
+    } catch (error) {
+      toast.error(error.message);
+    } finally {
+      setTimeout(() => {
+        setLoading(false);
+      }, 1000);
     }
   };
 
@@ -148,9 +171,11 @@ const EditModal = ({ type, toggleModal, serverId, channelId }) => {
               name && (type.toLowerCase() === "server" ? image : true)
                 ? "bg-main cursor-pointer hover:bg-main/85 text-white"
                 : "bg-main/50 cursor-not-allowed text-zinc-400"
-            }`}
+            } 
+            ${loading && "bg-main/50 cursor-not-allowed text-zinc-400"}
+            `}
           >
-            Save
+            {loading ? "Saving..." : "Save"}
           </button>
         </div>
       </div>
