@@ -78,14 +78,6 @@ router.post('/signin', async (req, res, next) => {
   }
 });
 
-router.get('/hello', passport.authenticate('jwt', { session: false }), async (req, res, next) => {
-  try {
-    res.status(200).json({ message: "hello" });
-  } catch (error) {
-    return next(error);
-  }
-});
-
 router.post('/server/create-channel', passport.authenticate('jwt', { session: false }), async (req, res, next) => {
   try {
     const { userId, name, type } = req.body;
@@ -142,7 +134,7 @@ router.delete('/server/delete', passport.authenticate('jwt', { session: false })
   try {
     const { id } = req.body;
     await serverController.deleteServerById(id);  
-    res.status(200).json({ message: `Delete suscessful` });
+    res.status(200).json({ message: `Delete server suscessful` });
   } catch (error) {
     return next(error);
   }
@@ -152,7 +144,7 @@ router.delete('/channel/delete', passport.authenticate('jwt', { session: false }
   try {
     const { id } = req.body;   
     await channelController.deleteChannelById(id);   
-    res.status(200).json({ message: `Delete suscessful` });
+    res.status(200).json({ message: `Delete channel suscessful` });
   } catch (error) {
     return next(error);
   }
@@ -162,7 +154,7 @@ router.delete('/user/delete', passport.authenticate('jwt', { session: false }), 
   try {
     const { id } = req.body;
     await userController.deleteUserById(id);  
-    res.status(200).json({ message: `Delete suscessful` });
+    res.status(200).json({ message: `Delete user suscessful` });
   } catch (error) {
     return next(error);
   }

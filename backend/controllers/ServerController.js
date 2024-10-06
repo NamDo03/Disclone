@@ -7,7 +7,11 @@ class ServerController {
   }
 
   async deleteServerById(id) {
-    await prisma.server.delete({ where: { id } });
+    try {
+        await prisma.server.delete({ where: { id } });
+    } catch (error) {
+        throw new Error(`Failed to delete server ${id}: ${error.message}`);
+    }
   }   
 
   async updateServer(serverId, userId, server_name, image_url) {

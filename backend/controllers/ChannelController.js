@@ -7,7 +7,11 @@ class ChannelController {
   }
 
   async deleteChannelById(id) {
-    await prisma.channel.delete({ where: { id } });
+    try {
+        await prisma.channel.delete({ where: { id } });
+    } catch (error) {
+        throw new Error(`Failed to delete channel ${id}: ${error.message}`);
+    }
   }   
 
   async updateChannel(channelId, userId, channel_name) {

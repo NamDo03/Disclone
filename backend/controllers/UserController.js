@@ -53,7 +53,11 @@ class UserController {
     }
   }  
   async deleteUserById(id) {
-    await prisma.user.delete({ where: { id } });
+    try {
+      await prisma.user.delete({ where: { id } });
+    } catch (error) {
+      throw new Error(`Failed to delete user ${id}: ${error.message}`);
+    }
   }
 }
 
