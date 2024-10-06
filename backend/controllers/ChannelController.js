@@ -1,6 +1,6 @@
 import prisma from "../db/prismaClient.js";
 
-class ChanelController {
+class ChannelController {
   async createChanel(userId, name, type) {
     const chanel = { userId: userId, name: name, type: type }
     return chanel;
@@ -41,4 +41,4 @@ class ChanelController {
   }
 }
 
-export const chanelController = new ChanelController();
+export const channelController = new ChannelController();
