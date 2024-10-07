@@ -3,14 +3,15 @@ import { IoClose } from "react-icons/io5";
 import { PiHashBold } from "react-icons/pi";
 import { PiMagnifyingGlass } from "react-icons/pi";
 import { listfriend } from "../../fakeApi";
+import { createPortal } from "react-dom";
 
 const InviteMember = ({ toggleModal }) => {
   const [searchTerm, setSearchTerm] = useState("");
   const filteredFriends = listfriend.filter((friend) =>
     friend.username.toLowerCase().includes(searchTerm.toLowerCase())
   );
-  return (
-    <div className="fixed inset-0 bg-black/70 flex justify-center items-center">
+  return createPortal(
+    <div className="fixed inset-0 bg-black/70 flex justify-center items-center z-[999]">
       <div className="max-w-[500px] w-full bg-primary-1 rounded-md min-w-[400px]">
         <div className="p-4 rounded-t-md">
           <div className="flex justify-between items-center">
@@ -62,7 +63,7 @@ const InviteMember = ({ toggleModal }) => {
                   />
                   <p className="text-zinc-300">{friend.username}</p>
                 </div>
-                <button className="border border-green px-4 py-2 rounded-[4px] hover:bg-green group-hover:bg-green">
+                <button className="border border-green px-4 py-2 rounded-[4px] hover:bg-green group-hover:bg-green text-white">
                   Invite
                 </button>
               </div>
@@ -74,7 +75,8 @@ const InviteMember = ({ toggleModal }) => {
           )}
         </div>
       </div>
-    </div>
+    </div>,
+    document.getElementById("root")
   );
 };
 
