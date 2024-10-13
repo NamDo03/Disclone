@@ -7,29 +7,44 @@ import "react-tooltip/dist/react-tooltip.css";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import ChannelPage from "./pages/ChannelPage";
+import ProtectedRoute from "./routes/ProtectedRoute";
+import HomeLayout from "./layouts/HomeLayout";
 
 function App() {
   return (
     <Router>
       <Routes>
         <Route
-          path="/servers/@me"
+          path="/"
           element={
-            <MainLayout>
-              <HomePage />
-            </MainLayout>
+            <ProtectedRoute>
+              <HomeLayout>
+                <HomePage />
+              </HomeLayout>
+            </ProtectedRoute>
           }
         />
         <Route
           path="/servers/:serverId/channels/:channelId"
           element={
-            <MainLayout>
-              <ChannelPage />
-            </MainLayout>
+            <ProtectedRoute>
+              <MainLayout>
+                <ChannelPage />
+              </MainLayout>
+            </ProtectedRoute>
           }
         />
+
         <Route path="/sign-up" element={<Signup />} />
         <Route path="/sign-in" element={<Signin />} />
+        <Route
+          path="*"
+          element={
+            <ProtectedRoute>
+              <HomePage />
+            </ProtectedRoute>
+          }
+        />
       </Routes>
       <ToastContainer
         position="top-right"

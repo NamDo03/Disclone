@@ -1,6 +1,19 @@
 import prisma from "../db/prismaClient.js";
 
 class ServerController {
+    async getServerById(serverId) {
+        try {
+            const server = await prisma.server.findUnique({
+                where: { id: parseInt(serverId) },
+                include: {
+                    channels: true,
+                },
+            });
+            return server;
+        } catch (error) {
+            throw new Error('Error retrieving server: ' + error.message);
+        }
+    }
     async createServer(userId, name, img_url) {
         try {
             const server = await prisma.server.create({
@@ -20,7 +33,7 @@ class ServerController {
         try {
             const servers = await prisma.server.findMany({
                 where: {
-                    user_id: userId,
+                    user_id: parseInt(userId),
                 }
             });
 
@@ -32,7 +45,7 @@ class ServerController {
 
     async deleteServerById(id) {
         try {
-            await prisma.server.delete({ where: { id } });
+            await prisma.server.delete({ where: { id: parseInt(id) } });
         } catch (error) {
             throw new Error(`Failed to delete server ${id}: ${error.message}`);
         }

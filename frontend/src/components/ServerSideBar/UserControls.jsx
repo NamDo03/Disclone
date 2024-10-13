@@ -3,8 +3,11 @@ import { FaMicrophone, FaMicrophoneSlash } from "react-icons/fa";
 import { TbHeadphonesFilled, TbHeadphonesOff } from "react-icons/tb";
 import { IoMdSettings } from "react-icons/io";
 import { Tooltip } from "react-tooltip";
+import { useSelector } from "react-redux";
 
 const UserControls = () => {
+  const currentUser = useSelector((state) => state.user.currentUser);
+  
   const [micOn, setMicOn] = useState(true);
   const [headphonesOn, setHeadphonesOn] = useState(true);
 
@@ -26,12 +29,12 @@ const UserControls = () => {
     <div className="px-2 py-3 flex items-center justify-between bg-[#232428]">
       <div className="flex flex-row items-center gap-2">
         <img
-          src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQcysrRmAGo9RR1jbOv2vyOU1KD-PRqHjXjLQ&s "
+          src={currentUser.avatar_url}
           alt="avatarUser"
           className="w-9 h-9 rounded-full object-cover"
         />
         <div className="flex flex-col">
-          <h2 className="text-sm">Namdo</h2>
+          <h2 className="text-sm">{currentUser.username}</h2>
           <p className="text-green text-xs">Online</p>
         </div>
       </div>

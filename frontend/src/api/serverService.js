@@ -23,3 +23,71 @@ export const updateServer = async (serverId, name, img_url, userId, token) => {
         throw error;
     }
 };
+
+export const getListOfChannels = async (serverId, token) => {
+    try {
+        const response = await fetch(`${API_URL}/server/${serverId}/list-channel`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            }
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+            throw new Error(data.message || 'Error fetching channels');
+        }
+
+        return data.channels;
+    } catch (error) {
+        console.error("Fetch channels error:", error);
+        throw error;
+    }
+};
+
+export const deleteServer = async (serverId, token) => {
+    try {
+        const response = await fetch(`${API_URL}/server/${serverId}/delete`, {
+            method: 'DELETE',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            }
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+            throw new Error(data.message || 'Error deleting server');
+        }
+
+        return data;
+    } catch (error) {
+        console.error("Delete server error:", error);
+        throw error;
+    }
+};
+export const getServerById = async (serverId, token) => {
+    try {
+        const response = await fetch(`${API_URL}/server/${serverId}/get-by-id`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            }
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+            throw new Error(data.message || 'Error fetching server');
+        }
+
+        return data;
+    } catch (error) {
+        console.error("Fetch server error:", error);
+        throw error;
+    }
+};
