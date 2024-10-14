@@ -7,6 +7,9 @@ import { addServer } from "../../redux/serverSlice";
 import { toast } from "react-toastify";
 import { useDispatch, useSelector } from "react-redux";
 
+const CLOUDINARY_URL =
+  import.meta.env.VITE_CLOUDINARY_URL ||
+  "https://api.cloudinary.com/v1_1/dyzlyiggq/image/upload";
 const AddServerModal = ({ toggleModal }) => {
   const dispatch = useDispatch();
   const currentUser = useSelector((state) => state.user.currentUser);
@@ -14,8 +17,11 @@ const AddServerModal = ({ toggleModal }) => {
 
   const inputRef = useRef();
 
-  const [image, setImage] = useState("");
+  const [image, setImage] = useState(null);
+  const [imagePreview, setImagePreview] = useState("");
   const [serverName, setServerName] = useState("");
+  const [uploading, setUploading] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
 
   const handleImageClick = () => {
     inputRef.current.click();
@@ -23,25 +29,59 @@ const AddServerModal = ({ toggleModal }) => {
 
   const handleImageChange = (event) => {
     const file = event.target.files[0];
-    if (file) {
+    const validImageTypes = [
+      "image/jpeg",
+      "image/png",
+      "image/gif",
+      "image/jpg",
+    ];
+    if (file && validImageTypes.includes(file.type)) {
+      setErrorMessage("");
       setImage(file);
+      setImagePreview(URL.createObjectURL(file));
+    } else {
+      setErrorMessage("Please select a valid image file (JPEG, PNG, GIF).");
+      setImage(null);
+      setImagePreview("");
     }
   };
 
   const handleImageRemove = () => {
-    setImage("");
+    setImage(null);
+    setImagePreview("");
+    setErrorMessage("");
+  };
+
+  const uploadImage = async () => {
+    if (!image) return;
+    setUploading(true);
+    const formData = new FormData();
+    formData.append("file", image);
+    formData.append("upload_preset", "Upload-img");
+    try {
+      const response = await fetch(CLOUDINARY_URL, {
+        method: "POST",
+        body: formData,
+      });
+      const data = await response.json();
+      return data.secure_url;
+    } catch (error) {
+      console.error("Error uploading image:", error);
+    } finally {
+      setUploading(false);
+    }
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
+      const img_url = await uploadImage();
       const newServer = await createServer(
         currentUser.id,
         serverName,
-        "https://assets.mofoprod.net/network/images/discord.original.jpg",
+        img_url,
         token
       );
-      console.log(newServer);
       dispatch(addServer(newServer.server));
       toast.success("Success to create server");
 
@@ -51,7 +91,6 @@ const AddServerModal = ({ toggleModal }) => {
       toast.error("Failed to create server:", error.message);
     }
   };
-
   return (
     <div className="fixed inset-0 bg-black/70 flex justify-center items-center z-[999]">
       <div className="max-w-[580px] bg-primary-1 rounded-md">
@@ -74,11 +113,11 @@ const AddServerModal = ({ toggleModal }) => {
           <form>
             <div className="py-5 px-4">
               <div className="flex items-center justify-center text-center">
-                {image ? (
+                {imagePreview ? (
                   <div className="relative">
                     <img
                       className="w-[100px] h-[100px] rounded-full object-cover"
-                      src={URL.createObjectURL(image)}
+                      src={imagePreview}
                       alt="serverImg"
                     />
                     <IoClose
@@ -105,6 +144,11 @@ const AddServerModal = ({ toggleModal }) => {
                   </div>
                 )}
               </div>
+              {errorMessage && (
+                <p className="text-red-500 text-sm mt-2 text-center">
+                  {errorMessage}
+                </p>
+              )}
 
               <div className="flex flex-col gap-2 mt-8">
                 <label
@@ -129,12 +173,12 @@ const AddServerModal = ({ toggleModal }) => {
           <button
             onClick={handleSubmit}
             className={`px-8 py-3 rounded font-semibold text-sm ${
-              serverName && image
+              serverName && image && !uploading
                 ? "bg-main cursor-pointer hover:bg-main/85 text-white"
                 : "bg-main/50 cursor-not-allowed text-zinc-400"
             }`}
           >
-            Create
+            {uploading ? "Uploading..." : "Create"}
           </button>
         </div>
       </div>
