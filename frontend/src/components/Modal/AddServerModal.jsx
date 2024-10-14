@@ -108,7 +108,7 @@ const AddServerModal = ({ toggleModal }) => {
               always change it later
             </p>
           </div>
-          <form>
+          <form onSubmit={handleSubmit}>
             <div className="py-5 px-4">
               <div className="flex items-center justify-center text-center">
                 {imagePreview ? (
@@ -164,6 +164,18 @@ const AddServerModal = ({ toggleModal }) => {
                   placeholder="Enter server name"
                 />
               </div>
+            </div>
+            <div className="bg-primary-2 rounded-b-md p-4 text-zinc-300 flex items-center justify-end gap-2 ">
+              <button
+                type="submit"
+                className={`px-8 py-3 rounded font-semibold text-sm ${
+                  serverName && image && !uploading
+                    ? "bg-main cursor-pointer hover:bg-main/85 text-white"
+                    : "bg-main/50 cursor-not-allowed text-zinc-400"
+                }`}
+              >
+                {uploading ? "Uploading..." : "Create"}
+              </button>
             </div>
           </form>
         </div>
