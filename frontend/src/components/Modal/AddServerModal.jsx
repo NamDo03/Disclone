@@ -53,7 +53,7 @@ const AddServerModal = ({ toggleModal }) => {
   };
 
   return (
-    <div className="fixed inset-0 bg-black/70 flex justify-center items-center">
+    <div className="fixed inset-0 bg-black/70 flex justify-center items-center z-[999]">
       <div className="max-w-[580px] bg-primary-1 rounded-md">
         <div className="p-4 rounded-t-md">
           <button

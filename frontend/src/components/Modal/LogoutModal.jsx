@@ -15,7 +15,7 @@ const LogoutModal = ({ toggleModal }) => {
     navigate("/sign-in");
   };
   return (
-    <div className="fixed inset-0 bg-black/70 flex justify-center items-center">
+    <div className="fixed inset-0 bg-black/70 flex justify-center items-center z-[999]">
       <div className="max-w-[400px] w-full bg-primary-1 rounded-md">
         <div className="p-4 rounded-t-md">
           <div className="flex justify-between items-center">

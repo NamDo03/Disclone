@@ -8,6 +8,7 @@ import Cookies from "js-cookie";
 import { createChannel } from "../../api/channelService";
 import { useParams } from "react-router-dom";
 import { addChannel } from "../../redux/channelSlice";
+import { createPortal } from "react-dom";
 
 const AddChannelModal = ({ toggleModal }) => {
   const dispatch = useDispatch();
@@ -146,7 +147,8 @@ const AddChannelModal = ({ toggleModal }) => {
           </button>
         </div>
       </div>
-    </div>
+    </div>,
+    document.getElementById("root")
   );
 };
 
