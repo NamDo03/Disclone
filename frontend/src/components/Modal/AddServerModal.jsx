@@ -7,9 +7,7 @@ import { addServer } from "../../redux/serverSlice";
 import { toast } from "react-toastify";
 import { useDispatch, useSelector } from "react-redux";
 
-const CLOUDINARY_URL =
-  import.meta.env.VITE_CLOUDINARY_URL ||
-  "https://api.cloudinary.com/v1_1/dyzlyiggq/image/upload";
+const CLOUDINARY_URL = import.meta.env.VITE_CLOUDINARY_URL || "https://api.cloudinary.com/v1_1/dyzlyiggq/image/upload";
 const AddServerModal = ({ toggleModal }) => {
   const dispatch = useDispatch();
   const currentUser = useSelector((state) => state.user.currentUser);
@@ -63,8 +61,8 @@ const AddServerModal = ({ toggleModal }) => {
         method: "POST",
         body: formData,
       });
-      const data = await response.json();
-      return data.secure_url;
+      const data = await response.json(); 
+      return data.secure_url
     } catch (error) {
       console.error("Error uploading image:", error);
     } finally {
