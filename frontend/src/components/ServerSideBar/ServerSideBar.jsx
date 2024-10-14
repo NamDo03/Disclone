@@ -4,13 +4,18 @@ import ServerSection from "./ServerSection";
 import { PiHashBold } from "react-icons/pi";
 import { BiSolidVolumeFull } from "react-icons/bi";
 import { useParams } from "react-router-dom";
-import servers from "../../fakeApi";
 import UserControls from "./UserControls";
 import ChannelItem from "./ChannelItem";
+import Cookies from "js-cookie";
+import { getServerById } from "../../api/serverService";
+import { useDispatch, useSelector } from "react-redux";
+import { setChannels } from "../../redux/channelSlice";
 
 const ServerSideBar = () => {
+  const token = Cookies.get("token");
   const { serverId } = useParams();
-  const [serverData, setServerData] = useState(null);
+  const dispatch = useDispatch();
+  const channels = useSelector((state) => state.channels);
   const [isTextChannelsExpanded, setTextChannelsExpanded] = useState(true);
   const [isVoiceChannelsExpanded, setVoiceChannelsExpanded] = useState(true);
 
@@ -20,15 +25,21 @@ const ServerSideBar = () => {
     setVoiceChannelsExpanded(!isVoiceChannelsExpanded);
 
   useEffect(() => {
-    const server = servers.find((server) => server.id === serverId);
-    setServerData(server);
+    const fetchServerById = async () => {
+      try {
+        const serverData = await getServerById(serverId, token);
+        dispatch(setChannels(serverData.channels));
+      } catch (error) {
+        console.error("Error fetching server:", error);
+      }
+    };
+    fetchServerById();
   }, [serverId]);
 
-  if (!serverData) return <div>Loading...</div>;
 
   return (
     <div className="flex flex-col bg-primary-2 h-full w-full text-white">
-      <ServerHeader name={serverData.name} />
+      <ServerHeader />
       <div className="flex flex-col flex-grow overflow-y-auto">
         <div className="m-2">
           <ServerSection
@@ -38,13 +49,13 @@ const ServerSideBar = () => {
           />
           {isTextChannelsExpanded && (
             <>
-              {serverData.channels
-                .filter((channel) => channel.type === "text")
+              {channels
+                .filter((channel) => channel.type === "TEXT")
                 .map((channel) => (
                   <ChannelItem
                     key={channel.id}
                     id={channel.id}
-                    name={channel.name}
+                    name={channel.channel_name}
                     Icon={PiHashBold}
                   />
                 ))}
@@ -59,13 +70,13 @@ const ServerSideBar = () => {
           />
           {isVoiceChannelsExpanded && (
             <>
-              {serverData.channels
-                .filter((channel) => channel.type === "voice")
+              {channels
+                .filter((channel) => channel.type === "VOICE")
                 .map((channel) => (
                   <ChannelItem
                     key={channel.id}
                     id={channel.id}
-                    name={channel.name}
+                    name={channel.channel_name}
                     Icon={BiSolidVolumeFull}
                   />
                 ))}

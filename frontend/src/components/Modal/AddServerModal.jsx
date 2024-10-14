@@ -1,8 +1,17 @@
 import React, { useRef, useState } from "react";
 import { IoClose } from "react-icons/io5";
 import { HiMiniCamera } from "react-icons/hi2";
+import { createServer } from "../../api/userService";
+import Cookies from "js-cookie";
+import { addServer } from "../../redux/serverSlice";
+import { toast } from "react-toastify";
+import { useDispatch, useSelector } from "react-redux";
 
 const AddServerModal = ({ toggleModal }) => {
+  const dispatch = useDispatch();
+  const currentUser = useSelector((state) => state.user.currentUser);
+  const token = Cookies.get("token");
+
   const inputRef = useRef();
 
   const [image, setImage] = useState("");
@@ -23,15 +32,23 @@ const AddServerModal = ({ toggleModal }) => {
     setImage("");
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    if (serverName && image) {
-      console.log(
-        "Creating server with name:",
+    try {
+      const newServer = await createServer(
+        currentUser.id,
         serverName,
-        "and image:",
-        image
+        "https://assets.mofoprod.net/network/images/discord.original.jpg",
+        token
       );
+      console.log(newServer);
+      dispatch(addServer(newServer.server));
+      toast.success("Success to create server");
+
+      toggleModal();
+    } catch (error) {
+      console.log(error);
+      toast.error("Failed to create server:", error.message);
     }
   };
 

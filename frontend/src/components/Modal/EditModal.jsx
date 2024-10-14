@@ -2,35 +2,43 @@ import React, { useEffect, useRef, useState } from "react";
 import { IoClose } from "react-icons/io5";
 import { HiMiniCamera } from "react-icons/hi2";
 import { PiHashBold } from "react-icons/pi";
-import servers from "../../fakeApi";
 import { createPortal } from "react-dom";
-import { updateChannel } from "../../api/channelService";
-import { updateServer } from "../../api/serverService";
+import { getChannelById, updateChannel } from "../../api/channelService";
+import { getServerById, updateServer } from "../../api/serverService";
 import { toast } from "react-toastify";
+import { useDispatch, useSelector } from "react-redux";
+import Cookies from "js-cookie";
+import { updateServerDetails } from "../../redux/serverSlice";
+import { updateChannelDetails } from "../../redux/channelSlice";
 
 const EditModal = ({ type, toggleModal, serverId, channelId }) => {
-  const token = localStorage.getItem("token");
-  const userId = localStorage.getItem("userId");
-
+  const token = Cookies.get("token");
+  const currentUser = useSelector((state) => state.user.currentUser);
+  const dispatch = useDispatch();
   const inputRef = useRef();
+
   const [image, setImage] = useState("");
   const [name, setName] = useState("");
   const [loading, setLoading] = useState(false);
 
-  const server = servers.find((s) => s.id === serverId);
-  const channel = server
-    ? server.channels.find((c) => c.id === channelId)
-    : null;
-
   useEffect(() => {
-    if (server && type.toLowerCase() === "server") {
-      setName(server.name);
-      setImage(server.imageUrl || "");
-    }
-    if (channel && type.toLowerCase() === "channel") {
-      setName(channel.name);
-    }
-  }, [server, channel, type]);
+    const fetchData = async () => {
+      try {
+        if (type.toLowerCase() === "server" && serverId) {
+          const serverData = await getServerById(serverId, token);
+          setName(serverData.server_name);
+          setImage(serverData.image_url);
+        } else if (type.toLowerCase() === "channel" && channelId) {
+          const channelData = await getChannelById(channelId, token);
+          setName(channelData.channel_name);
+        }
+      } catch (error) {
+        toast.error("Failed to load data:" + error.message);
+      }
+    };
+
+    fetchData();
+  }, [type, serverId, channelId, token]);
 
   const handleImageClick = () => {
     inputRef.current.click();
@@ -50,14 +58,15 @@ const EditModal = ({ type, toggleModal, serverId, channelId }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
-    const channelId = 1;
 
     try {
       if (type.toLowerCase() === "server") {
-        await updateServer(serverId, name, image, userId, token);
+        const updatedServer =await updateServer(serverId, name, image, currentUser.id, token);
+        dispatch(updateServerDetails(updatedServer.server));
         toast.success("Server updated successfully");
       } else if (type.toLowerCase() === "channel") {
-        await updateChannel(channelId, name, userId, token);
+        const updatedChannel = await updateChannel(channelId, name, currentUser.id, token);
+        dispatch(updateChannelDetails(updatedChannel.channel));
         toast.success("Channel updated successfully");
       }
       setTimeout(() => {
@@ -65,6 +74,7 @@ const EditModal = ({ type, toggleModal, serverId, channelId }) => {
       }, 1000);
     } catch (error) {
       toast.error(error.message);
+      throw error.message;
     } finally {
       setTimeout(() => {
         setLoading(false);
@@ -141,7 +151,7 @@ const EditModal = ({ type, toggleModal, serverId, channelId }) => {
                 <input
                   id="input"
                   type="text"
-                  value={name}
+                  value={name || ""}
                   onChange={(e) => setName(e.target.value)}
                   className={`bg-primary-3/80 py-2 border-0 focus-visible:ring-0 focus-visible:ring-offset-0 text-zinc-300 outline-none rounded
                     ${type.toLowerCase() === "channel" ? "pl-8" : "px-3"}
