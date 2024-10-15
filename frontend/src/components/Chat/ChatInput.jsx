@@ -1,26 +1,46 @@
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
 import { BsEmojiSmile } from "react-icons/bs";
-import { FaPlus } from "react-icons/fa6";
+import { ImAttachment } from "react-icons/im";
 import EmojiPicker from 'emoji-picker-react';
 
 const ChatInput = ({ type, name }) => {
+  const [fileName, setFileName] = useState("");
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
   const [message, setMessage] = useState("");
 
   const handleEmojiClick = (emojiObject) => {
     setMessage((prevMessage) => prevMessage + emojiObject.emoji);
     setShowEmojiPicker(false);
-  };  
+  }; 
+
+  const fileInputRef = useRef(null);
+
+  const handleFileClick = () => {
+    fileInputRef.current.click();
+  };
+
+  const handleFileChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      setFileName(file.name); 
+    }
+  };
 
   return (
     <form className="w-full" onSubmit={(e) => e.preventDefault()}>
       <div className="relative p-4 pb-6">
         <button
-          onClick={() => {}}
+          onClick={handleFileClick}
           className="absolute top-7 left-8 h-[24px] w-[24px] bg-zinc-400 hover:bg-zinc-300 transition rounded-full p-1 flex items-center justify-center"
         >
-          <FaPlus size={30} className="text-primary-1" />
+          <ImAttachment  size={30} className="text-primary-1" />
         </button>
+        <input
+          type="file"
+          ref={fileInputRef}
+          onChange={handleFileChange} 
+          className="hidden" 
+        />
         <input
           type="text"
           placeholder={`Message ${type === " text" ? name : "#" + name}`}
