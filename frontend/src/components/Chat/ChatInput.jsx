@@ -1,7 +1,7 @@
 import React, { useRef, useState } from "react";
 import { BsEmojiSmile } from "react-icons/bs";
 import { ImAttachment } from "react-icons/im";
-import EmojiPicker from 'emoji-picker-react';
+import EmojiPicker from "emoji-picker-react";
 
 const ChatInput = ({ type, name }) => {
   const [fileName, setFileName] = useState("");
@@ -11,7 +11,7 @@ const ChatInput = ({ type, name }) => {
   const handleEmojiClick = (emojiObject) => {
     setMessage((prevMessage) => prevMessage + emojiObject.emoji);
     setShowEmojiPicker(false);
-  }; 
+  };
 
   const fileInputRef = useRef(null);
 
@@ -22,7 +22,7 @@ const ChatInput = ({ type, name }) => {
   const handleFileChange = (e) => {
     const file = e.target.files[0];
     if (file) {
-      setFileName(file.name); 
+      setFileName(file.name);
     }
   };
 
@@ -33,17 +33,17 @@ const ChatInput = ({ type, name }) => {
           onClick={handleFileClick}
           className="absolute top-7 left-8 h-[24px] w-[24px] bg-zinc-400 hover:bg-zinc-300 transition rounded-full p-1 flex items-center justify-center"
         >
-          <ImAttachment  size={30} className="text-primary-1" />
+          <ImAttachment size={30} className="text-primary-1" />
         </button>
         <input
           type="file"
           ref={fileInputRef}
-          onChange={handleFileChange} 
-          className="hidden" 
+          onChange={handleFileChange}
+          className="hidden"
         />
         <input
           type="text"
-          placeholder={`Message ${type === " text" ? name : "#" + name}`}
+          placeholder={`Message ${type === "TEXT" ? "#" + name : name}`}
           value={message}
           onChange={(e) => setMessage(e.target.value)}
           className="w-full px-14 py-3 bg-zinc-700/75 border-none border-0 
@@ -57,8 +57,7 @@ const ChatInput = ({ type, name }) => {
           />
           {showEmojiPicker && (
             <div className="absolute bottom-10 right-0">
-              <EmojiPicker onEmojiClick={handleEmojiClick} 
-              theme = 'dark'/>
+              <EmojiPicker onEmojiClick={handleEmojiClick} theme="dark" />
             </div>
           )}
         </div>

@@ -1,5 +1,5 @@
 
-const API_URL = import.meta.env.VITE_BACKEND_URL || "http://localhost:3000/api";
+const API_URL = "http://localhost:3000/api";
 
 export const updateServer = async (serverId, name, img_url, userId, token) => {
     try {
@@ -94,7 +94,7 @@ export const getServerById = async (serverId, token) => {
 
 export const getListOfMembers = async (serverId, token) => {
     try {
-        const response = await fetch(`${API_URL}/server/${serverId}/members`, {
+        const response = await fetch(`${API_URL}/server/${serverId}/list-member`, {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
@@ -116,7 +116,7 @@ export const getListOfMembers = async (serverId, token) => {
 
 export const deleteMember = async (serverId, userId, token) => {
     try {
-        const response = await fetch(`${API_URL}/api/server/delete-member`, {
+        const response = await fetch(`${API_URL}/server/delete-member`, {
             method: 'DELETE',
             headers: {
                 'Content-Type': 'application/json',
