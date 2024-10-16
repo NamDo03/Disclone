@@ -9,7 +9,7 @@ const EditUserModal = ({ toggleModal, user }) => {
   const inputRef = useRef();
   
 
-  const [image] = useState(user.avatar || "");
+  const [image] = useState(user.avatar_url  || "");
   const [username, setUsername] = useState(user.username || "");
   const [email, setEmail] = useState(user.email || "");
   const [password, setPassword] = useState("1234567890"); 
@@ -97,7 +97,7 @@ const EditUserModal = ({ toggleModal, user }) => {
         <div className="overflow-y-auto">
           <div className="flex items-center mb-4">
             <img
-              src="https://upload.wikimedia.org/wikipedia/commons/thumb/4/4d/Cat_November_2010-1a.jpg/1200px-Cat_November_2010-1a.jpg"
+              src={image}
               alt="Avatar"
               className="w-[72px] h-[72px] rounded-full object-cover"
             />

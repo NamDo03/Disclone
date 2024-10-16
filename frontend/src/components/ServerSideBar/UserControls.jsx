@@ -10,16 +10,10 @@ import { useSelector } from "react-redux";
 
 const UserControls = () => {
   const currentUser = useSelector((state) => state.user.currentUser);
-  
+  console.log(currentUser)
   const [micOn, setMicOn] = useState(true);
   const [headphonesOn, setHeadphonesOn] = useState(true);
   const { isOpenModal: isOpenEditUser, toggleModal: toggleEditUser } = useModal();
-  const currentUser = {
-    id: 1,
-    username: "johndoe",
-    email: "johndoe@example.com",
-    avatar: "https://example.com/avatar.jpg",
-  };
 
   const handleMicToggle = () => {
     if (!headphonesOn) {
@@ -104,8 +98,8 @@ const UserControls = () => {
       </div>
         {isOpenEditUser && (
         <EditUserModal
-          toggleModal={toggleEditUser}  // Đây là hàm dùng để đóng/mở modal
-          user={currentUser}            // Dữ liệu người dùng cần truyền vào modal
+          toggleModal={toggleEditUser} 
+          user={currentUser}         
         />
         )}
     </div>
