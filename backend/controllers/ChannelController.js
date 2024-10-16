@@ -1,11 +1,22 @@
 import prisma from "../db/prismaClient.js";
 
 class ChannelController {
+    async getChannelById(channelId) {
+        try {
+            const channel = await prisma.channel.findUnique({
+                where: { id: parseInt(channelId) },
+            });
+            return channel;
+        } catch (error) {
+            throw new Error('Error retrieving channel: ' + error.message);
+        }
+    }
+
     async createChannel(serverId, name, type) {
         try {
             const channel = await prisma.channel.create({
                 data: {
-                    server_id: serverId,
+                    server_id: parseInt(serverId),
                     channel_name: name,
                     type,
                 }
@@ -20,7 +31,7 @@ class ChannelController {
         try {
             const channels = await prisma.channel.findMany({
                 where: {
-                    server_id: serverId,
+                    server_id: parseInt(serverId),
                 }
             });
             return channels;
@@ -31,7 +42,7 @@ class ChannelController {
 
     async deleteChannelById(id) {
         try {
-            await prisma.channel.delete({ where: { id } });
+            await prisma.channel.delete({ where: { id: parseInt(id) } });
         } catch (error) {
             throw new Error(`Failed to delete channel ${id}: ${error.message}`);
         }

@@ -1,9 +1,21 @@
 import React from "react";
 import { IoClose } from "react-icons/io5";
+import { useDispatch } from "react-redux";
+import { useNavigate } from "react-router-dom";
+import Cookies from "js-cookie";
+import { logout } from "../../redux/userSlice";
 
 const LogoutModal = ({ toggleModal }) => {
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    Cookies.remove("token");
+    dispatch(logout());
+    navigate("/sign-in");
+  };
   return (
-    <div className="fixed inset-0 bg-black/70 flex justify-center items-center">
+    <div className="fixed inset-0 bg-black/70 flex justify-center items-center z-[999]">
       <div className="max-w-[400px] w-full bg-primary-1 rounded-md">
         <div className="p-4 rounded-t-md">
           <div className="flex justify-between items-center">
@@ -26,7 +38,10 @@ const LogoutModal = ({ toggleModal }) => {
           >
             Cancel
           </div>
-          <button className="px-4 py-1 bg-red-1 rounded-sm cursor-pointer hover:bg-red-1/85">
+          <button
+            onClick={handleLogout}
+            className="px-4 py-1 bg-red-1 rounded-sm cursor-pointer hover:bg-red-1/85"
+          >
             Logout
           </button>
         </div>

@@ -2,38 +2,37 @@ import React, { useState } from "react";
 import img from "../assets/bg.webp";
 import { useLocation, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
+import { useDispatch } from "react-redux";
+import { loginFailure, loginStart, loginSuccess } from "../redux/userSlice";
+import { login } from "../api/authService";
+import Cookies from "js-cookie";
 
-const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || "http://localhost:3000";
 const Signin = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const [email, setEmail] = useState(location.state?.userEmail || "");
   const [password, setPassword] = useState("");
-  
+  const dispatch = useDispatch();
+
   const handleSignin = async (e) => {
     e.preventDefault();
+    dispatch(loginStart());
     try {
-      const res = await fetch(`${BACKEND_URL}/api/signin`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          email: email,
-          password: password
-        }),
+      const data = await login(email, password);
+      Cookies.set("token", data.token, {
+        expires: 2 / 24,
+        secure: true,
+        sameSite: "Strict",
+        path: "/",
       });
-      if (!res.ok) {
-        const error = await res.json();
-        throw new Error(res.status !== 500 ? error.message : "An error occurred while signup")
-      }
-      const data = await res.json();
-      localStorage.setItem("token", data.token);
-      localStorage.setItem("userId", data.user.id);
+      dispatch(loginSuccess(data.user));
+      toast.success("Login successful!");
+      navigate("/");
     } catch (err) {
-      toast.error("Failed to signin: "+ err.message);
+      toast.error("Failed to signin: " + err.message);
+      dispatch(loginFailure());
     }
-  }
+  };
 
   return (
     <div className="relative h-screen w-screen">

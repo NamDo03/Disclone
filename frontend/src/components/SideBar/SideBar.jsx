@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import SideBarAction from "./SideBarAction";
 import SideBarItem from "./SideBarItem";
 import { FaPlus } from "react-icons/fa6";
@@ -6,9 +6,13 @@ import { FaHome } from "react-icons/fa";
 import { MdLogout } from "react-icons/md";
 import useModal from "../../hooks/useModal";
 import LogoutModal from "../Modal/LogoutModal";
-import servers from "../../fakeApi";
 import { useNavigate } from "react-router-dom";
 import AddServerModal from "../Modal/AddServerModal";
+import { getListOfServers } from "../../api/userService";
+import { getListOfChannels } from "../../api/serverService";
+import Cookies from "js-cookie";
+import { useDispatch, useSelector } from "react-redux";
+import { setServers } from "../../redux/serverSlice";
 
 const SideBar = () => {
   const { isOpenModal: isLogoutModalOpen, toggleModal: toggleLogoutModal } =
@@ -19,6 +23,37 @@ const SideBar = () => {
   } = useModal();
 
   const navigate = useNavigate();
+  const token = Cookies.get("token");
+  const currentUser = useSelector((state) => state.user.currentUser);
+  const servers = useSelector((state) => state.servers)
+  const dispatch = useDispatch();
+  const [serverChannels, setServerChannels] = useState({});
+  
+  useEffect(() => {
+    const getListServer = async () => {
+      try {
+        const fetchedServers = await getListOfServers(currentUser.id, token);
+        dispatch(setServers(fetchedServers));
+        const channelsData = {};
+        for (const server of fetchedServers) {
+          try {
+            const channels = await getListOfChannels(server.id, token);
+            channelsData[server.id] = channels[0] || null;
+          } catch (error) {
+            console.error(
+              `Error fetching channels for server ${server.id}:`,
+              error
+            );
+          }
+        }
+        setServerChannels(channelsData);
+      } catch (error) {
+        console.error("Error fetching servers:", error);
+      }
+    };
+
+    getListServer();
+  }, [currentUser.id, token]);
   return (
     <div className="h-full w-full flex flex-col justify-between items-center bg-primary-3 text-white shadow-lg py-3">
       <div className="space-y-4">
@@ -26,24 +61,22 @@ const SideBar = () => {
           name="home"
           content="Home"
           Icon={FaHome}
-          handleAction={() => navigate("/servers/@me")}
+          handleAction={() => navigate("/")}
         />
 
         <div className="h-[2px] bg-primary-1 rounded-md w-10 mx-auto" />
 
-        <div className="flex flex-col gap-5 w-full">
+        <div className="flex flex-col gap-5 w-full max-h-96 overflow-y-auto scrollbar-hide">
           {servers.map((server) => (
             <SideBarItem
               key={server.id}
-              id={server.id}
-              name={server.name}
-              imgUrl={server.imageUrl}
-              channels={server.channels}
+              serverId={server.id}
+              name={server.server_name}
+              imgUrl={server.image_url}
+              channels={serverChannels[server.id] || []}
             />
           ))}
         </div>
-
-        <div className="h-[2px] bg-primary-1 rounded-md w-10 mx-auto" />
 
         <SideBarAction
           name="plus"

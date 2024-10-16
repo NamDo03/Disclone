@@ -13,7 +13,7 @@ const ChannelItem = ({ id, name, Icon }) => {
   const { serverId } = useParams();
   const { isOpenModal: isOpenEditModal, toggleModal: toggleEditModal } =
     useModal();
-    const { isOpenModal: isOpenDeleteModal, toggleModal: toggleDeleteModel } =
+  const { isOpenModal: isOpenDeleteModal, toggleModal: toggleDeleteModel } =
     useModal();
 
   const handleEdit = (event) => {
@@ -29,13 +29,13 @@ const ChannelItem = ({ id, name, Icon }) => {
     <div
       onClick={() => navigate(`/servers/${serverId}/channels/${id}`)}
       className={`p-2 rounded-md flex items-center group gap-x-1 hover:bg-zinc-700/50 transition mb-1 cursor-pointer ${
-        params?.channelId === id && "bg-zinc-700"
+        Number(params?.channelId) === id && "bg-zinc-700"
       }`}
     >
       <Icon className="flex-shrink-0 w-5 h-5 text-zinc-400" />
       <p
         className={`line-clamp-1 font-semibold text-sm  transition ${
-          params?.channelId === id
+          Number(params?.channelId) === id
             ? "text-zinc-200 group-hover:text-white"
             : "text-zinc-400 group-hover:text-zinc-300"
         }`}
@@ -78,10 +78,10 @@ const ChannelItem = ({ id, name, Icon }) => {
       )}
       {isOpenDeleteModal && (
         <DeleteModal
-        toggleModal={toggleDeleteModel}
-        type="channel"
-        serverId={serverId}
-        channelId={id}
+          toggleModal={toggleDeleteModel}
+          type="channel"
+          serverId={serverId}
+          channelId={id}
         />
       )}
     </div>
