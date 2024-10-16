@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useState } from "react";
 import ChatWelcome from "./ChatWelcome";
 import { LuServerCrash } from "react-icons/lu";
 import ChatItem from "./ChatItem";
@@ -40,11 +40,13 @@ const ChatMessages = ({ type, name, messages }) => {
           messages.map((message) => (
             <ChatItem
               key={message.id}
-              authorId={message.author.id}
-              authorName={message.author.name}
-              authorAvatar={message.author.avatar}
+              authorId={message.user.id}
+              authorName={message.user.name}
+              authorAvatar={message.user.avatar}
               content={message.content}
-              timestamp={message.timestamp}
+              timestamp={new Date(message.created_at).toLocaleString('vi-VN', {
+                timeZone: 'Asia/Ho_Chi_Minh'
+              })}
             />
           ))}
       </div>

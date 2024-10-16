@@ -3,6 +3,7 @@ import express from 'express';
 import { router } from './routers/route.js';
 import { createServer } from 'http';
 import { Server } from "socket.io";
+import ChatManager from './io/ChatManager.js';
 
 const app = express();
 const server = createServer(app);
@@ -29,21 +30,8 @@ app.use((err, req, res, next) => {
   });
 });
 
-io.on('connection', (socket) => {
-  console.log('a user connected:', socket.id);
-  const messages = [{id: 1, name: "A", content: "hihi", timestamp: "hihi", author: {id:1, name:"hihi", avatar: "hihi"}}]
-  socket.emit('previousMessages', messages);
-
-  socket.on('newMessage', (msg) => {
-    console.log('message from client:', msg);
-    io.emit('message', msg);
-  });
-
-  // Handle disconnection
-  socket.on('disconnect', () => {
-    console.log('user disconnected');
-  });
-});
+const chatManager = new ChatManager(io);
+chatManager.setupSocketEvents();
 
 server.listen(3000, () => {
   console.log('server is working on port 3000');

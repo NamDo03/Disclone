@@ -1,12 +1,14 @@
 import React, { useRef, useState } from "react";
+import { useSelector } from "react-redux";
 import { BsEmojiSmile } from "react-icons/bs";
 import { ImAttachment } from "react-icons/im";
 import EmojiPicker from "emoji-picker-react";
 
-const ChatInput = ({ type, name, socket }) => {
+const ChatInput = ({ type, channelId, name, socket }) => {
   const [fileName, setFileName] = useState("");
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
   const [content, setContent] = useState("");
+  const author_id = useSelector((state) => state.user.currentUser.id);
 
   const handleEmojiClick = (emojiObject) => {
     setContent((prevMessage) => prevMessage + emojiObject.emoji);
@@ -29,11 +31,9 @@ const ChatInput = ({ type, name, socket }) => {
   const sendMessage = (e) => {
     e.preventDefault();
     const newMessage = {
-      id:Math.random(),
-      name,
       content,
-      timestamps: "hihi",
-      author: {id: 1, name: "hihi", avatar: "hihi"}
+      channelId,
+      author_id
     };
     socket.emit('newMessage', newMessage);
     setContent('');
