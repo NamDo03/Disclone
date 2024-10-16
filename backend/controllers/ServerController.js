@@ -78,6 +78,60 @@ class ServerController {
             throw new Error('Error updating server: ' + error.message);
         }
     }
-}
+    async getListOfMembers(serverId) {
+        try {
+          const serverExists = await prisma.server.findUnique({
+            where: {
+              id: parseInt(serverId),
+            },
+          });
+      
+          if (!serverExists) {
+            throw new Error('Server không tồn tại.');
+          }
+          
+          const members = await prisma.serverMember.findMany({
+            where: {
+              server_id: parseInt(serverId),
+            },
+            include: {
+              user: {
+                select: {
+                  id: true,
+                  avatar_url: true,
+                  username: true,
+                },
+              },
+            },
+          });
+          return members.map((member) => ({
+            id: member.user.id,
+            avatar_url: member.user.avatar_url,
+            username: member.user.username,
+          }));
+        } catch (error) {
+          throw new Error(`Failed to retrieve server members: ${error.message}`);
+        }
+      }
+      async deleteMember(serverId, userId) {
+        try {
+          const deleteMember = await prisma.serverMember.deleteMany({
+            where: {
+              server_id: parseInt(serverId),
+              user_id: parseInt(userId),
+            },
+          });
+    
+          if (!deleteMember.count) {
+            throw new Error('Member not found or already deleted');
+          }
+    
+          return { message: 'Member deleted successfully' };
+        } catch (error) {
+          throw new Error(`Failed to delete member: ${error.message}`);
+        }
+      }
+    }
+
 
 export const serverController = new ServerController();

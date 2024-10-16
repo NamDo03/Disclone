@@ -32,11 +32,6 @@ const DropdownMenu = () => {
           onClick={toggleEditServer}
           Icon={IoMdSettings}
         />
-        <DropdownItem
-          label="Manage Members"
-          onClick={() => console.log("Manage Members clicked")}
-          Icon={IoPeople}
-        />
         <div className="border-b-[1px] mx-2 my-1 border-neutral-700"></div>
         <DropdownItem
           label="Delete Server"

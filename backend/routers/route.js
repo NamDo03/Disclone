@@ -198,6 +198,30 @@ router.delete('/user/:id/delete', passport.authenticate('jwt', { session: false 
   }
 });
 
+router.get('/server/:serverId/list-member', passport.authenticate('jwt', { session: false }), async (req, res, next) => {
+  try {
+    const { serverId } = req.params;
+    const members = await serverController.getListOfMembers(serverId);
+    res.status(200).json({ members });
+  } catch (error) {
+    return next(error);
+  }
+});
+
+router.delete('/server/delete-member', passport.authenticate('jwt', { session: false }), async (req, res, next) => {
+  try {
+    const { serverId, userId } = req.body;
+
+    if (!serverId || !userId) {
+      return res.status(400).json({ message: "Missing server id or user id!" });
+    }
+
+    const result = await serverController.deleteMember(serverId, userId);
+    res.status(200).json(result);
+  } catch (error) {
+    return next(error);
+  }
+});
 
 router.get('/server/:serverId/get-by-id', passport.authenticate('jwt', { session: false }), async (req, res, next) => {
   try {

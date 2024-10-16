@@ -1,5 +1,5 @@
 
-const API_URL = 'http://localhost:3000/api';
+const API_URL = "http://localhost:3000/api";
 
 export const updateServer = async (serverId, name, img_url, userId, token) => {
     try {
@@ -89,5 +89,53 @@ export const getServerById = async (serverId, token) => {
     } catch (error) {
         console.error("Fetch server error:", error);
         throw error;
+    }
+};
+
+export const getListOfMembers = async (serverId, token) => {
+    try {
+        const response = await fetch(`${API_URL}/server/${serverId}/list-member`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            }
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+            throw new Error(data.message || 'Error fetching server members');
+        }
+
+        return data;
+    } catch (error) {
+        throw new Error(`Failed to fetch server members: ${error.message}`);
+    }
+};
+
+export const deleteMember = async (serverId, userId, token) => {
+    try {
+        const response = await fetch(`${API_URL}/server/delete-member`, {
+            method: 'DELETE',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            },
+            body: JSON.stringify({
+                serverId: serverId,
+                userId: userId
+            })
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+            throw new Error(data.message || 'Error deleting member');
+        }
+
+        return data;
+    } catch (error) {
+        throw new Error(`Failed to delete member: ${error.message}`);
     }
 };
