@@ -3,13 +3,23 @@ import { FaMicrophone, FaMicrophoneSlash } from "react-icons/fa";
 import { TbHeadphonesFilled, TbHeadphonesOff } from "react-icons/tb";
 import { IoMdSettings } from "react-icons/io";
 import { Tooltip } from "react-tooltip";
+import useModal from "../../hooks/useModal";
+import EditUserModal from "../Modal/EditUser";
 import { useSelector } from "react-redux";
+
 
 const UserControls = () => {
   const currentUser = useSelector((state) => state.user.currentUser);
   
   const [micOn, setMicOn] = useState(true);
   const [headphonesOn, setHeadphonesOn] = useState(true);
+  const { isOpenModal: isOpenEditUser, toggleModal: toggleEditUser } = useModal();
+  const currentUser = {
+    id: 1,
+    username: "johndoe",
+    email: "johndoe@example.com",
+    avatar: "https://example.com/avatar.jpg",
+  };
 
   const handleMicToggle = () => {
     if (!headphonesOn) {
@@ -68,6 +78,7 @@ const UserControls = () => {
           )}
         </button>
         <button
+          onClick={toggleEditUser}
           className="p-1.5 hover:bg-zinc-700 rounded"
           data-tooltip-id="setting"
           data-tooltip-content="User Settings"
@@ -91,6 +102,12 @@ const UserControls = () => {
           style={{ backgroundColor: "#111214", color: "#fff" }}
         />
       </div>
+        {isOpenEditUser && (
+        <EditUserModal
+          toggleModal={toggleEditUser}  // Đây là hàm dùng để đóng/mở modal
+          user={currentUser}            // Dữ liệu người dùng cần truyền vào modal
+        />
+        )}
     </div>
   );
 };
