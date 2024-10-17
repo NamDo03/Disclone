@@ -29,7 +29,7 @@ class ServerController {
         }
     }
 
-    async getListOfServers(userId) {
+    async getListOfOwnServers(userId) {
         try {
             const servers = await prisma.server.findMany({
                 where: {
@@ -42,6 +42,36 @@ class ServerController {
             throw new Error(`Failed to retrieve servers: ${error.message}`);
         }
     }
+
+    async getListOfServers(userId) {
+      try {
+        const user = await prisma.user.findUnique({
+          where: {
+            id: userId,
+          },
+          include: {
+            ownedServers: true,
+            serverMemberships: {
+              include: {
+                server: true,
+              },
+            },
+          },
+        });
+      
+        if (!user) {
+          throw new Error('User not found');
+        }
+
+        const ownedServers = user.ownedServers;
+        const memberServers = user.serverMemberships.map(membership => membership.server);
+        const allServers = [...ownedServers, ...memberServers];
+      
+        return allServers;
+      } catch (error) {
+          throw new Error(`Failed to retrieve servers: ${error.message}`);
+      }
+  }
 
     async deleteServerById(id) {
         try {
