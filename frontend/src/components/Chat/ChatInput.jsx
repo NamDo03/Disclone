@@ -30,6 +30,9 @@ const ChatInput = ({ type, channelId, name, socket }) => {
 
   const sendMessage = (e) => {
     e.preventDefault();
+    if (!content || content.trim() == "") {
+      return
+    }
     const newMessage = {
       content,
       channelId,
@@ -43,6 +46,7 @@ const ChatInput = ({ type, channelId, name, socket }) => {
     <form className="w-full" onSubmit={sendMessage}>
       <div className="relative p-4 pb-6">
         <button
+          type="button"
           onClick={handleFileClick}
           className="absolute top-7 left-8 h-[24px] w-[24px] bg-zinc-400 hover:bg-zinc-300 transition rounded-full p-1 flex items-center justify-center"
         >
