@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useState } from "react";
 import ChatWelcome from "./ChatWelcome";
 import { LuServerCrash } from "react-icons/lu";
 import ChatItem from "./ChatItem";
@@ -7,7 +7,7 @@ import useScrollToBottom from "../../hooks/useScrollToBottom";
 const ChatMessages = ({ type, name, messages }) => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(false);
-
+console.log(messages.user)
   const messagesEndRef = useScrollToBottom(messages);
 
   if (loading) {
@@ -40,11 +40,13 @@ const ChatMessages = ({ type, name, messages }) => {
           messages.map((message) => (
             <ChatItem
               key={message.id}
-              authorId={message.author.id}
-              authorName={message.author.name}
-              authorAvatar={message.author.avatar}
-              message={message.message}
-              timestamp={message.timestamp}
+              authorId={message.user.id}
+              authorName={message.user.username}
+              authorAvatar={message.user.avatar}
+              content={message.content}
+              timestamp={new Date(message.created_at).toLocaleString('vi-VN', {
+                timeZone: 'Asia/Ho_Chi_Minh'
+              })}
             />
           ))}
       </div>

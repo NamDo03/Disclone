@@ -1,8 +1,18 @@
 import cors from 'cors';
 import express from 'express';
 import { router } from './routers/route.js';
+import { createServer } from 'http';
+import { Server } from "socket.io";
+import ChatManager from './io/ChatManager.js';
 
 const app = express();
+const server = createServer(app);
+const io = new Server(server, {
+  cors: {
+    origin: '*'
+  },
+});
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cors());
@@ -20,6 +30,9 @@ app.use((err, req, res, next) => {
   });
 });
 
-app.listen(3000, () => {
+const chatManager = new ChatManager(io);
+chatManager.setupSocketEvents();
+
+server.listen(3000, () => {
   console.log('server is working on port 3000');
 });

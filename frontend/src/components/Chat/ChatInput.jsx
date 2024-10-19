@@ -1,15 +1,17 @@
 import React, { useRef, useState } from "react";
+import { useSelector } from "react-redux";
 import { BsEmojiSmile } from "react-icons/bs";
 import { ImAttachment } from "react-icons/im";
 import EmojiPicker from "emoji-picker-react";
 
-const ChatInput = ({ type, name }) => {
+const ChatInput = ({ type, channelId, name, socket }) => {
   const [fileName, setFileName] = useState("");
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
-  const [message, setMessage] = useState("");
+  const [content, setContent] = useState("");
+  const author_id = useSelector((state) => state.user.currentUser.id);
 
   const handleEmojiClick = (emojiObject) => {
-    setMessage((prevMessage) => prevMessage + emojiObject.emoji);
+    setContent((prevMessage) => prevMessage + emojiObject.emoji);
     setShowEmojiPicker(false);
   };
 
@@ -26,10 +28,25 @@ const ChatInput = ({ type, name }) => {
     }
   };
 
+  const sendMessage = (e) => {
+    e.preventDefault();
+    if (!content || content.trim() == "") {
+      return
+    }
+    const newMessage = {
+      content,
+      channelId,
+      author_id
+    };
+    socket.emit('newMessage', newMessage);
+    setContent('');
+  };
+
   return (
-    <form className="w-full" onSubmit={(e) => e.preventDefault()}>
+    <form className="w-full" onSubmit={sendMessage}>
       <div className="relative p-4 pb-6">
         <button
+          type="button"
           onClick={handleFileClick}
           className="absolute top-7 left-8 h-[24px] w-[24px] bg-zinc-400 hover:bg-zinc-300 transition rounded-full p-1 flex items-center justify-center"
         >
@@ -44,8 +61,8 @@ const ChatInput = ({ type, name }) => {
         <input
           type="text"
           placeholder={`Message ${type === "TEXT" ? "#" + name : name}`}
-          value={message}
-          onChange={(e) => setMessage(e.target.value)}
+          value={content}
+          onChange={(e) => setContent(e.target.value)}
           className="w-full px-14 py-3 bg-zinc-700/75 border-none border-0 
           focus-visible:ring-0 focus-visible:ring-offset-0 text-zinc-200 outline-none placeholder-zinc-500"
         />
