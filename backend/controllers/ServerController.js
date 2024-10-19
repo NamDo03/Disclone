@@ -47,7 +47,7 @@ class ServerController {
       try {
         const user = await prisma.user.findUnique({
           where: {
-            id: userId,
+            id: parseInt(userId),
           },
           include: {
             ownedServers: true,

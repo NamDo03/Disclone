@@ -7,7 +7,7 @@ import useScrollToBottom from "../../hooks/useScrollToBottom";
 const ChatMessages = ({ type, name, messages }) => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(false);
-
+console.log(messages.user)
   const messagesEndRef = useScrollToBottom(messages);
 
   if (loading) {
@@ -41,7 +41,7 @@ const ChatMessages = ({ type, name, messages }) => {
             <ChatItem
               key={message.id}
               authorId={message.user.id}
-              authorName={message.user.name}
+              authorName={message.user.username}
               authorAvatar={message.user.avatar}
               content={message.content}
               timestamp={new Date(message.created_at).toLocaleString('vi-VN', {
