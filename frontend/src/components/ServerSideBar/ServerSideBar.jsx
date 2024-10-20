@@ -77,6 +77,7 @@ const ServerSideBar = () => {
                     key={channel.id}
                     id={channel.id}
                     name={channel.channel_name}
+                    type={channel.type}
                     Icon={BiSolidVolumeFull}
                   />
                 ))}

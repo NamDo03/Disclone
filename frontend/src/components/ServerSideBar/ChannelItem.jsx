@@ -7,7 +7,7 @@ import useModal from "../../hooks/useModal";
 import EditModal from "../Modal/EditModal";
 import DeleteModal from "../Modal/DeleteModal";
 
-const ChannelItem = ({ id, name, Icon }) => {
+const ChannelItem = ({ id, name, type, Icon }) => {
   const navigate = useNavigate();
   const params = useParams();
   const { serverId } = useParams();
@@ -27,7 +27,7 @@ const ChannelItem = ({ id, name, Icon }) => {
   };
   return (
     <div
-      onClick={() => navigate(`/servers/${serverId}/channels/${id}`)}
+      onClick={() => navigate(type === 'VOICE' ? `/servers/${serverId}/channels/${id}/voice` : `/servers/${serverId}/channels/${id}`)}
       className={`p-2 rounded-md flex items-center group gap-x-1 hover:bg-zinc-700/50 transition mb-1 cursor-pointer ${
         Number(params?.channelId) === id && "bg-zinc-700"
       }`}
