@@ -8,7 +8,7 @@ import EditModal from "../Modal/EditModal";
 import DeleteModal from "../Modal/DeleteModal";
 import useServerOwner from "../../hooks/useServerOwner";
 
-const ChannelItem = ({ index, id, name, Icon }) => {
+const ChannelItem = ({ index, id, name, Icon, type }) => {
   const navigate = useNavigate();
   const params = useParams();
   const { isOpenModal: isOpenEditModal, toggleModal: toggleEditModal } =
@@ -30,7 +30,13 @@ const ChannelItem = ({ index, id, name, Icon }) => {
 
   return (
     <div
-      onClick={() => navigate(`/servers/${params.serverId}/channels/${id}`)}
+      onClick={() =>
+        navigate(
+          type === "VOICE"
+            ? `/servers/${params.serverId}/channels/${id}/voice`
+            : `/servers/${params.serverId}/channels/${id}`
+        )
+      }
       className={`p-2 rounded-md flex items-center group gap-x-1 hover:bg-zinc-700/50 transition mb-1 cursor-pointer ${
         Number(params?.channelId) === id && "bg-zinc-700"
       }`}
@@ -60,7 +66,9 @@ const ChannelItem = ({ index, id, name, Icon }) => {
               className="font-semibold"
               style={{ backgroundColor: "#111214", color: "#fff" }}
             />
-            {index >= 1 && (
+            {index == 0 && type == "TEXT" ? (
+              <></>
+            ) : (
               <FaTrashCan
                 data-tooltip-id="delete"
                 data-tooltip-content="Delete"

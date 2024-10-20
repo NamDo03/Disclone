@@ -12,6 +12,7 @@ import HomeLayout from "./layouts/HomeLayout";
 import PersonalMessage from "./pages/PersonalMessage";
 import JoinServer from "./pages/JoinServer";
 import PageNotFound from "./pages/PageNotFound";
+import VideoCall from "./components/Call/VideoCall";
 
 function App() {
   return (
@@ -53,6 +54,16 @@ function App() {
           element={
             <ProtectedRoute>
               <JoinServer />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/servers/:serverId/channels/:channelId/voice"
+          element={
+            <ProtectedRoute>
+              <MainLayout>
+                <VideoCall />
+              </MainLayout>
             </ProtectedRoute>
           }
         />
