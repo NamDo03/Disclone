@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import Cookies from "js-cookie";
 import img from "../assets/bg.webp";
 import { toast } from "react-toastify";
@@ -8,15 +8,20 @@ import { getServerById, joinServer } from "../api/serverService";
 
 const JoinServer = () => {
   const token = Cookies.get("token");
+  const navigate = useNavigate();
   const { serverId } = useParams();
   const currentUser = useSelector((state) => state.user.currentUser);
   const [server, setServer] = useState({});
-  console.log(server);
+
   useEffect(() => {
     const fetchData = async () => {
       try {
         const serverData = await getServerById(serverId, token);
-        setServer(serverData);
+        if (serverData && serverData.channels) {
+          setServer(serverData);
+        } else {
+          throw new Error("Server data is incomplete.");
+        }
       } catch (error) {
         toast.error("Failed to load data:" + error.message);
       }
@@ -27,8 +32,8 @@ const JoinServer = () => {
   const handleJoinServer = async () => {
     try {
       const response = await joinServer(currentUser.id, serverId, token);
-
       toast.success(response.message);
+      navigate(`/servers/${server.id}/channels/${server.channels[0].id}`);
     } catch (error) {
       toast.error("Failed to join server: " + error.message);
     }
