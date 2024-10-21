@@ -10,7 +10,6 @@ import { useSelector } from "react-redux";
 
 const UserControls = () => {
   const currentUser = useSelector((state) => state.user.currentUser);
-  console.log(currentUser)
   const [micOn, setMicOn] = useState(true);
   const [headphonesOn, setHeadphonesOn] = useState(true);
   const { isOpenModal: isOpenEditUser, toggleModal: toggleEditUser } = useModal();

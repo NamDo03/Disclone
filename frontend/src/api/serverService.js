@@ -139,3 +139,26 @@ export const deleteMember = async (serverId, userId, token) => {
         throw new Error(`Failed to delete member: ${error.message}`);
     }
 };
+
+export const joinServer = async (userId, serverId, token) => {
+    try {
+        const response = await fetch(`${API_URL}/server/join`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            },
+            body: JSON.stringify({ serverId: serverId, userId: userId })
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+            throw new Error(data.message || 'Failed to join server');
+        }
+
+        return data;
+    } catch (error) {
+        throw error;
+    }
+};
