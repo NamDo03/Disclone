@@ -13,6 +13,7 @@ const Signin = () => {
   const [email, setEmail] = useState(location.state?.userEmail || "");
   const [password, setPassword] = useState("");
   const dispatch = useDispatch();
+  const from = location.state?.from?.pathname || "/";
 
   const handleSignin = async (e) => {
     e.preventDefault();
@@ -27,7 +28,7 @@ const Signin = () => {
       });
       dispatch(loginSuccess(data.user));
       toast.success("Login successful!");
-      navigate("/");
+      navigate(from, { replace: true });
     } catch (err) {
       toast.error("Failed to signin: " + err.message);
       dispatch(loginFailure());

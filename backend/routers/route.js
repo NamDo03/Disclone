@@ -253,4 +253,16 @@ router.get('/channel/:channelId/get-by-id', passport.authenticate('jwt', { sessi
   }
 });
 
+router.post('/server/join', passport.authenticate('jwt', { session: false }), async (req, res, next) => {
+  try {
+    const { serverId, userId } = req.body;
+
+    const newMember = await serverController.addMemberToServer(serverId, userId);
+    res.status(201).json({ message: 'User added to server successfully!', member: newMember });
+  } catch (error) {
+    return next(error);
+  }
+});
+
+
 export { router };

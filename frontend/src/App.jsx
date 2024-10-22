@@ -10,6 +10,7 @@ import ChannelPage from "./pages/ChannelPage";
 import ProtectedRoute from "./routes/ProtectedRoute";
 import HomeLayout from "./layouts/HomeLayout";
 import PersonalMessage from "./pages/PersonalMessage";
+import JoinServer from "./pages/JoinServer";
 
 function App() {
   return (
@@ -45,7 +46,14 @@ function App() {
             </ProtectedRoute>
           }
         />
-
+        <Route
+          path="/invite/:serverId"
+          element={
+            <ProtectedRoute>
+              <JoinServer />
+            </ProtectedRoute>
+          }
+        />
         <Route path="/sign-up" element={<Signup />} />
         <Route path="/sign-in" element={<Signin />} />
         <Route
