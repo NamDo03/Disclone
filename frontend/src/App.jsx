@@ -9,6 +9,7 @@ import "react-toastify/dist/ReactToastify.css";
 import ChannelPage from "./pages/ChannelPage";
 import ProtectedRoute from "./routes/ProtectedRoute";
 import HomeLayout from "./layouts/HomeLayout";
+import PersonalMessage from "./pages/PersonalMessage";
 import JoinServer from "./pages/JoinServer";
 
 function App() {
@@ -32,6 +33,16 @@ function App() {
               <MainLayout>
                 <ChannelPage />
               </MainLayout>
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/DM/:conversationId"
+          element={
+            <ProtectedRoute>
+              <HomeLayout>
+                <PersonalMessage/>
+              </HomeLayout>
             </ProtectedRoute>
           }
         />

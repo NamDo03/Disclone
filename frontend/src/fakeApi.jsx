@@ -244,57 +244,157 @@ const servers = [
 export default servers;
 export const listfriend = [
   {
-    id: "f1",
+    id: "1",
     username: "Alice",
     email: "alice@example.com",
-    avatarUrl: "https://cmsassets.rgpub.io/sanity/images/dsfx7636/news/01f7e1d821b09b9b09eb2621efe22c9068d8756c-200x200.jpg",
+    avatarUrl:
+      "https://cmsassets.rgpub.io/sanity/images/dsfx7636/news/01f7e1d821b09b9b09eb2621efe22c9068d8756c-200x200.jpg",
   },
   {
-    id: "f2",
+    id: "2",
     username: "Bob",
     email: "bob@example.com",
-    avatarUrl: "https://cmsassets.rgpub.io/sanity/images/dsfx7636/news/01f7e1d821b09b9b09eb2621efe22c9068d8756c-200x200.jpg",
+    avatarUrl:
+      "https://cmsassets.rgpub.io/sanity/images/dsfx7636/news/01f7e1d821b09b9b09eb2621efe22c9068d8756c-200x200.jpg",
   },
   {
-    id: "f3",
+    id: "3",
     username: "Charlie",
     email: "charlie@example.com",
-    avatarUrl: "https://cmsassets.rgpub.io/sanity/images/dsfx7636/news/01f7e1d821b09b9b09eb2621efe22c9068d8756c-200x200.jpg",
+    avatarUrl:
+      "https://cmsassets.rgpub.io/sanity/images/dsfx7636/news/01f7e1d821b09b9b09eb2621efe22c9068d8756c-200x200.jpg",
+  },
+];
+export const directMessages = [
+  {
+    id: "dm1", 
+    participants: [
+      {
+        id: "1",
+        username: "Alice",
+        avatar:
+          "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQTwFFwBmxuGhvLHukLH4hXOT6EsQDhY4CbKw&s",
+      },
+      {
+        id: "2",
+        username: "Bob",
+        avatar: "https://avatarfiles.alphacoders.com/367/367019.png",
+      }
+    ],
+    messages: [
+      {
+        id: "m1",
+        user: {
+          id: "1",
+          username: "Alice",
+          avatar:
+            "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQTwFFwBmxuGhvLHukLH4hXOT6EsQDhY4CbKw&s",
+        },
+        content: "Chào Bob, bạn khỏe không?",
+        created_at: "2024-09-24T09:00:00",
+      },
+      {
+        id: "m2",
+        user: {
+          id: "2",
+          username: "Bob",
+          avatar: "https://avatarfiles.alphacoders.com/367/367019.png",
+        },
+        content: "Chào Alice, mình khỏe. Còn bạn thì sao?",
+        created_at: "2024-09-24T09:02:00",
+      },
+      {
+        id: "m3",
+        user: {
+          id: "1",
+          username: "Alice",
+          avatar:
+            "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQTwFFwBmxuGhvLHukLH4hXOT6EsQDhY4CbKw&s",
+        },
+        content: "Mình cũng ổn, cảm ơn bạn!",
+        created_at: "2024-09-24T09:05:00",
+      },
+      {
+        id: "m4",
+        user: {
+          id: "2",
+          username: "Bob",
+          avatar: "https://avatarfiles.alphacoders.com/367/367019.png",
+        },
+        content: "Bạn đang làm gì vậy?",
+        created_at: "2024-09-24T09:06:00",
+      },
+      {
+        id: "m5",
+        user: {
+          id: "1",
+          username: "Alice",
+          avatar:
+            "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQTwFFwBmxuGhvLHukLH4hXOT6EsQDhY4CbKw&s",
+        },
+        content: "Mình đang tìm hiểu về cách sửa lỗi null pointer trong API.",
+        created_at: "2024-09-24T09:10:00",
+      },
+    ],
   },
   {
-    id: "f4",
-    username: "Alice",
-    email: "alice@example.com",
-    avatarUrl: "https://cmsassets.rgpub.io/sanity/images/dsfx7636/news/01f7e1d821b09b9b09eb2621efe22c9068d8756c-200x200.jpg",
-  },
-  {
-    id: "f5",
-    username: "Bob",
-    email: "bob@example.com",
-    avatarUrl: "https://cmsassets.rgpub.io/sanity/images/dsfx7636/news/01f7e1d821b09b9b09eb2621efe22c9068d8756c-200x200.jpg",
-  },
-  {
-    id: "f6",
-    username: "Charlie",
-    email: "charlie@example.com",
-    avatarUrl: "https://cmsassets.rgpub.io/sanity/images/dsfx7636/news/01f7e1d821b09b9b09eb2621efe22c9068d8756c-200x200.jpg",
-  },
-  {
-    id: "f7",
-    username: "Alice",
-    email: "alice@example.com",
-    avatarUrl: "https://cmsassets.rgpub.io/sanity/images/dsfx7636/news/01f7e1d821b09b9b09eb2621efe22c9068d8756c-200x200.jpg",
-  },
-  {
-    id: "f8",
-    username: "Bob",
-    email: "bob@example.com",
-    avatarUrl: "https://cmsassets.rgpub.io/sanity/images/dsfx7636/news/01f7e1d821b09b9b09eb2621efe22c9068d8756c-200x200.jpg",
-  },
-  {
-    id: "f9",
-    username: "Charlie",
-    email: "charlie@example.com",
-    avatarUrl: "https://cmsassets.rgpub.io/sanity/images/dsfx7636/news/01f7e1d821b09b9b09eb2621efe22c9068d8756c-200x200.jpg",
+    id: "dm2", 
+    participants: [
+      {
+        id: "1",
+        username: "Alice",
+        avatar:
+          "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQTwFFwBmxuGhvLHukLH4hXOT6EsQDhY4CbKw&s",
+      },
+      {
+        id: "3",
+        username: "Charlie",
+        avatar: "https://avatarfiles.alphacoders.com/160/thumb-160594.png",
+      }
+    ],
+    messages: [
+      {
+        id: "m1",
+        user: {
+          id: "1",
+          username: "Alice",
+          avatar:
+            "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQTwFFwBmxuGhvLHukLH4hXOT6EsQDhY4CbKw&s",
+        },
+        content: "Chào Charlie, dạo này bạn thế nào?",
+        created_at: "2024-09-25T10:00:00",
+      },
+      {
+        id: "m2",
+        user: {
+          id: "3",
+          username: "Charlie",
+          avatar: "https://avatarfiles.alphacoders.com/160/thumb-160594.png",
+        },
+        content: "Chào Alice, mình đang ổn. Còn bạn?",
+        created_at: "2024-09-25T10:02:00",
+      },
+      {
+        id: "m3",
+        user: {
+          id: "1",
+          username: "Alice",
+          avatar:
+            "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQTwFFwBmxuGhvLHukLH4hXOT6EsQDhY4CbKw&s",
+        },
+        content: "Mình cũng vậy. Bạn có dự án gì mới không?",
+        created_at: "2024-09-25T10:05:00",
+      },
+      {
+        id: "m4",
+        user: {
+          id: "3",
+          username: "Charlie",
+          avatar: "https://avatarfiles.alphacoders.com/160/thumb-160594.png",
+        },
+        content: "Mình đang làm dự án mới về AI, khá thú vị!",
+        created_at: "2024-09-25T10:06:00",
+      },
+    ],
   },
 ];
