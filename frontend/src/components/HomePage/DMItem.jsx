@@ -7,7 +7,7 @@ const DMItem = ({ avatar, name, id, conversationId}) => {
   return (
     <div
       onClick={()=>navigate(`/dm/${conversationId}`)}
-      className={`flex justify-between items-center px-3 py-2 rounded-lg group hover:bg-zinc-700/50 cursor-pointer group ${
+      className={`flex justify-between items-center px-3 py-2 rounded group hover:bg-zinc-700/50 cursor-pointer group ${
         param.conversationId == conversationId && "bg-zinc-700"
       }`}
     >
