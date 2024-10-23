@@ -28,6 +28,7 @@ const ChatItem = ({
   const handleInputChange = (e) => {
     setEditedMessage(e.target.value);
   };
+  
   const handleDelete = () => {
     console.log("Delete message success");
   };
@@ -40,7 +41,11 @@ const ChatItem = ({
     };
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
-  });
+  }, []); // Added dependency array to prevent memory leaks
+
+  const isCloudinaryImageUrl = (string) => {
+    return string.startsWith("https://res.cloudinary.com/") && /\.(jpg|jpeg|png|gif)$/.test(string);
+  };
   return (
     <div className="relative group flex items-center hover:bg-black/5 p-4 transition w-full">
       <div className="group flex gap-x-2 items-start w-full">
@@ -60,7 +65,17 @@ const ChatItem = ({
             </div>
             <span className="text-xs text-zinc-400">{timestamp}</span>
           </div>
-          {!isEditing && <p className="text-sm text-zinc-300">{content}</p>}
+          {!isEditing && (
+            isCloudinaryImageUrl(content) ? (
+              <img
+                src={content}
+                alt="uploaded"
+                className="max-w-[300px] mt-4 h-auto rounded-md object-cover" 
+              />
+            ) : (
+              <p className="text-sm text-zinc-300">{content}</p>
+            )
+          )}
           {isEditing && (
             <>
               <form
@@ -88,7 +103,7 @@ const ChatItem = ({
         </div>
       </div>
       {(canDeleteMessage || canEditMessage) && !isEditing && (
-        <div className=" hidden group-hover:flex items-center absolute -top-2 right-5 bg-primary-1 border border-zinc-800 rounded-md">
+        <div className="hidden group-hover:flex items-center absolute -top-2 right-5 bg-primary-1 border border-zinc-800 rounded-md">
           {canEditMessage && (
             <>
               <div

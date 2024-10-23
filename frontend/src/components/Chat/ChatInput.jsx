@@ -1,63 +1,140 @@
 import React, { useRef, useState } from "react";
 import { useSelector } from "react-redux";
 import { BsEmojiSmile } from "react-icons/bs";
+import { FaTrash } from "react-icons/fa6";
 import { ImAttachment } from "react-icons/im";
 import EmojiPicker from "emoji-picker-react";
 
+const CLOUDINARY_URL =
+  import.meta.env.VITE_CLOUDINARY_URL ||
+  "https://api.cloudinary.com/v1_1/dyzlyiggq/image/upload";
+
 const ChatInput = ({ type, channelId, name, socket }) => {
-  const [fileName, setFileName] = useState("");
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
   const [content, setContent] = useState("");
   const author_id = useSelector((state) => state.user.currentUser.id);
-
+  const [uploadedFiles, setUploadedFiles] = useState([]);
   const handleEmojiClick = (emojiObject) => {
     setContent((prevMessage) => prevMessage + emojiObject.emoji);
     setShowEmojiPicker(false);
   };
-
-  const fileInputRef = useRef(null);
-
-  const handleFileClick = () => {
-    fileInputRef.current.click();
-  };
-
-  const handleFileChange = (e) => {
-    const file = e.target.files[0];
-    if (file) {
-      setFileName(file.name);
-    }
-  };
-
-  const sendMessage = (e) => {
+  const sendMessage = async (e) => {
     e.preventDefault();
-    if (!content || content.trim() == "") {
-      return
+    if (!content && uploadedFiles.length === 0) {
+      return;
     }
-    const newMessage = {
-      content,
-      channelId,
-      author_id
-    };
-    socket.emit('newMessage', newMessage);
-    setContent('');
+    const imageUrls = await uploadFiles();
+    if (content) {
+      const newMessage = {
+        content,
+        channelId,
+        author_id,
+      };
+      socket.emit("newMessage", newMessage);
+    }
+    for (const url of imageUrls) {
+      const imageMessage = {
+        content: url,
+        channelId,
+        author_id,
+      };
+      socket.emit("newMessage", imageMessage);
+    }
+
+    setContent("");
+    setUploadedFiles([]);
+  };
+
+  const uploadFiles = async () => {
+    const uploadedUrls = [];
+
+    for (const file of uploadedFiles) {
+      const formData = new FormData();
+      formData.append("file", file.file);
+      formData.append("upload_preset", "Upload-img");
+
+      try {
+        const response = await fetch(CLOUDINARY_URL, {
+          method: "POST",
+          body: formData,
+        });
+
+        const data = await response.json();
+        if (data.secure_url) {
+          uploadedUrls.push(data.secure_url);
+        }
+      } catch (error) {
+        console.error("Error uploading file:", error);
+      }
+    }
+
+    return uploadedUrls;
+  };
+
+  const handleFileUpload = (e) => {
+    const files = Array.from(e.target.files);
+    const filePreviews = files.map((file) => {
+      const isImage = file.type.startsWith("image/");
+      return {
+        url: isImage ? URL.createObjectURL(file) : null,
+        name: file.name,
+        file,
+        isImage,
+      };
+    });
+    setUploadedFiles((prevFiles) => [...prevFiles, ...filePreviews]);
+  };
+
+  const handleFileRemove = (index) => {
+    setUploadedFiles((prevFiles) => prevFiles.filter((_, i) => i !== index));
   };
 
   return (
-    <form className="w-full" onSubmit={sendMessage}>
+    <form
+      className="w-full"
+      onSubmit={sendMessage}
+      onKeyDown={(e) => e.key === "Enter" && sendMessage(e)}
+    >
+      {/* File Previews */}
+      {uploadedFiles.length > 0 && (
+        <div className="p-4 flex gap-3 mx-4 overflow-x-auto bg-zinc-700/75 rounded-t">
+          {uploadedFiles.map((file, index) => (
+            <div
+              key={index}
+              className="relative bg-zinc-800/55 rounded p-2 w-32 flex flex-col items-center justify-center"
+            >
+              <img
+                src={file.url}
+                alt={`Uploaded Preview ${index + 1}`}
+                className="w-21 h-20 object-cover"
+              />
+              <span className="block text-center text-xs text-white mt-1 overflow-hidden whitespace-nowrap text-ellipsis">
+                {file.name}
+              </span>
+              <button
+                onClick={() => handleFileRemove(index)}
+                className="absolute top-1 right-1 bg-red-500 p-1 rounded-full"
+              >
+                <FaTrash size={12} className="text-white" />
+              </button>
+            </div>
+          ))}
+        </div>
+      )}
       <div className="relative p-4 pb-6">
-        <button
-          type="button"
-          onClick={handleFileClick}
-          className="absolute top-7 left-8 h-[24px] w-[24px] bg-zinc-400 hover:bg-zinc-300 transition rounded-full p-1 flex items-center justify-center"
-        >
+        {/* File Upload Button */}
+        <label className="absolute top-7 left-8 h-[24px] w-[24px] bg-zinc-400 hover:bg-zinc-300 transition rounded-full p-1 flex items-center justify-center cursor-pointer">
           <ImAttachment size={30} className="text-primary-1" />
-        </button>
-        <input
-          type="file"
-          ref={fileInputRef}
-          onChange={handleFileChange}
-          className="hidden"
-        />
+          <input
+            type="file"
+            className="hidden"
+            onChange={handleFileUpload}
+            multiple
+            accept="image/*"
+          />
+        </label>
+
+        {/* Message Input */}
         <input
           type="text"
           placeholder={`Message ${type === "TEXT" ? "#" + name : name}`}
@@ -66,6 +143,8 @@ const ChatInput = ({ type, channelId, name, socket }) => {
           className="w-full px-14 py-3 bg-zinc-700/75 border-none border-0 
           focus-visible:ring-0 focus-visible:ring-offset-0 text-zinc-200 outline-none placeholder-zinc-500"
         />
+
+        {/* Emoji Picker */}
         <div className="absolute top-7 right-8">
           <BsEmojiSmile
             size={24}
