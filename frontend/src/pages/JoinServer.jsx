@@ -29,16 +29,20 @@ const JoinServer = () => {
 
     fetchData();
   }, [serverId, token]);
+  const isMember = server?.members?.some((member) => member.user_id === currentUser.id);
   const handleJoinServer = async () => {
-    try {
-      const response = await joinServer(currentUser.id, serverId, token);
-      toast.success(response.message);
+    if (isMember) {
       navigate(`/servers/${server.id}/channels/${server.channels[0].id}`);
-    } catch (error) {
-      toast.error("Failed to join server: " + error.message);
+    } else {
+      try {
+        const response = await joinServer(currentUser.id, serverId, token);
+        toast.success(response.message);
+        navigate(`/servers/${server.id}/channels/${server.channels[0].id}`);
+      } catch (error) {
+        toast.error("Failed to join server: " + error.message);
+      }
     }
   };
-
   return (
     <div className="relative h-screen w-screen">
       <img
