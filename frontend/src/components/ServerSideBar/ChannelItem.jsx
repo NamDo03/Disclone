@@ -6,11 +6,11 @@ import { Tooltip } from "react-tooltip";
 import useModal from "../../hooks/useModal";
 import EditModal from "../Modal/EditModal";
 import DeleteModal from "../Modal/DeleteModal";
+import useServerOwner from "../../hooks/useServerOwner";
 
 const ChannelItem = ({ id, name, Icon }) => {
   const navigate = useNavigate();
   const params = useParams();
-  const { serverId } = useParams();
   const { isOpenModal: isOpenEditModal, toggleModal: toggleEditModal } =
     useModal();
   const { isOpenModal: isOpenDeleteModal, toggleModal: toggleDeleteModel } =
@@ -25,9 +25,12 @@ const ChannelItem = ({ id, name, Icon }) => {
     event.stopPropagation();
     toggleDeleteModel();
   };
+
+  const isOwner = useServerOwner();
+
   return (
     <div
-      onClick={() => navigate(`/servers/${serverId}/channels/${id}`)}
+      onClick={() => navigate(`/servers/${params.serverId}/channels/${id}`)}
       className={`p-2 rounded-md flex items-center group gap-x-1 hover:bg-zinc-700/50 transition mb-1 cursor-pointer ${
         Number(params?.channelId) === id && "bg-zinc-700"
       }`}
@@ -42,47 +45,51 @@ const ChannelItem = ({ id, name, Icon }) => {
       >
         {name}
       </p>
-      <div className="ml-auto flex items-center gap-x-2">
-        <FiEdit
-          data-tooltip-id="edit"
-          data-tooltip-content="Edit"
-          data-tooltip-place="top"
-          onClick={handleEdit}
-          className="hidden group-hover:block w-4 h-4 text-zinc-400 hover:text-zinc-300 transition outline-none"
-        />
-        <Tooltip
-          id="edit"
-          className="font-semibold"
-          style={{ backgroundColor: "#111214", color: "#fff" }}
-        />
-        <FaTrashCan
-          data-tooltip-id="delete"
-          data-tooltip-content="Delete"
-          data-tooltip-place="top"
-          onClick={handleDelete}
-          className="hidden group-hover:block w-4 h-4 text-zinc-400 hover:text-zinc-300 transition outline-none"
-        />
-        <Tooltip
-          id="delete"
-          className="font-semibold"
-          style={{ backgroundColor: "#111214", color: "#fff" }}
-        />
-      </div>
-      {isOpenEditModal && (
-        <EditModal
-          toggleModal={toggleEditModal}
-          type="channel"
-          serverId={serverId}
-          channelId={id}
-        />
-      )}
-      {isOpenDeleteModal && (
-        <DeleteModal
-          toggleModal={toggleDeleteModel}
-          type="channel"
-          serverId={serverId}
-          channelId={id}
-        />
+      {isOwner && (
+        <>
+          <div className="ml-auto flex items-center gap-x-2">
+            <FiEdit
+              data-tooltip-id="edit"
+              data-tooltip-content="Edit"
+              data-tooltip-place="top"
+              onClick={handleEdit}
+              className="hidden group-hover:block w-4 h-4 text-zinc-400 hover:text-zinc-300 transition outline-none"
+            />
+            <Tooltip
+              id="edit"
+              className="font-semibold"
+              style={{ backgroundColor: "#111214", color: "#fff" }}
+            />
+            <FaTrashCan
+              data-tooltip-id="delete"
+              data-tooltip-content="Delete"
+              data-tooltip-place="top"
+              onClick={handleDelete}
+              className="hidden group-hover:block w-4 h-4 text-zinc-400 hover:text-zinc-300 transition outline-none"
+            />
+            <Tooltip
+              id="delete"
+              className="font-semibold"
+              style={{ backgroundColor: "#111214", color: "#fff" }}
+            />
+          </div>
+          {isOpenEditModal && (
+            <EditModal
+              toggleModal={toggleEditModal}
+              type="channel"
+              serverId={params.serverId}
+              channelId={id}
+            />
+          )}
+          {isOpenDeleteModal && (
+            <DeleteModal
+              toggleModal={toggleDeleteModel}
+              type="channel"
+              serverId={params.serverId}
+              channelId={id}
+            />
+          )}
+        </>
       )}
     </div>
   );

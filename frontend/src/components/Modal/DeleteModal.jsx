@@ -5,7 +5,7 @@ import { deleteServer, getServerById } from "../../api/serverService";
 import { deleteChannel, getChannelById } from "../../api/channelService";
 import Cookies from "js-cookie";
 import { toast } from "react-toastify";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { removeServer } from "../../redux/serverSlice";
 import { useNavigate } from "react-router-dom";
 import { removeChannel } from "../../redux/channelSlice";
@@ -15,6 +15,8 @@ const DeleteModal = ({ type, toggleModal, serverId, channelId }) => {
   const navigate = useNavigate();
   const token = Cookies.get("token");
   const [name, setName] = useState();
+  const channels = useSelector((state) => state.channels);
+
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -42,6 +44,14 @@ const DeleteModal = ({ type, toggleModal, serverId, channelId }) => {
       } else if (type.toLowerCase() === "channel" && channelId) {
         await deleteChannel(channelId, token);
         dispatch(removeChannel({ id: channelId }));
+        const remainingChannels = channels.filter(
+          (channel) => channel.id !== channelId
+        );
+        if (remainingChannels.length > 0) {
+          navigate(`/servers/${serverId}/channels/${remainingChannels[0].id}`);
+        } else {
+          navigate("/");
+        }
       }
       toggleModal();
       toast.success(`Delete ${type} ${name} success`);

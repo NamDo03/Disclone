@@ -3,9 +3,11 @@ import { FaPlus, FaChevronDown, FaChevronRight } from "react-icons/fa6";
 import { Tooltip } from "react-tooltip";
 import AddChannelModal from "../Modal/AddChannelModal";
 import useModal from "../../hooks/useModal";
+import useServerOwner from "../../hooks/useServerOwner";
 
 const ServerSection = ({ name, isExpanded, toggleExpand }) => {
-  const { isOpenModal, toggleModal} = useModal();
+  const { isOpenModal, toggleModal } = useModal();
+  const isOwner = useServerOwner();
   return (
     <div className="flex items-center justify-between py-2 cursor-pointer group">
       <p
@@ -19,20 +21,24 @@ const ServerSection = ({ name, isExpanded, toggleExpand }) => {
         )}
         {name}
       </p>
-      <button
-        onClick={toggleModal}
-        data-tooltip-id="addChannel"
-        data-tooltip-content="Create Channel"
-        data-tooltip-place="top"
-        className="text-zinc-400 hover:text-zinc-300 "
-      >
-        <FaPlus />
-      </button>
-      <Tooltip
-        id="addChannel"
-        style={{ backgroundColor: "#111214", color: "#fff" }}
-      />
-      {isOpenModal && <AddChannelModal toggleModal={toggleModal}/> }
+      {isOwner && (
+        <>
+          <button
+            onClick={toggleModal}
+            data-tooltip-id="addChannel"
+            data-tooltip-content="Create Channel"
+            data-tooltip-place="top"
+            className="text-zinc-400 hover:text-zinc-300 "
+          >
+            <FaPlus />
+          </button>
+          <Tooltip
+            id="addChannel"
+            style={{ backgroundColor: "#111214", color: "#fff" }}
+          />
+          {isOpenModal && <AddChannelModal toggleModal={toggleModal} />}
+        </>
+      )}
     </div>
   );
 };
