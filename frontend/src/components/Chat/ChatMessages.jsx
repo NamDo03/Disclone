@@ -7,7 +7,6 @@ import useScrollToBottom from "../../hooks/useScrollToBottom";
 const ChatMessages = ({ type, name, messages }) => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(false);
-console.log(messages.user)
   const messagesEndRef = useScrollToBottom(messages);
 
   if (loading) {

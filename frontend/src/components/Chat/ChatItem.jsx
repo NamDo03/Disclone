@@ -70,7 +70,7 @@ const ChatItem = ({
               <img
                 src={content}
                 alt="uploaded"
-                className="max-w-[300px] mt-4 h-auto rounded-md" // Added rounded corners for aesthetics
+                className="max-w-[300px] mt-4 h-auto rounded-md object-cover" 
               />
             ) : (
               <p className="text-sm text-zinc-300">{content}</p>

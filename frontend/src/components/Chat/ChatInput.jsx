@@ -3,9 +3,11 @@ import { useSelector } from "react-redux";
 import { BsEmojiSmile } from "react-icons/bs";
 import { FaTrash } from "react-icons/fa6";
 import { ImAttachment } from "react-icons/im";
-import EmojiPicker from 'emoji-picker-react';
+import EmojiPicker from "emoji-picker-react";
 
-const CLOUDINARY_URL = import.meta.env.VITE_CLOUDINARY_URL || "https://api.cloudinary.com/v1_1/dyzlyiggq/image/upload";
+const CLOUDINARY_URL =
+  import.meta.env.VITE_CLOUDINARY_URL ||
+  "https://api.cloudinary.com/v1_1/dyzlyiggq/image/upload";
 
 const ChatInput = ({ type, channelId, name, socket }) => {
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
@@ -21,52 +23,66 @@ const ChatInput = ({ type, channelId, name, socket }) => {
     if (!content && uploadedFiles.length === 0) {
       return;
     }
-    const newMessage = {
-      content,
-      channelId,
-      author_id
-    };
-    socket.emit('newMessage', newMessage);
-    setContent('');
+    const imageUrls = await uploadFiles();
+    if (content) {
+      const newMessage = {
+        content,
+        channelId,
+        author_id,
+      };
+      socket.emit("newMessage", newMessage);
+    }
+    for (const url of imageUrls) {
+      const imageMessage = {
+        content: url,
+        channelId,
+        author_id,
+      };
+      socket.emit("newMessage", imageMessage);
+    }
+
+    setContent("");
     setUploadedFiles([]);
   };
 
-  const handleFileUpload = async (e) => {
+  const uploadFiles = async () => {
+    const uploadedUrls = [];
+
+    for (const file of uploadedFiles) {
+      const formData = new FormData();
+      formData.append("file", file.file);
+      formData.append("upload_preset", "Upload-img");
+
+      try {
+        const response = await fetch(CLOUDINARY_URL, {
+          method: "POST",
+          body: formData,
+        });
+
+        const data = await response.json();
+        if (data.secure_url) {
+          uploadedUrls.push(data.secure_url);
+        }
+      } catch (error) {
+        console.error("Error uploading file:", error);
+      }
+    }
+
+    return uploadedUrls;
+  };
+
+  const handleFileUpload = (e) => {
     const files = Array.from(e.target.files);
     const filePreviews = files.map((file) => {
       const isImage = file.type.startsWith("image/");
       return {
         url: isImage ? URL.createObjectURL(file) : null,
         name: file.name,
-        file, 
+        file,
         isImage,
       };
     });
     setUploadedFiles((prevFiles) => [...prevFiles, ...filePreviews]);
-    for (const file of files) {
-      const formData = new FormData();
-      formData.append('file', file);
-      formData.append('upload_preset', 'Upload-img'); 
-  
-      try {
-        const response = await fetch(CLOUDINARY_URL, {
-          method: 'POST',
-          body: formData
-        });
-  
-        const data = await response.json();
-        if (data.secure_url) {
-          setUploadedFiles((prevFiles) => 
-            prevFiles.map((prevFile) => 
-              prevFile.file === file ? { ...prevFile, cloudinaryUrl: data.secure_url } : prevFile
-            )
-          );
-        }
-        setContent(data.secure_url)
-      } catch (error) {
-        console.error('Error uploading file:', error);
-      }
-    }
   };
 
   const handleFileRemove = (index) => {
@@ -74,18 +90,27 @@ const ChatInput = ({ type, channelId, name, socket }) => {
   };
 
   return (
-    <form className="w-full" onSubmit={sendMessage} onKeyDown={(e) => e.key === 'Enter' && sendMessage(e)}>
+    <form
+      className="w-full"
+      onSubmit={sendMessage}
+      onKeyDown={(e) => e.key === "Enter" && sendMessage(e)}
+    >
       {/* File Previews */}
       {uploadedFiles.length > 0 && (
-        <div className="p-4 flex space-x-4 mb-4 overflow-x-auto">
+        <div className="p-4 flex gap-3 mx-4 overflow-x-auto bg-zinc-700/75 rounded-t">
           {uploadedFiles.map((file, index) => (
-            <div key={index} className="relative border border-gray-600 rounded p-2 w-32">
+            <div
+              key={index}
+              className="relative bg-zinc-800/55 rounded p-2 w-32 flex flex-col items-center justify-center"
+            >
               <img
                 src={file.url}
                 alt={`Uploaded Preview ${index + 1}`}
-                className="w-21 h-20 object-fit"
+                className="w-21 h-20 object-cover"
               />
-              <span className="block text-center text-xs text-white mt-1 overflow-hidden whitespace-nowrap text-ellipsis">{file.name}</span>
+              <span className="block text-center text-xs text-white mt-1 overflow-hidden whitespace-nowrap text-ellipsis">
+                {file.name}
+              </span>
               <button
                 onClick={() => handleFileRemove(index)}
                 className="absolute top-1 right-1 bg-red-500 p-1 rounded-full"

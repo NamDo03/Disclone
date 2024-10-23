@@ -40,7 +40,7 @@ export default class ChatManager {
       const messages = await this.prisma.message.findMany({
         where: { channel_id: parseInt(channelId) },
         include: { user: true },
-        orderBy: { created_at: 'asc' },
+        orderBy: { created_at: 'desc' },
       });
 
       socket.emit('previousMessages', messages);
