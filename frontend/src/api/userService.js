@@ -51,3 +51,27 @@ export const getListOfServers = async (userId) => {
         throw error;
     }
 };
+
+export const getUserById = async (userId) => {
+    try {
+        const token = getToken();
+        const response = await fetch(`${API_URL}/user/${userId}/get-by-id`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            }
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+            throw new Error(data.message || 'Error fetching user');
+        }
+
+        return data;
+    } catch (error) {
+        console.error("Fetch user error:", error);
+        throw error;
+    }
+};

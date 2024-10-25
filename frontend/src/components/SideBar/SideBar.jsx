@@ -23,33 +23,33 @@ const SideBar = () => {
 
   const navigate = useNavigate();
   const currentUser = useSelector((state) => state.user.currentUser);
-  const servers = useSelector((state) => state.servers)
+  const servers = useSelector((state) => state.servers);
   const dispatch = useDispatch();
   const [serverChannels, setServerChannels] = useState({});
   
-  useEffect(() => {
-    const getListServer = async () => {
-      try {
-        const fetchedServers = await getListOfServers(currentUser.id);
-        dispatch(setServers(fetchedServers));
-        const channelsData = {};
-        for (const server of fetchedServers) {
-          try {
-            const channels = await getListOfChannels(server.id);
-            channelsData[server.id] = channels[0] || null;
-          } catch (error) {
-            console.error(
-              `Error fetching channels for server ${server.id}:`,
-              error
-            );
-          }
+  const getListServer = async () => {
+    try {
+      const fetchedServers = await getListOfServers(currentUser.id);
+      dispatch(setServers(fetchedServers));
+      const channelsData = {};
+      for (const server of fetchedServers) {
+        try {
+          const channels = await getListOfChannels(server.id);
+          channelsData[server.id] = channels[0] || null;
+        } catch (error) {
+          console.error(
+            `Error fetching channels for server ${server.id}:`,
+            error
+          );
         }
-        setServerChannels(channelsData);
-      } catch (error) {
-        console.error("Error fetching servers:", error);
       }
-    };
+      setServerChannels(channelsData);
+    } catch (error) {
+      console.error("Error fetching servers:", error);
+    }
+  };
 
+  useEffect(() => {
     getListServer();
   }, [currentUser.id]);
   return (
@@ -97,7 +97,10 @@ const SideBar = () => {
       {isLogoutModalOpen && <LogoutModal toggleModal={toggleLogoutModal} />}
 
       {isAddServerModalOpen && (
-        <AddServerModal toggleModal={toggleAddServerModal} />
+        <AddServerModal
+          toggleModal={toggleAddServerModal}
+          onServerAdded={getListServer}
+        />
       )}
     </div>
   );
