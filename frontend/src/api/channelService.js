@@ -1,10 +1,13 @@
 
 const API_URL = 'http://localhost:3000/api';
+import Cookies from "js-cookie";
 
+const getToken = () => Cookies.get("token");
 
-export const getChannelById = async (channel, token) => {
+export const getChannelById = async (channelId) => {
     try {
-        const response = await fetch(`${API_URL}/channel/${channel}/get-by-id`, {
+        const token = getToken();
+        const response = await fetch(`${API_URL}/channel/${channelId}/get-by-id`, {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
@@ -25,8 +28,9 @@ export const getChannelById = async (channel, token) => {
     }
 };
 
-export const createChannel = async (serverId, name, type, token) => {
+export const createChannel = async (serverId, name, type) => {
     try {
+        const token = getToken();
         const response = await fetch(`${API_URL}/server/create-channel`, {
             method: 'POST',
             headers: {
@@ -47,8 +51,9 @@ export const createChannel = async (serverId, name, type, token) => {
         throw error;
     }
 };
-export const updateChannel = async (channelId, name, userId, token) => {
+export const updateChannel = async (channelId, name, userId) => {
     try {
+        const token = getToken();
         const response = await fetch(`${API_URL}/channel/edit`, {
             method: 'POST',
             headers: {
@@ -70,8 +75,9 @@ export const updateChannel = async (channelId, name, userId, token) => {
     }
 };
 
-export const deleteChannel = async (channelId, token) => {
+export const deleteChannel = async (channelId) => {
     try {
+        const token = getToken();
         const response = await fetch(`${API_URL}/channel/${channelId}/delete`, {
             method: 'DELETE',
             headers: {

@@ -1,8 +1,12 @@
 
 const API_URL = "http://localhost:3000/api";
+import Cookies from "js-cookie";
 
-export const updateServer = async (serverId, name, img_url, userId, token) => {
+const getToken = () => Cookies.get("token");;
+
+export const updateServer = async (serverId, name, img_url, userId) => {
     try {
+        const token = getToken();
         const response = await fetch(`${API_URL}/server/edit`, {
             method: 'POST',
             headers: {
@@ -24,8 +28,9 @@ export const updateServer = async (serverId, name, img_url, userId, token) => {
     }
 };
 
-export const getListOfChannels = async (serverId, token) => {
+export const getListOfChannels = async (serverId) => {
     try {
+        const token = getToken();
         const response = await fetch(`${API_URL}/server/${serverId}/list-channel`, {
             method: 'GET',
             headers: {
@@ -47,8 +52,9 @@ export const getListOfChannels = async (serverId, token) => {
     }
 };
 
-export const deleteServer = async (serverId, token) => {
+export const deleteServer = async (serverId) => {
     try {
+        const token = getToken();
         const response = await fetch(`${API_URL}/server/${serverId}/delete`, {
             method: 'DELETE',
             headers: {
@@ -69,8 +75,9 @@ export const deleteServer = async (serverId, token) => {
         throw error;
     }
 };
-export const getServerById = async (serverId, token) => {
+export const getServerById = async (serverId) => {
     try {
+        const token = getToken();
         const response = await fetch(`${API_URL}/server/${serverId}/get-by-id`, {
             method: 'GET',
             headers: {
@@ -92,8 +99,9 @@ export const getServerById = async (serverId, token) => {
     }
 };
 
-export const getListOfMembers = async (serverId, token) => {
+export const getListOfMembers = async (serverId) => {
     try {
+        const token = getToken();
         const response = await fetch(`${API_URL}/server/${serverId}/list-member`, {
             method: 'GET',
             headers: {
@@ -114,8 +122,9 @@ export const getListOfMembers = async (serverId, token) => {
     }
 };
 
-export const deleteMember = async (serverId, userId, token) => {
+export const deleteMember = async (serverId, userId) => {
     try {
+        const token = getToken();
         const response = await fetch(`${API_URL}/server/delete-member`, {
             method: 'DELETE',
             headers: {
@@ -140,8 +149,9 @@ export const deleteMember = async (serverId, userId, token) => {
     }
 };
 
-export const joinServer = async (userId, serverId, token) => {
+export const joinServer = async (userId, serverId) => {
     try {
+        const token = getToken();
         const response = await fetch(`${API_URL}/server/join`, {
             method: 'POST',
             headers: {

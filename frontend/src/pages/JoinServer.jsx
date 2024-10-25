@@ -1,13 +1,11 @@
 import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
-import Cookies from "js-cookie";
 import img from "../assets/bg.webp";
 import { toast } from "react-toastify";
 import { getServerById, joinServer } from "../api/serverService";
 
 const JoinServer = () => {
-  const token = Cookies.get("token");
   const navigate = useNavigate();
   const { serverId } = useParams();
   const currentUser = useSelector((state) => state.user.currentUser);
@@ -16,7 +14,7 @@ const JoinServer = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const serverData = await getServerById(serverId, token);
+        const serverData = await getServerById(serverId);
         if (serverData && serverData.channels) {
           setServer(serverData);
         } else {
@@ -28,14 +26,14 @@ const JoinServer = () => {
     };
 
     fetchData();
-  }, [serverId, token]);
+  }, [serverId]);
   const isMember = server?.members?.some((member) => member.user_id === currentUser.id);
   const handleJoinServer = async () => {
     if (isMember) {
       navigate(`/servers/${server.id}/channels/${server.channels[0].id}`);
     } else {
       try {
-        const response = await joinServer(currentUser.id, serverId, token);
+        const response = await joinServer(currentUser.id, serverId);
         toast.success(response.message);
         navigate(`/servers/${server.id}/channels/${server.channels[0].id}`);
       } catch (error) {

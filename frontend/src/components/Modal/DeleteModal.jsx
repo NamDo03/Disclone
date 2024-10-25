@@ -3,7 +3,6 @@ import { IoClose } from "react-icons/io5";
 import { createPortal } from "react-dom";
 import { deleteServer, getServerById } from "../../api/serverService";
 import { deleteChannel, getChannelById } from "../../api/channelService";
-import Cookies from "js-cookie";
 import { toast } from "react-toastify";
 import { useDispatch, useSelector } from "react-redux";
 import { removeServer } from "../../redux/serverSlice";
@@ -13,7 +12,6 @@ import { removeChannel } from "../../redux/channelSlice";
 const DeleteModal = ({ type, toggleModal, serverId, channelId }) => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const token = Cookies.get("token");
   const [name, setName] = useState();
   const channels = useSelector((state) => state.channels);
 
@@ -21,10 +19,10 @@ const DeleteModal = ({ type, toggleModal, serverId, channelId }) => {
     const fetchData = async () => {
       try {
         if (type.toLowerCase() === "server" && serverId) {
-          const serverData = await getServerById(serverId, token);
+          const serverData = await getServerById(serverId);
           setName(serverData.server_name);
         } else if (type.toLowerCase() === "channel" && channelId) {
-          const channelData = await getChannelById(channelId, token);
+          const channelData = await getChannelById(channelId);
           setName(channelData.channel_name);
         }
       } catch (error) {
@@ -33,16 +31,16 @@ const DeleteModal = ({ type, toggleModal, serverId, channelId }) => {
     };
 
     fetchData();
-  }, [type, serverId, channelId, token]);
+  }, [type, serverId, channelId]);
 
   const handleDelete = async () => {
     try {
       if (type.toLowerCase() === "server" && serverId) {
-        await deleteServer(serverId, token);
+        await deleteServer(serverId);
         dispatch(removeServer({ id: serverId }));
         setTimeout(() => navigate("/"), 100);
       } else if (type.toLowerCase() === "channel" && channelId) {
-        await deleteChannel(channelId, token);
+        await deleteChannel(channelId);
         dispatch(removeChannel({ id: channelId }));
         const remainingChannels = channels.filter(
           (channel) => channel.id !== channelId
