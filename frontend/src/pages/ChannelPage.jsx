@@ -1,31 +1,49 @@
 import React, { useState, useEffect } from "react";
 import ChatHeader from "../components/Chat/ChatHeader";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import ChatInput from "../components/Chat/ChatInput";
 import ChatMessages from "../components/Chat/ChatMessages";
 import MemberList from "../components/MemberList/MemberList";
-import { getChannelById } from "../api/channelService";
-import { getListOfMembers } from "../api/serverService";
-import { io } from 'socket.io-client';
+import { getServerById } from "../api/serverService";
+import { io } from "socket.io-client";
+import { getUserById } from "../api/userService";
 
 const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || "http://localhost:3000";
 const socket = io(BACKEND_URL);
 const ChannelPage = () => {
+
   const { serverId, channelId } = useParams();
+  const navigate = useNavigate();
   const [showMemberList, setShowMemberList] = useState(false);
   const [memberList, setMemberList] = useState([]);
   const [channel, setChannel] = useState(null);
   const [messages, setMessages] = useState([]);
-
+  const [owner, setOwner] = useState({});
   useEffect(() => {
+    if (!serverId || !channelId) {
+      navigate("/page-not-found");
+      return;
+    }
     const fetchData = async () => {
       try {
-        const channelData = await getChannelById(channelId);
-        const membersData = await getListOfMembers(serverId);
-        setChannel(channelData);
-        setMemberList(membersData.members);
+        const serverData = await getServerById(serverId);
+        const foundChannel = serverData.channels.find(
+          (channel) => channel.id === Number(channelId)
+        );
+        if (!foundChannel) {
+          navigate("/page-not-found");
+          return;
+        }
+        const ownerServer = await getUserById(serverData.user_id);
+        setOwner(ownerServer);
+        setMemberList(serverData.members);
+        setChannel(foundChannel);
       } catch (err) {
-        throw err.message;
+        if (err.message.includes("Server not found")) {
+          navigate("/page-not-found");
+        } else {
+          console.log(err.message);
+        }
       }
     };
 
@@ -76,11 +94,17 @@ const ChannelPage = () => {
           name={channel.channel_name}
           messages={messages}
         />
-        <ChatInput type={channel.type} channelId={channel.id} name={channel.channel_name} socket={socket} />
+        <ChatInput
+          type={channel.type}
+          channelId={channel.id}
+          name={channel.channel_name}
+          socket={socket}
+        />
       </div>
       {showMemberList && (
         <div className="w-[240px] bg-[#2B2D31] overflow-y-auto transition">
           <MemberList
+            owner={owner}
             members={memberList}
             onMemberDeleted={handleMemberDeleted}
           />

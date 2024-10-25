@@ -23,19 +23,27 @@ class ServerController {
         }
     }
     async createServer(userId, name, img_url) {
-        try {
-            const server = await prisma.server.create({
-                data: {
-                    server_name: name,
-                    image_url: img_url,
-                    user_id: userId,
-                }
-            });
-            return server;
-        } catch (error) {
-            throw new Error(`Failed to create new server: ${error.message}`)
-        }
-    }
+      try {
+          // Create the server and add the initial channel and member
+          const server = await prisma.server.create({
+              data: {
+                  server_name: name,
+                  image_url: img_url,
+                  user_id: userId,
+                  channels: {
+                      create: {
+                          channel_name: "general",  
+                          type: 'TEXT'  
+                      },
+                  }
+              }
+          });
+  
+          return server;
+      } catch (error) {
+          throw new Error(`Failed to create new server: ${error.message}`);
+      }
+  }
 
     async getListOfOwnServers(userId) {
         try {

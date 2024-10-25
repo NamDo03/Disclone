@@ -42,6 +42,25 @@ class ChannelController {
 
     async deleteChannelById(id) {
         try {
+            const channel = await prisma.channel.findUnique({
+                where: { id: parseInt(id) },
+            });
+            const textChannelCount = await prisma.channel.count({
+                where: {
+                    server_id: channel.server_id,
+                    type: 'TEXT',
+                },
+            });
+
+            const voiceChannelCount = await prisma.channel.count({
+                where: {
+                    server_id: channel.server_id,
+                    type: 'VOICE',
+                },
+            });
+            if (channel.type === 'TEXT' && textChannelCount <= 1) {
+                throw new Error("always have at least one channel");
+            }
             await prisma.channel.delete({ where: { id: parseInt(id) } });
         } catch (error) {
             throw new Error(`Failed to delete channel ${id}: ${error.message}`);

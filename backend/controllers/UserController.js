@@ -12,7 +12,7 @@ class UserController {
   async getUserById(id) {
     try {
       const user = await prisma.user.findUnique({
-        where: { id: id },
+        where: { id: parseInt(id) },
       });
       return user
     } catch (error) {

@@ -8,7 +8,7 @@ import EditModal from "../Modal/EditModal";
 import DeleteModal from "../Modal/DeleteModal";
 import useServerOwner from "../../hooks/useServerOwner";
 
-const ChannelItem = ({ id, name, Icon }) => {
+const ChannelItem = ({ index, id, name, Icon }) => {
   const navigate = useNavigate();
   const params = useParams();
   const { isOpenModal: isOpenEditModal, toggleModal: toggleEditModal } =
@@ -60,13 +60,16 @@ const ChannelItem = ({ id, name, Icon }) => {
               className="font-semibold"
               style={{ backgroundColor: "#111214", color: "#fff" }}
             />
-            <FaTrashCan
-              data-tooltip-id="delete"
-              data-tooltip-content="Delete"
-              data-tooltip-place="top"
-              onClick={handleDelete}
-              className="hidden group-hover:block w-4 h-4 text-zinc-400 hover:text-zinc-300 transition outline-none"
-            />
+            {index >= 1 && (
+              <FaTrashCan
+                data-tooltip-id="delete"
+                data-tooltip-content="Delete"
+                data-tooltip-place="top"
+                onClick={handleDelete}
+                className="hidden group-hover:block w-4 h-4 text-zinc-400 hover:text-zinc-300 transition outline-none"
+              />
+            )}
+
             <Tooltip
               id="delete"
               className="font-semibold"

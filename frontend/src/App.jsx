@@ -11,6 +11,7 @@ import ProtectedRoute from "./routes/ProtectedRoute";
 import HomeLayout from "./layouts/HomeLayout";
 import PersonalMessage from "./pages/PersonalMessage";
 import JoinServer from "./pages/JoinServer";
+import PageNotFound from "./pages/PageNotFound";
 
 function App() {
   return (
@@ -60,7 +61,15 @@ function App() {
           path="*"
           element={
             <ProtectedRoute>
-              <HomePage />
+              <PageNotFound />
+            </ProtectedRoute>
+          }
+        />
+          <Route
+          path="/page-not-found"
+          element={
+            <ProtectedRoute>
+              <PageNotFound />
             </ProtectedRoute>
           }
         />

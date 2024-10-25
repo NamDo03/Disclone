@@ -14,7 +14,10 @@ const serverSlice = createSlice({
             }
         },
         addServer(state, action) {
-            state.push(action.payload);
+            const exists = state.some((server) => server.id === action.payload.id);
+            if (!exists) {
+                state.push(action.payload);
+            }
         },
         updateServerDetails: (state, action) => {
             const index = state.findIndex((channel) => channel.id === action.payload.id);
