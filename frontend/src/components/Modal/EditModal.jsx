@@ -7,12 +7,10 @@ import { getChannelById, updateChannel } from "../../api/channelService";
 import { getServerById, updateServer } from "../../api/serverService";
 import { toast } from "react-toastify";
 import { useDispatch, useSelector } from "react-redux";
-import Cookies from "js-cookie";
 import { updateServerDetails } from "../../redux/serverSlice";
 import { updateChannelDetails } from "../../redux/channelSlice";
 
 const EditModal = ({ type, toggleModal, serverId, channelId }) => {
-  const token = Cookies.get("token");
   const currentUser = useSelector((state) => state.user.currentUser);
   const dispatch = useDispatch();
   const inputRef = useRef();
@@ -25,11 +23,11 @@ const EditModal = ({ type, toggleModal, serverId, channelId }) => {
     const fetchData = async () => {
       try {
         if (type.toLowerCase() === "server" && serverId) {
-          const serverData = await getServerById(serverId, token);
+          const serverData = await getServerById(serverId);
           setName(serverData.server_name);
           setImage(serverData.image_url);
         } else if (type.toLowerCase() === "channel" && channelId) {
-          const channelData = await getChannelById(channelId, token);
+          const channelData = await getChannelById(channelId);
           setName(channelData.channel_name);
         }
       } catch (error) {
@@ -38,7 +36,7 @@ const EditModal = ({ type, toggleModal, serverId, channelId }) => {
     };
 
     fetchData();
-  }, [type, serverId, channelId, token]);
+  }, [type, serverId, channelId]);
 
   const handleImageClick = () => {
     inputRef.current.click();
@@ -61,11 +59,11 @@ const EditModal = ({ type, toggleModal, serverId, channelId }) => {
 
     try {
       if (type.toLowerCase() === "server") {
-        const updatedServer =await updateServer(serverId, name, image, currentUser.id, token);
+        const updatedServer =await updateServer(serverId, name, image, currentUser.id);
         dispatch(updateServerDetails(updatedServer.server));
         toast.success("Server updated successfully");
       } else if (type.toLowerCase() === "channel") {
-        const updatedChannel = await updateChannel(channelId, name, currentUser.id, token);
+        const updatedChannel = await updateChannel(channelId, name, currentUser.id);
         dispatch(updateChannelDetails(updatedChannel.channel));
         toast.success("Channel updated successfully");
       }

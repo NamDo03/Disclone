@@ -1,7 +1,11 @@
 const API_URL = 'http://localhost:3000/api';
+import Cookies from "js-cookie";
 
-export const createServer = async (userId, name, img_url, token) => {
+const getToken = () => Cookies.get("token");;
+
+export const createServer = async (userId, name, img_url) => {
     try {
+        const token = getToken();
         const response = await fetch(`${API_URL}/user/create-server`, {
             method: 'POST',
             headers: {
@@ -24,8 +28,9 @@ export const createServer = async (userId, name, img_url, token) => {
     }
 };
 
-export const getListOfServers = async (userId, token) => {
+export const getListOfServers = async (userId) => {
     try {
+        const token = getToken();
         const response = await fetch(`${API_URL}/user/${userId}/list-server`, {
             method: 'GET',
             headers: {

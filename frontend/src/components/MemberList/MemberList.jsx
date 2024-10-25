@@ -1,17 +1,15 @@
 import React from "react";
 import MemberItem from "./MemberItem";
-import Cookies from "js-cookie";
 import { deleteMember } from "../../api/serverService";
 import { useParams } from "react-router-dom";
 import { toast } from "react-toastify";
 
 const MemberList = ({ members, onMemberDeleted }) => {
-  const token = Cookies.get("token");
   const { serverId } = useParams();
 
   const handleDeleteMember = async (userId) => {
     try {
-      const result = await deleteMember(serverId, userId, token);
+      const result = await deleteMember(serverId, userId);
       toast.success(result.message);
       onMemberDeleted(userId);
     } catch (error) {

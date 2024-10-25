@@ -6,13 +6,11 @@ import { BiSolidVolumeFull } from "react-icons/bi";
 import { useParams } from "react-router-dom";
 import UserControls from "./UserControls";
 import ChannelItem from "./ChannelItem";
-import Cookies from "js-cookie";
 import { getServerById } from "../../api/serverService";
 import { useDispatch, useSelector } from "react-redux";
 import { setChannels } from "../../redux/channelSlice";
 
 const ServerSideBar = () => {
-  const token = Cookies.get("token");
   const { serverId } = useParams();
   const dispatch = useDispatch();
   const channels = useSelector((state) => state.channels);
@@ -27,7 +25,7 @@ const ServerSideBar = () => {
   useEffect(() => {
     const fetchServerById = async () => {
       try {
-        const serverData = await getServerById(serverId, token);
+        const serverData = await getServerById(serverId);
         dispatch(setChannels(serverData.channels));
       } catch (error) {
         console.error("Error fetching server:", error);

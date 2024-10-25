@@ -4,7 +4,6 @@ import { useParams } from "react-router-dom";
 import ChatInput from "../components/Chat/ChatInput";
 import ChatMessages from "../components/Chat/ChatMessages";
 import MemberList from "../components/MemberList/MemberList";
-import Cookies from "js-cookie";
 import { getChannelById } from "../api/channelService";
 import { getListOfMembers } from "../api/serverService";
 import { io } from 'socket.io-client';
@@ -12,8 +11,6 @@ import { io } from 'socket.io-client';
 const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || "http://localhost:3000";
 const socket = io(BACKEND_URL);
 const ChannelPage = () => {
-  const token = Cookies.get("token");
-
   const { serverId, channelId } = useParams();
   const [showMemberList, setShowMemberList] = useState(false);
   const [memberList, setMemberList] = useState([]);
@@ -23,8 +20,8 @@ const ChannelPage = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const channelData = await getChannelById(channelId, token);
-        const membersData = await getListOfMembers(serverId, token);
+        const channelData = await getChannelById(channelId);
+        const membersData = await getListOfMembers(serverId);
         setChannel(channelData);
         setMemberList(membersData.members);
       } catch (err) {

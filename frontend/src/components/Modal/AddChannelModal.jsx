@@ -4,7 +4,6 @@ import { PiHashBold } from "react-icons/pi";
 import { BiSolidVolumeFull } from "react-icons/bi";
 import { useDispatch } from "react-redux";
 import { toast } from "react-toastify";
-import Cookies from "js-cookie";
 import { createChannel } from "../../api/channelService";
 import { useParams } from "react-router-dom";
 import { addChannel } from "../../redux/channelSlice";
@@ -12,7 +11,6 @@ import { createPortal } from "react-dom";
 
 const AddChannelModal = ({ toggleModal }) => {
   const dispatch = useDispatch();
-  const token = Cookies.get("token");
   const { serverId } = useParams();
   const [channelType, setChannelType] = useState("text");
   const [channelName, setChannelName] = useState("");
@@ -22,8 +20,7 @@ const AddChannelModal = ({ toggleModal }) => {
       const newChannel = await createChannel(
         serverId,
         channelName,
-        channelType.toUpperCase(),
-        token
+        channelType.toUpperCase()
       );
       dispatch(addChannel(newChannel.channel));
       toast.success("Success to create channel");

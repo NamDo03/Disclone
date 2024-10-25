@@ -10,7 +10,6 @@ import { useNavigate } from "react-router-dom";
 import AddServerModal from "../Modal/AddServerModal";
 import { getListOfServers } from "../../api/userService";
 import { getListOfChannels } from "../../api/serverService";
-import Cookies from "js-cookie";
 import { useDispatch, useSelector } from "react-redux";
 import { setServers } from "../../redux/serverSlice";
 
@@ -23,7 +22,6 @@ const SideBar = () => {
   } = useModal();
 
   const navigate = useNavigate();
-  const token = Cookies.get("token");
   const currentUser = useSelector((state) => state.user.currentUser);
   const servers = useSelector((state) => state.servers)
   const dispatch = useDispatch();
@@ -32,12 +30,12 @@ const SideBar = () => {
   useEffect(() => {
     const getListServer = async () => {
       try {
-        const fetchedServers = await getListOfServers(currentUser.id, token);
+        const fetchedServers = await getListOfServers(currentUser.id);
         dispatch(setServers(fetchedServers));
         const channelsData = {};
         for (const server of fetchedServers) {
           try {
-            const channels = await getListOfChannels(server.id, token);
+            const channels = await getListOfChannels(server.id);
             channelsData[server.id] = channels[0] || null;
           } catch (error) {
             console.error(
@@ -53,7 +51,7 @@ const SideBar = () => {
     };
 
     getListServer();
-  }, [currentUser.id, token]);
+  }, [currentUser.id]);
   return (
     <div className="h-full w-full flex flex-col justify-between items-center bg-primary-3 text-white shadow-lg py-3">
       <div className="space-y-4">

@@ -2,7 +2,6 @@ import React, { useRef, useState } from "react";
 import { IoClose } from "react-icons/io5";
 import { HiMiniCamera } from "react-icons/hi2";
 import { createServer } from "../../api/userService";
-import Cookies from "js-cookie";
 import { addServer } from "../../redux/serverSlice";
 import { toast } from "react-toastify";
 import { useDispatch, useSelector } from "react-redux";
@@ -11,7 +10,6 @@ const CLOUDINARY_URL = import.meta.env.VITE_CLOUDINARY_URL || "https://api.cloud
 const AddServerModal = ({ toggleModal }) => {
   const dispatch = useDispatch();
   const currentUser = useSelector((state) => state.user.currentUser);
-  const token = Cookies.get("token");
 
   const inputRef = useRef();
 
@@ -77,8 +75,7 @@ const AddServerModal = ({ toggleModal }) => {
       const newServer = await createServer(
         currentUser.id,
         serverName,
-        img_url,
-        token
+        img_url
       );
       dispatch(addServer(newServer.server));
       toast.success("Success to create server");
@@ -164,18 +161,6 @@ const AddServerModal = ({ toggleModal }) => {
                   placeholder="Enter server name"
                 />
               </div>
-            </div>
-            <div className="bg-primary-2 rounded-b-md p-4 text-zinc-300 flex items-center justify-end gap-2 ">
-              <button
-                type="submit"
-                className={`px-8 py-3 rounded font-semibold text-sm ${
-                  serverName && image && !uploading
-                    ? "bg-main cursor-pointer hover:bg-main/85 text-white"
-                    : "bg-main/50 cursor-not-allowed text-zinc-400"
-                }`}
-              >
-                {uploading ? "Uploading..." : "Create"}
-              </button>
             </div>
           </form>
         </div>
