@@ -5,7 +5,7 @@ import { Navigate, useLocation } from "react-router-dom";
 const ProtectedRoute = ({ children }) => {
   const currentUser = useSelector((state) => state.user.currentUser);
   const location = useLocation();
-  if (!currentUser || !token) {
+  if (!currentUser) {
     return <Navigate to="/sign-in" state={{ from: location }} replace />;
   }
   return children;
