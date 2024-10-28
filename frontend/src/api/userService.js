@@ -62,7 +62,6 @@ export const getUserById = async (userId) => {
                 'Authorization': `Bearer ${token}`
             }
         });
-
         const data = await response.json();
 
         if (!response.ok) {
@@ -175,3 +174,104 @@ export const deleteUser = async (userId) => {
         throw error;
     }
 };
+export const sendFriendInvite = async (userId, friendUsername, token) => {
+    try {
+        const token = getToken();
+        const response = await fetch(`${API_URL}/user/add-friend`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            },
+            body: JSON.stringify({ userId: userId, friendUsername: friendUsername })
+        });
+
+        if (!response.ok) {
+            const errorData = await response.json();
+            throw new Error(errorData.message || 'Error sending friend invite');
+        }
+
+        const data = await response.json();
+        return data; 
+    } catch (error) {
+        console.error("Fetch send friend invite error:", error);
+        throw error; 
+    }
+};
+
+export const acceptFriendInvite = async (inviteId) => {
+    try {
+        const token = getToken();
+        const response = await fetch(`${API_URL}/user/accept-friend`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            },
+            body: JSON.stringify({ inviteId: inviteId })
+        });
+
+        if (!response.ok) {
+            const errorData = await response.json();
+            throw new Error(errorData.message || 'Error accepting friend invite');
+        }
+
+        const data = await response.json();
+        return data; 
+    } catch (error) {
+        console.error("Fetch accept friend invite error:", error);
+        throw error; 
+    }
+};
+
+export const rejectFriendInvite = async (inviteId) => {
+    try {
+        const token = getToken();
+        const response = await fetch(`${API_URL}/user/reject-friend`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            },
+            body: JSON.stringify({ inviteId: inviteId })
+        });
+
+        if (!response.ok) {
+            const errorData = await response.json();
+            throw new Error(errorData.message || 'Error rejecting friend invite');
+        }
+
+        const data = await response.json();
+        return data; 
+    } catch (error) {
+        console.error("Fetch reject friend invite error:", error);
+        throw error; 
+    }
+};
+
+export const getPendingInvites = async () => {
+    try {
+        const token = getToken();
+        const response = await fetch(`${API_URL}/user/pending-invites`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            }
+        });
+
+        if (!response.ok) {
+            const errorData = await response.json();
+            throw new Error(errorData.message || 'Error fetching pending invites');
+        }
+
+        const data = await response.json();
+        return data; 
+    } catch (error) {
+        console.error("Fetch pending invites error:", error);
+        throw error; 
+    }
+};
+
+
+

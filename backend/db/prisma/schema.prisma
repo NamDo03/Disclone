@@ -19,7 +19,46 @@ model User {
   messages    Message[]
   serverMemberships ServerMember[]
   ownedServers   Server[] @relation("UserServers")
+
+  friends     Friendship[] @relation("UserFriends")
+  friendOf    Friendship[] @relation("FriendUsers")
+
+
+  sentInvites     FriendInvite[] @relation("SentInvites")
+  receivedInvites FriendInvite[] @relation("ReceivedInvites")
 }
+
+model Friendship {
+  id         Int      @id @default(autoincrement())
+  userId     Int
+  friendId   Int
+  created_at DateTime @default(now())
+
+  user       User     @relation("UserFriends", fields: [userId], references: [id], onDelete: Cascade)
+  friend     User     @relation("FriendUsers", fields: [friendId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, friendId])
+}
+
+model FriendInvite {
+  id         Int       @id @default(autoincrement())
+  senderId   Int
+  receiverId Int
+  status     InviteStatus @default(PENDING) 
+  created_at DateTime   @default(now())
+
+  sender     User       @relation("SentInvites", fields: [senderId], references: [id], onDelete: Cascade)
+  receiver   User       @relation("ReceivedInvites", fields: [receiverId], references: [id], onDelete: Cascade)
+
+  @@unique([senderId, receiverId]) 
+}
+
+enum InviteStatus {
+  PENDING
+  ACCEPTED
+  REJECTED
+}
+
 
 model Server {
   id          Int       @id @default(autoincrement())
