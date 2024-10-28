@@ -127,6 +127,130 @@ class UserController {
     }
   }
   
+  async sendFriendInvite(userId, friendUsername) {
+    try {
+      const friend = await prisma.user.findUnique({
+        where: { username: friendUsername }
+      });
+  
+      if (!friend) {
+        throw new Error("Friend not found!");
+      }
+  
+      if (userId === friend.id) {
+        throw new Error("You cannot send a friend invite to yourself!");
+      }
+  
+   
+      const existingFriendship = await prisma.friendship.findFirst({
+        where: {
+          OR: [
+            { userId: parseInt(userId), friendId: parseInt(friend.id) },
+            { userId: parseInt(friend.id), friendId: parseInt(userId) }
+          ]
+        }
+      });
+  
+      if (existingFriendship) {
+        throw new Error("You are already friends with this user!");
+      }
+  
+     
+      const existingInvite = await prisma.friendInvite.findFirst({
+        where: {
+          senderId: parseInt(userId),
+          receiverId: parseInt(friend.id),
+          status: 'PENDING'
+        }
+      });
+  
+      if (existingInvite) {
+        throw new Error("Friend invite already sent and is pending!");
+      }
+  
+  
+      const newInvite = await prisma.friendInvite.create({
+        data: {
+          senderId: parseInt(userId),
+          receiverId: parseInt(friend.id),
+          status: 'PENDING'
+        }
+      });
+  
+      return {
+        message: "Friend invite sent successfully!",
+        invite: newInvite
+      };
+    } catch (error) {
+      throw new Error(`${error.message}`);
+    }
+  }
+  
+
+  async acceptFriendInvite(inviteId) {
+    try {
+      const invite = await prisma.friendInvite.findUnique({
+        where: { id: parseInt(inviteId) },
+      });
+  
+      if (!invite) {
+        throw new Error("Friend invite not found!");
+      }
+  
+      if (invite.status !== 'PENDING') {
+        throw new Error("This invite has already been processed!");
+      }
+  
+    
+      const newFriendship = await prisma.friendship.create({
+        data: {
+          userId: invite.senderId,
+          friendId: invite.receiverId
+        }
+      });
+  
+      await prisma.friendInvite.update({
+        where: { id: invite.id },
+        data: { status: 'ACCEPTED' }
+      });
+  
+      return {
+        message: "Friend invite accepted successfully!",
+        friendship: newFriendship
+      };
+    } catch (error) {
+      throw new Error(`${error.message}`);
+    }
+  }
+  
+  async getPendingInvites(userId) {
+    try {
+      const pendingInvites = await prisma.friendInvite.findMany({
+        where: {
+          receiverId: userId,
+          status: 'PENDING', 
+        },
+        include: {
+          sender: {
+            select: {
+              id: true,
+              username: true, 
+            },
+          },
+        },
+      });
+      return pendingInvites;
+    } catch (error) {
+      throw new Error(`Failed to get pending invites for userId ${userId}: ${error.message}`);
+    }
+  }
+  
+  
+ 
+  
+  
 }
+
+
 
 export const userController = new UserController()

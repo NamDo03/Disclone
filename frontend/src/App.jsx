@@ -27,6 +27,7 @@ function App() {
             </ProtectedRoute>
           }
         />
+
         <Route
           path="/servers/:serverId/channels/:channelId"
           element={
@@ -42,7 +43,7 @@ function App() {
           element={
             <ProtectedRoute>
               <HomeLayout>
-                <PersonalMessage/>
+                <PersonalMessage />
               </HomeLayout>
             </ProtectedRoute>
           }
@@ -65,7 +66,7 @@ function App() {
             </ProtectedRoute>
           }
         />
-          <Route
+        <Route
           path="/page-not-found"
           element={
             <ProtectedRoute>

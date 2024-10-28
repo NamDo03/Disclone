@@ -223,6 +223,7 @@ router.delete('/server/delete-member', passport.authenticate('jwt', { session: f
   }
 });
 
+
 router.get('/server/:serverId/get-by-id', passport.authenticate('jwt', { session: false }), async (req, res, next) => {
   try {
     const { serverId } = req.params;
@@ -248,6 +249,7 @@ router.get('/channel/:channelId/get-by-id', passport.authenticate('jwt', { sessi
       return res.status(404).json({ message: 'Channel not found' });
     }
     res.status(200).json(channel);
+
   } catch (error) {
     return next(error);
   }
@@ -350,6 +352,67 @@ router.delete('/user/delete', passport.authenticate('jwt', { session: false }), 
     return next(error);
   }
 });
+
+
+
+router.post('/user/add-friend', passport.authenticate('jwt', { session: false }), async (req, res, next) => {
+  try {
+    const { friendUsername, userId } = req.body;
+    if (!userId || !friendUsername) {
+      return res.status(400).json({ message: "Missing user id or friend's username!" });
+    }
+
+    const result = await userController.sendFriendInvite(userId, friendUsername);
+    res.status(200).json(result);
+  } catch (error) {
+    return next(error);
+  }
+});
+
+router.post('/user/accept-friend', passport.authenticate('jwt', { session: false }), async (req, res, next) => {
+  try {
+    const { inviteId } = req.body;
+    if (!inviteId) {
+      return res.status(400).json({ message: "Missing invite ID!" });
+    }
+
+    const result = await userController.acceptFriendInvite(inviteId);
+    res.status(200).json(result);
+  } catch (error) {
+    return next(error);
+  }
+});
+
+router.post('/user/reject-friend', passport.authenticate('jwt', { session: false }), async (req, res, next) => {
+  try {
+    const { inviteId } = req.body;
+    if (!inviteId) {
+      return res.status(400).json({ message: "Missing invite ID!" });
+    }
+
+    const result = await userController.rejectFriendInvite(inviteId);
+    res.status(200).json(result);
+  } catch (error) {
+    return next(error);
+  }
+});
+
+router.get('/user/pending-invites', passport.authenticate('jwt', { session: false }), async (req, res, next) => {
+  try {
+    const userId = req.user.id; 
+
+    const pendingInvites = await userController.getPendingInvites(userId);
+    if (!pendingInvites || pendingInvites.length === 0) {
+      return res.status(404).json({ message: 'No pending invites found' });
+    }
+
+    res.status(200).json(pendingInvites);
+
+  } catch (error) {
+    return next(error);
+  }
+});
+
 
 
 
