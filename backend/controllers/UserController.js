@@ -160,12 +160,20 @@ class UserController {
         where: {
           senderId: parseInt(userId),
           receiverId: parseInt(friend.id),
-          status: 'PENDING'
+          status: {
+            in: ['PENDING', 'REJECTED'],
+          },
         }
       });
   
       if (existingInvite) {
-        throw new Error("Friend invite already sent and is pending!");
+        if (existingInvite.status === 'PENDING') {
+          throw new Error("Friend invite already sent and is pending!");
+        } else if (existingInvite.status === 'REJECTED') {
+          await prisma.friendInvite.delete({
+            where: { id: existingInvite.id },
+          });
+        }
       }
   
   
@@ -235,6 +243,7 @@ class UserController {
             select: {
               id: true,
               username: true, 
+              avatar_url:true,
             },
           },
         },
@@ -245,10 +254,34 @@ class UserController {
     }
   }
   
+  async rejectFriendInvite(inviteId) {
+    try {
+      const invite = await prisma.friendInvite.findUnique({
+        where: { id: parseInt(inviteId) },
+      });
   
- 
+      if (!invite) {
+        throw new Error("Friend invite not found!");
+      }
   
+      if (invite.status !== 'PENDING') {
+        throw new Error("This invite has already been processed!");
+      }
   
+      // Cập nhật trạng thái của lời mời thành 'REJECTED'
+      await prisma.friendInvite.update({
+        where: { id: invite.id },
+        data: { status: 'REJECTED' }
+      });
+  
+      return {
+        message: "Friend invite rejected successfully!"
+      };
+    } catch (error) {
+      throw new Error(error.message);
+    }
+  }
+   
 }
 
 

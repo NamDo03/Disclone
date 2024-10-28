@@ -4,9 +4,9 @@ import {
   acceptFriendInvite,
   rejectFriendInvite,
 } from "../api/userService";
-import Cookies from "js-cookie";
 import { IoClose } from "react-icons/io5";
 import { FaCheck } from "react-icons/fa6";
+import img from "../assets/nopending.svg";
 
 const PendingInvites = () => {
   const [pendingInvites, setPendingInvites] = useState([]);
@@ -16,11 +16,10 @@ const PendingInvites = () => {
   useEffect(() => {
     const fetchPendingInvites = async () => {
       try {
-        const token = Cookies.get("token");
-        const invites = await getPendingInvites(token);
+        const invites = await getPendingInvites();
         setPendingInvites(invites);
       } catch (error) {
-        setMessage(error.message);
+        console.log(error.message);
       } finally {
         setLoading(false);
       }
@@ -30,9 +29,8 @@ const PendingInvites = () => {
   }, []);
 
   const handleAccept = async (inviteId) => {
-    const token = Cookies.get("token");
     try {
-      await acceptFriendInvite(inviteId, token);
+      await acceptFriendInvite(inviteId);
       setPendingInvites((prevInvites) =>
         prevInvites.filter((invite) => invite.id !== inviteId)
       );
@@ -43,9 +41,8 @@ const PendingInvites = () => {
   };
 
   const handleReject = async (inviteId) => {
-    const token = Cookies.get("token");
     try {
-      await rejectFriendInvite(inviteId, token);
+      await rejectFriendInvite(inviteId);
       setPendingInvites((prevInvites) =>
         prevInvites.filter((invite) => invite.id !== inviteId)
       );
@@ -61,9 +58,12 @@ const PendingInvites = () => {
         <p>Loading...</p>
       ) : (
         <>
-          {message && <p className="text-green-500 mb-4">{message}</p>}
+          {message && <p className="text-green mb-4">{message}</p>}
           {pendingInvites.length === 0 ? (
-            <p>No pending invites.</p>
+            <div className="flex flex-col items-center justify-center h-full">
+              <img src={img} alt="No pending invites" className="mb-4" />
+              <p>There are no pending friend requests.</p>
+            </div>
           ) : (
             <div className="w-full">
               <p className="mb-4">PENDING - {pendingInvites.length}</p>
@@ -73,13 +73,16 @@ const PendingInvites = () => {
                     key={invite.id}
                     className="border-t-[1px] border-t-zinc-500 p-4  flex justify-between items-center"
                   >
-                    <span>
-                      <strong style={{ fontSize: "larger" }}>
-                        {invite.sender.username}
-                      </strong>
-                      <br />
-                      Incoming Friend Request
-                    </span>
+                    <div className="flex flex-row gap-3 items-center">
+                      <img
+                        src={invite.sender.avatar_url}
+                        className="w-10 h-10 rounded-full object-cover"
+                      />
+                      <div className="flex flex-col justify-start">
+                        <h2 className="font-semibold">{invite.sender.username}</h2>
+                        <span className="text-xs text-zinc-400">Incoming Friend Request</span>
+                      </div>
+                    </div>
 
                     <div className="flex items-center gap-4">
                       <button

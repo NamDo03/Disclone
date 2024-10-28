@@ -9,10 +9,12 @@ const AddFriends = () => {
   const [message, setMessage] = useState(null);
   const [loading, setLoading] = useState(false);
   const [color, setColor] = useState(null);
+  const [borderColor, setBorderColor] = useState("border-white");
   const currentUser = useSelector((state) => state.user.currentUser);
 
   const handleInputChange = (e) => {
     setInputValue(e.target.value);
+    setBorderColor("border-white");
   };
 
   const handleSendRequest = async () => {
@@ -21,19 +23,19 @@ const AddFriends = () => {
     setLoading(true);
     setMessage(null);
     try {
-      const token = Cookies.get("token");
-
-      if (!token || !currentUser.id) {
+      if (!currentUser.id) {
         throw new Error("Missing authentication information");
       }
 
       // Gọi hàm sendFriendInvite với đúng tham số
-      const result = await sendFriendInvite(currentUser.id, inputValue, token);
+      const result = await sendFriendInvite(currentUser.id, inputValue);
       setMessage(result.message);
       setColor("text-green");
+      setBorderColor("border-green");
     } catch (error) {
       setMessage(error.message);
       setColor("text-red-500");
+      setBorderColor("border-red-500");
     } finally {
       setLoading(false);
     }
@@ -50,7 +52,7 @@ const AddFriends = () => {
           <input
             type="text"
             placeholder="You can add friends with their Discord username"
-            className="bg-gray-700 p-3 w-full text-white placeholder-gray-400 rounded-md pr-40"
+            className={`bg-zinc-900 p-3 w-full text-white placeholder-zinc-500 rounded-md pr-40 border-[1px] ${borderColor}`}
             value={inputValue}
             onChange={handleInputChange}
           />

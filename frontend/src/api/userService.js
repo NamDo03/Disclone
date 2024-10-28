@@ -176,6 +176,7 @@ export const deleteUser = async (userId) => {
 };
 export const sendFriendInvite = async (userId, friendUsername, token) => {
     try {
+        const token = getToken();
         const response = await fetch(`${API_URL}/user/add-friend`, {
             method: 'POST',
             headers: {
@@ -198,8 +199,9 @@ export const sendFriendInvite = async (userId, friendUsername, token) => {
     }
 };
 
-export const acceptFriendInvite = async (inviteId, token) => {
+export const acceptFriendInvite = async (inviteId) => {
     try {
+        const token = getToken();
         const response = await fetch(`${API_URL}/user/accept-friend`, {
             method: 'POST',
             headers: {
@@ -222,8 +224,9 @@ export const acceptFriendInvite = async (inviteId, token) => {
     }
 };
 
-export const rejectFriendInvite = async (inviteId, token) => {
+export const rejectFriendInvite = async (inviteId) => {
     try {
+        const token = getToken();
         const response = await fetch(`${API_URL}/user/reject-friend`, {
             method: 'POST',
             headers: {
@@ -246,8 +249,9 @@ export const rejectFriendInvite = async (inviteId, token) => {
     }
 };
 
-export const getPendingInvites = async (token) => {
+export const getPendingInvites = async () => {
     try {
+        const token = getToken();
         const response = await fetch(`${API_URL}/user/pending-invites`, {
             method: 'GET',
             headers: {
