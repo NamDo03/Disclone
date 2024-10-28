@@ -41,7 +41,7 @@ const ChatMessages = ({ type, name, messages }) => {
               key={message.id}
               authorId={message.user.id}
               authorName={message.user.username}
-              authorAvatar={message.user.avatar}
+              authorAvatar={message.user.avatar_url}
               content={message.content}
               timestamp={new Date(message.created_at).toLocaleString('vi-VN', {
                 timeZone: 'Asia/Ho_Chi_Minh'
