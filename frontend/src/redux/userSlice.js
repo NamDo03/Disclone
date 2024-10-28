@@ -25,10 +25,20 @@ export const userSlice = createSlice({
             state.currentUser = null;
             state.loading = false;
             state.error = false;
+        },
+        updateUsername: (state, action) => {
+            if (state.currentUser) {
+                state.currentUser.username = action.payload;
+            }
+        },
+        updateAvatarUrl: (state, action) => {
+            if (state.currentUser) {
+                state.currentUser.avatar_url = action.payload;
+            }
         }
     },
 })
 
-export const { loginStart, loginSuccess, loginFailure, logout } = userSlice.actions
+export const { loginStart, loginSuccess, loginFailure, logout, updateUsername, updateAvatarUrl } = userSlice.actions
 
 export default userSlice.reducer

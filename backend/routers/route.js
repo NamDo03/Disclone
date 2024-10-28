@@ -277,5 +277,80 @@ router.get('/user/:userId/get-by-id', passport.authenticate('jwt', { session: fa
     return next(error);
   }
 });
+router.post('/user/update-username', passport.authenticate('jwt', { session: false }), async (req, res, next) => {
+  try {
+    const { newUsername, currentPassword, userId } = req.body;
+
+    if (!userId || !newUsername || !currentPassword) {
+      return res.status(400).json({ message: "Both new username and current password are required!" });
+    }
+
+    const updatedUser = await userController.updateUsername(userId, newUsername, currentPassword);
+    res.status(200).json({ message: 'Username updated successfully', user: updatedUser });
+  } catch (error) {
+    return next(error);
+  }
+});
+
+
+router.post('/user/update-password', passport.authenticate('jwt', { session: false }), async (req, res, next) => {
+  try {
+    const { currentPassword, newPassword, userId } = req.body;
+
+    if (!currentPassword || !newPassword) {
+      return res.status(400).json({ message: "Current and new passwords are required!" });
+    }
+
+    const user = await userController.getUserById(parseInt(userId));
+    const isPasswordValid = await bcrypt.compare(currentPassword, user.password);
+
+    if (!isPasswordValid) {
+      return res.status(401).json({ message: "Incorrect current password" });
+    }
+
+    const isSamePassword = await bcrypt.compare(newPassword, user.password);
+    if (isSamePassword) {
+      return res.status(400).json({ message: "New password cannot be the same as the current password" });
+    }
+
+    const hashedPassword = await bcrypt.hash(newPassword, 10);
+    await userController.updatePassword(userId, hashedPassword);
+    res.status(200).json({ message: "Password updated successfully" });
+  } catch (error) {
+    return next(error);
+  }
+});
+
+router.post('/user/update-avatar', passport.authenticate('jwt', { session: false }), async (req, res, next) => {
+  try {
+    const { avatarUrl, userId } = req.body;
+
+    if (!avatarUrl) {
+      return res.status(400).json({ message: "Avatar URL is required!" });
+    }
+
+    const updatedUser = await userController.updateAvatar(userId, avatarUrl);
+    res.status(200).json({ message: "Avatar updated successfully", user: updatedUser });
+  } catch (error) {
+    return next(error);
+  }
+});
+
+router.delete('/user/delete', passport.authenticate('jwt', { session: false }), async (req, res, next) => {
+  try {
+    const { userId } = req.body;
+
+    if (!userId) {
+      return res.status(400).json({ message: "User ID is required!" });
+    }
+
+    await userController.deleteUser(userId);
+    res.status(200).json({ message: "User deleted successfully" });
+  } catch (error) {
+    return next(error);
+  }
+});
+
+
 
 export { router };

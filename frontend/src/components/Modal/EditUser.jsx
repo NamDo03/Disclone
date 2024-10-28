@@ -1,20 +1,29 @@
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { IoClose } from "react-icons/io5";
 import { createPortal } from "react-dom";
 import { toast } from "react-toastify";
-
+import DeleteModal from "./DeleteModal";
+import EditAvatar from "./EditAvatar";
+import EditInfo from "./EditInfo";
+import useModal from "../../hooks/useModal";
+import { useParams } from "react-router-dom";
+import { RiPencilFill } from "react-icons/ri";
 
 const EditUserModal = ({ toggleModal, user }) => {
-  const token = localStorage.getItem("token");
-  const inputRef = useRef();
-  
+  const { userId } = useParams();
 
-  const [image] = useState(user.avatar_url  || "");
-  const [username, setUsername] = useState(user.username || "");
-  const [email, setEmail] = useState(user.email || "");
-  const [password, setPassword] = useState("1234567890"); 
-  const [showPassword, setShowPassword] = useState(false);
+  // const [image] = useState(user.avatar_url || "");
+  // const [username, setUsername] = useState(user.username || "");
   const [loading, setLoading] = useState(false);
+
+  const { isOpenModal: isOpenDeleteModal, toggleModal: toggleDeleteModal } =
+    useModal();
+  const { isOpenModal: isOpenEditAvatar, toggleModal: toggleEditAvatar } =
+    useModal();
+  const { isOpenModal: isOpenEditUsername, toggleModal: toggleEditUsername } =
+    useModal();
+  const { isOpenModal: isOpenEditPassword, toggleModal: toggleEditPassword } =
+    useModal();
 
   useEffect(() => {
     const handleKeyDown = (event) => {
@@ -22,65 +31,11 @@ const EditUserModal = ({ toggleModal, user }) => {
         toggleModal();
       }
     };
-
     window.addEventListener("keydown", handleKeyDown);
     return () => {
       window.removeEventListener("keydown", handleKeyDown);
     };
   }, [toggleModal]);
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setLoading(true);
-    try {
-      await fetch(`/api/users/${user.id}`, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({
-          username,
-          email,
-          avatar: image,
-          password, 
-        }),
-      });
-
-      toast.success("User updated successfully!");
-      setTimeout(() => {
-        setLoading(false);
-        toggleModal();
-      }, 1000);
-    } catch (error) {
-      toast.error("Failed to update user information");
-      setLoading(false);
-    }
-  };
-
-  const handleDelete = async () => {
-    const confirmed = window.confirm("Are you sure you want to delete this user?");
-    if (!confirmed) return;
-
-    setLoading(true);
-    try {
-      await fetch(`/api/users/${user.id}`, {
-        method: "DELETE",
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-
-      toast.success("User deleted successfully!");
-      setTimeout(() => {
-        setLoading(false);
-        toggleModal();
-      }, 1000);
-    } catch (error) {
-      toast.error("Failed to delete user");
-      setLoading(false);
-    }
-  };
 
   return createPortal(
     <div className="fixed inset-0 bg-black/50 z-[1000] flex items-center justify-center">
@@ -96,74 +51,86 @@ const EditUserModal = ({ toggleModal, user }) => {
         </div>
         <div className="overflow-y-auto">
           <div className="flex items-center mb-4">
-            <img
-              src={image}
-              alt="Avatar"
-              className="w-[72px] h-[72px] rounded-full object-cover"
-            />
+            <div
+              className="relative group w-[72px] h-[72px]"
+              onClick={toggleEditAvatar}
+            >
+              <img
+                src={user.avatar_url}
+                alt="Avatar"
+                className="w-full h-full rounded-full object-cover group-hover:brightness-50 transition duration-200"
+              />
+              <RiPencilFill
+                size={24}
+                className="absolute inset-0 m-auto text-white opacity-0 group-hover:opacity-100 transition-opacity duration-200"
+              />
+            </div>
             <div className="ml-4">
-              <h3 className="text-white text-2xl">{username}</h3>
+              <h3 className="text-white text-2xl">{user.username}</h3>
             </div>
           </div>
           <div className="bg-primary-3 rounded-lg p-4 mb-4">
-            <div className="mb-4">
-              <label className="text-sm text-gray-400 block">User Name</label>
-              <input
-                type="text"
-                className="w-full px-4 py-2 my-2 rounded-md bg-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
-                value={username}
-                onChange={(e) => setUsername(e.target.value)}
-              />
-            </div>
-            <div className="mb-4">
-              <label className="text-sm text-gray-400 block">Email</label>
-              <p className="text-white">{email}</p>
-            </div>
-            <div className="mb-4">
-              <label className="text-sm text-gray-400 block">Password</label>
+            <div className="mb-4 flex items-center justify-between">
               <div className="flex items-center">
-                <input
-                  type={showPassword ? "text" : "password"}
-                  className="w-full px-4 py-2 my-2 rounded-md bg-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)} 
-                />
-                <button
-                  onClick={() => setShowPassword(!showPassword)}
-                  className="ml-4 px-4 py-2 bg-gray-600 text-white rounded-md hover:bg-gray-500 transition"
-                >
-                  {showPassword ? "Hide" : "Show"}
-                </button>
+                <label className="text-sm text-gray-400 block mr-4">
+                  Email
+                </label>
+                <p className="text-white text-zinc-400 mr-2">{user.email}</p>
               </div>
+            </div>
+            <div className="mb-4 flex items-center justify-between">
+              <div className="flex items-center">
+                <label className="text-sm text-gray-400 block mr-4">
+                  Username
+                </label>
+                <p className="text-white text-zinc-400 mr-2">{user.username}</p>
+              </div>
+              <button
+                onClick={toggleEditUsername}
+                type="button"
+                className="ml-2 px-3 py-1 bg-gray-600 text-white rounded-md hover:bg-gray-500 transition "
+              >
+                Edit
+              </button>
+            </div>
+            <div className="mb-4 flex items-center justify-between">
+              <div className="flex">
+                <label className="text-sm text-gray-400 block mr-4">
+                  Password
+                </label>
+                <p className="text-white text-zinc-400 mr-2">••••••••••</p>
+              </div>
+              <button
+                onClick={toggleEditPassword}
+                type="button"
+                className="ml-2 px-3 py-1 bg-gray-600 text-white rounded-md hover:bg-gray-500 transition "
+              >
+                Edit
+              </button>
             </div>
           </div>
           <button
-            onClick={handleDelete}
+            onClick={toggleDeleteModal}
             className="w-full px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-500 transition"
-            disabled={loading}
           >
             {loading ? "Deleting..." : "Delete User"}
           </button>
         </div>
-        <div className="flex justify-end mt-4">
-          <button
-            onClick={toggleModal}
-            className="mr-4 px-5 py-2 bg-gray-600 text-white rounded-md hover:bg-gray-500 transition"
-            disabled={loading}
-          >
-            Cancel
-          </button>
-          <button
-            onClick={handleSubmit}
-            className={`px-6 py-2 rounded-md bg-blue-600 text-white hover:bg-blue-500 transition ${
-              loading ? "opacity-50 cursor-not-allowed" : ""
-            }`}
-            disabled={loading}
-          >
-            {loading ? "Saving..." : "Save Changes"}
-          </button>
-        </div>
       </div>
+      {isOpenDeleteModal && (
+        <DeleteModal
+          toggleModal={toggleDeleteModal}
+          type="user"
+          userId={userId}
+        />
+      )}
+      {isOpenEditAvatar && <EditAvatar toggleModal={toggleEditAvatar} />}
+      {isOpenEditUsername && (
+        <EditInfo toggleModal={toggleEditUsername} type="username" />
+      )}
+      {isOpenEditPassword && (
+        <EditInfo toggleModal={toggleEditPassword} type="new password" />
+      )}
     </div>,
     document.getElementById("root")
   );

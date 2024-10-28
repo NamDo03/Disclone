@@ -8,8 +8,11 @@ import { useDispatch, useSelector } from "react-redux";
 import { removeServer } from "../../redux/serverSlice";
 import { useNavigate } from "react-router-dom";
 import { removeChannel } from "../../redux/channelSlice";
+import { deleteUser } from "../../api/userService";
+import { logout } from "../../redux/userSlice";
 
 const DeleteModal = ({ type, toggleModal, serverId, channelId }) => {
+  const currentUser = useSelector((state) => state.user.currentUser);
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const [name, setName] = useState();
@@ -50,6 +53,9 @@ const DeleteModal = ({ type, toggleModal, serverId, channelId }) => {
         } else {
           navigate("/");
         }
+      } else if (type.toLowerCase() === "user") {
+        await deleteUser(currentUser.id);
+        dispatch(logout());
       }
       toggleModal();
       toast.success(`Delete ${type} ${name} success`);
@@ -59,7 +65,7 @@ const DeleteModal = ({ type, toggleModal, serverId, channelId }) => {
   };
 
   return createPortal(
-    <div className="fixed inset-0 bg-black/70 flex justify-center items-center z-[999]">
+    <div className="fixed inset-0 bg-black/70 flex justify-center items-center z-[9999]">
       <div className="min-w-[450px] max-w-[580px] bg-primary-1 rounded-md">
         <div className="p-4 rounded-t-md">
           <div className="flex items-center justify-between">
@@ -76,8 +82,10 @@ const DeleteModal = ({ type, toggleModal, serverId, channelId }) => {
 
           <div className="py-5">
             <p className="text-zinc-300 text-center">
-              Are you sure you want to delete the {type} <strong>{name}</strong>
-              ?
+              {type.toLowerCase() === "user"
+                ? `Are you sure you want to delete this user `
+                : `Are you sure you want to delete the ${type} `}
+              <strong>{name}</strong>?
             </p>
             <p className="text-zinc-300 text-center">
               This action cannot be undone.
