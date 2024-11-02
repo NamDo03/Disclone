@@ -2,47 +2,69 @@ import { StreamCall, StreamVideo, StreamVideoClient, StreamTheme, SpeakerLayout,
 import '@stream-io/video-react-sdk/dist/css/styles.css';
 import './style.css';
 import { useSelector } from "react-redux";
-import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
-
-const apiKey = 'mmhfdzb5evj2';
-const token = import.meta.env.VITE_CALL_TOKEN || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJodHRwczovL3Byb250by5nZXRzdHJlYW0uaW8iLCJzdWIiOiJ1c2VyL0JpYl9Gb3J0dW5hIiwidXNlcl9pZCI6IkJpYl9Gb3J0dW5hIiwidmFsaWRpdHlfaW5fc2Vjb25kcyI6NjA0ODAwLCJpYXQiOjE3MjkzOTc4NTIsImV4cCI6MTczMDAwMjY1Mn0.woEePdddpfjywYDSqKWoxPFeaFINMads7effB6rKcm4';
-const callId = 'yFYamwIDNPtJ';
-const userId = 'Bib_Fortuna';
+import { useEffect, useState, useRef } from "react";
+import { useNavigate, useParams } from "react-router-dom";
+import { socket } from "../../pages/ChannelPage";
 
 export default function VideoCall() {
   const currentUser = useSelector((state) => state.user.currentUser);
-  const [client, setClient] = useState();
-  const [call, setCall] = useState();
+  const clientRef = useRef(null);
+  const hasJoinedCall = useRef(false);
+  const [call, setCall] = useState(null);
   const navigate = useNavigate();
+  const { serverId, channelId } = useParams();
+
+  const getOrCreateInstance = (apiKey, token, user) => {
+    if (!clientRef.current) {
+      clientRef.current = new StreamVideoClient({ apiKey, user, token });
+    }
+    return clientRef.current;
+  };
+
   useEffect(() => {
-    const user = {
-      id: userId || currentUser.id,
-      name: currentUser.username,
-      image: currentUser.avatar_url,
+    const handleGetCall = ({ apiKey, callId, token, user }) => {
+      if (!hasJoinedCall.current) {
+        const client = getOrCreateInstance(apiKey, token, user);
+        const callInstance = client.call('default', callId);
+        callInstance.join({ create: true });
+        setCall(callInstance);
+        hasJoinedCall.current = true;
+      }
     };
-    
-    const client = new StreamVideoClient({ apiKey, user, token });
-    setClient(client)
-    const call = client.call('default', callId);
-    setCall(call)
-    call.join({ create: true });
+
+    socket.on("getCall", handleGetCall);
+    socket.emit('joinCall', { serverId, channelId, currentUser });
 
     return () => {
-      client.disconnectUser();
-      setClient(undefined);
+      if (call) {
+        call.leave();
+      }
+      socket.off("getCall", handleGetCall);
+      setCall(null);
+      hasJoinedCall.current = false;
     };
-  },[currentUser])
+  }, [currentUser, serverId, channelId]);
 
   return (
-    <StreamVideo client={client}>
-      <StreamTheme>
-        <StreamCall call={call}>
-          <SpeakerLayout participantsBarPosition='bottom' />
-          <CallControls onLeave={() => {client.disconnectUser(); setClient(undefined); navigate('/')}}/>
-        </StreamCall>
-      </StreamTheme>
-    </StreamVideo>
+    clientRef.current && call ? (
+      <StreamVideo client={clientRef.current}>
+        <StreamTheme>
+          <StreamCall call={call}>
+            <SpeakerLayout participantsBarPosition='bottom' />
+            <CallControls onLeave={() => {
+              if (call) {
+                call.leave();
+              }
+              setCall(null);
+              clientRef.current = null;
+              hasJoinedCall.current = false;
+              navigate('/');
+            }}/>
+          </StreamCall>
+        </StreamTheme>
+      </StreamVideo>
+    ) : (
+      <div>Loading Call...</div>
+    )
   );
 }
-

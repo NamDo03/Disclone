@@ -72,7 +72,6 @@ const EditAvatar = ({ toggleModal }) => {
     try {
       const img_url = await uploadImage();
       const newAvatar = await editUserAvatar(currentUser.id, img_url);
-      console.log(newAvatar)
       dispatch(updateAvatarUrl(newAvatar.user.avatar_url));
       toast.success("Update avatar success");
       toggleModal();
