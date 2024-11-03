@@ -74,7 +74,7 @@ const AllFriends = ({ setActiveComponent }) => {
                 <div className="flex items-center gap-3">
                   <img
                     className="w-9 h-9 object-cover rounded-full"
-                    src={friend.avatarUrl || "/default-avatar.png"}
+                    src={friend.avatar_url}
                     alt={friend.username}
                   />
                   <p className="text-zinc-300">{friend.username}</p>
