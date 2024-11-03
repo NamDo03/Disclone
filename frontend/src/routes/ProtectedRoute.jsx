@@ -4,6 +4,7 @@ import { Navigate, useLocation } from "react-router-dom";
 import Cookies from "js-cookie";
 
 const ProtectedRoute = ({ children }) => {
+  const token = Cookies.get("token");
   const currentUser = useSelector((state) => state.user.currentUser);
   const token = Cookies.get("token");;
   const location = useLocation();

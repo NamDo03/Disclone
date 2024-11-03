@@ -54,6 +54,7 @@ const ServerSideBar = () => {
                     key={channel.id}
                     index={index}
                     id={channel.id}
+                    type={channel.type}
                     name={channel.channel_name}
                     Icon={PiHashBold}
                   />
@@ -71,11 +72,13 @@ const ServerSideBar = () => {
             <>
               {channels
                 .filter((channel) => channel.type === "VOICE")
-                .map((channel) => (
+                .map((channel,index) => (
                   <ChannelItem
                     key={channel.id}
                     id={channel.id}
+                    index={index}
                     name={channel.channel_name}
+                    type={channel.type}
                     Icon={BiSolidVolumeFull}
                   />
                 ))}

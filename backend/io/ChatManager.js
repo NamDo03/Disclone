@@ -1,4 +1,6 @@
 import prisma from "../db/prismaClient.js";
+import videoClient from "../stream-io/VideoManager.js";
+const apiKey = process.env.API_VIDEO;
 
 export default class ChatManager {
   constructor(io) {
@@ -17,6 +19,10 @@ export default class ChatManager {
 
       socket.on('joinServer', async ({ serverId, channelId }) => {
         await this.joinServer(socket, serverId, channelId);
+      });
+
+      socket.on('joinCall', async({ serverId, channelId, currentUser }) => {
+        await this.joinCall(socket, serverId, channelId, currentUser);
       });
 
       socket.on('newMessage', async (msg) => {
@@ -65,6 +71,21 @@ export default class ChatManager {
       console.error('Error saving message:', error);
     }
   }
+
+  async joinCall(socket, serverId, channelId, currentUser) {
+    try {
+      const user = {
+        id: currentUser.id.toString(),
+        role: 'user',
+        name: currentUser.username,
+        image: currentUser.avatar_url,
+      };
+      await videoClient.upsertUsers([user]);
+      const token = videoClient.generateUserToken({ user_id: user.id, validity_in_seconds: 60 * 60 * 2 });
+      const callId = `${serverId}${channelId}`;
+      socket.emit('getCall', { apiKey, callId, token, user });
+    } catch (error) {
+      console.error('Error get video call', error);
+    }
+  }
 }
-
-

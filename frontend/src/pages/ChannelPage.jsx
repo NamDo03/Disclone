@@ -9,7 +9,7 @@ import { io } from "socket.io-client";
 import { getUserById } from "../api/userService";
 
 const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || "http://localhost:3000";
-const socket = io(BACKEND_URL);
+export const socket = io(BACKEND_URL);
 const ChannelPage = () => {
 
   const { serverId, channelId } = useParams();
