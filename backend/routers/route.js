@@ -412,6 +412,22 @@ router.get('/user/pending-invites', passport.authenticate('jwt', { session: fals
     return next(error);
   }
 });
+router.get('/user/:id/friends', passport.authenticate('jwt', { session: false }), async (req, res, next) => {
+  try {
+    const userId = parseInt(req.params.id); 
+    if (isNaN(userId)) {
+      return res.status(400).json({ message: 'Invalid userId provided' });
+    }
+
+    const friends = await userController.getFriends(userId);
+
+    res.status(200).json(friends);
+  } catch (error) {
+    return next(error);
+  }
+});
+
+
 
 
 

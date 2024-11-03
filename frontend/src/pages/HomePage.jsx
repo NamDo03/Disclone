@@ -41,7 +41,7 @@ const HomePage = () => {
         ) : activeComponent === "addFriends" ? (
           <AddFriends />
         ) : (
-          <AllFriends />
+          <AllFriends setActiveComponent={setActiveComponent}/>
         )}
       </main>
     </div>

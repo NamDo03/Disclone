@@ -273,5 +273,37 @@ export const getPendingInvites = async () => {
     }
 };
 
+export const getFriends = async (userId) => {
+    if (!userId || isNaN(userId)) {
+        throw new Error("Invalid userId provided");
+    }
 
+    const token = getToken(); 
+ 
+    if (!token) {
+        throw new Error("Token is not available");
+    }
+
+    try {
+        const response = await fetch(`${API_URL}/user/${userId}/friends`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            }
+        });
+
+        if (!response.ok) {
+            const errorData = await response.json();
+            console.error("Error fetching friends:", errorData);
+            throw new Error(errorData.message || 'Error fetching friends');
+        }
+
+        const data = await response.json();
+        return data;
+    } catch (error) {
+        console.error("Fetch friends error:", error);
+        throw new Error(error.message || "Error retrieving friends");
+    }
+};
 
