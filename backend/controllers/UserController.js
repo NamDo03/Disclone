@@ -8,6 +8,14 @@ class UserController {
     });
     return user;
   }
+
+  async getUserByUsername(username) {
+    const user = await prisma.user.findUnique({
+      where: { username: username },
+    });
+    return user;
+  }
+  
   
   async getUserById(id) {
     try {
@@ -25,6 +33,10 @@ class UserController {
       const user = await this.getUserByEmail(email);
       if (user) {
         throw new Error(`User with email ${email} already exists`);
+      }
+      const userByUsername = await this.getUserByUsername(username);
+      if (userByUsername) {
+        throw new Error(`Username "${username}" is already taken`);
       }
       const hashedPassword = await bcrypt.hash(password, 10);
       const defaultAvatarUrl = "https://res.cloudinary.com/dyzlyiggq/image/upload/v1730085888/c5aaqj0pfasjfoufwwx5.png"; 
