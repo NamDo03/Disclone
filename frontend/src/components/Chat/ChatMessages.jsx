@@ -4,7 +4,7 @@ import { LuServerCrash } from "react-icons/lu";
 import ChatItem from "./ChatItem";
 import useScrollToBottom from "../../hooks/useScrollToBottom";
 
-const ChatMessages = ({ type, name, messages }) => {
+const ChatMessages = ({ type, name, messages,owner }) => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(false);
   const messagesEndRef = useScrollToBottom(messages);
@@ -43,6 +43,7 @@ const ChatMessages = ({ type, name, messages }) => {
               authorName={message.user.username}
               authorAvatar={message.user.avatar_url}
               content={message.content}
+              owner={owner}
               timestamp={new Date(message.created_at).toLocaleString('vi-VN', {
                 timeZone: 'Asia/Ho_Chi_Minh'
               })}

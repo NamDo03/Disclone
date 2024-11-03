@@ -93,6 +93,7 @@ const ChannelPage = () => {
           type={channel.type}
           name={channel.channel_name}
           messages={messages}
+          owner={owner}
         />
         <ChatInput
           type={channel.type}

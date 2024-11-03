@@ -2,22 +2,28 @@ import React, { useEffect, useState } from "react";
 import { MdEdit } from "react-icons/md";
 import { FaTrashCan } from "react-icons/fa6";
 import { Tooltip } from "react-tooltip";
+import { useSelector } from "react-redux";
+import { Filter } from 'bad-words'
 
 const ChatItem = ({
   authorName,
   authorAvatar,
   authorId,
   content,
+  owner,
   timestamp,
 }) => {
-  const userId = "a1";
-  const isAdmin = true;
+  const currentUser = useSelector((state) => state.user.currentUser);
+  const isAdmin = Number(currentUser.id) === Number(owner.id);
 
-  const canEditMessage = authorId === userId;
-  const canDeleteMessage = isAdmin || authorId === userId;
+  const canEditMessage = authorId === currentUser.id;
+  const canDeleteMessage = isAdmin || authorId === currentUser.id;
 
   const [isEditing, setIsEditing] = useState(false);
   const [editedMessage, setEditedMessage] = useState(content);
+
+  const filter = new Filter();
+  const filteredContent = filter.clean(content);
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -28,7 +34,7 @@ const ChatItem = ({
   const handleInputChange = (e) => {
     setEditedMessage(e.target.value);
   };
-  
+
   const handleDelete = () => {
     console.log("Delete message success");
   };
@@ -44,7 +50,10 @@ const ChatItem = ({
   }, []); // Added dependency array to prevent memory leaks
 
   const isCloudinaryImageUrl = (string) => {
-    return string.startsWith("https://res.cloudinary.com/") && /\.(jpg|jpeg|png|gif)$/.test(string);
+    return (
+      string.startsWith("https://res.cloudinary.com/") &&
+      /\.(jpg|jpeg|png|gif)$/.test(string)
+    );
   };
   return (
     <div className="relative group flex items-center hover:bg-black/5 p-4 transition w-full">
@@ -65,17 +74,16 @@ const ChatItem = ({
             </div>
             <span className="text-xs text-zinc-400">{timestamp}</span>
           </div>
-          {!isEditing && (
-            isCloudinaryImageUrl(content) ? (
+          {!isEditing &&
+            (isCloudinaryImageUrl(content) ? (
               <img
                 src={content}
                 alt="uploaded"
-                className="max-w-[300px] mt-4 h-auto rounded-md object-cover" 
+                className="max-w-[300px] mt-4 h-auto rounded-md object-cover"
               />
             ) : (
-              <p className="text-sm text-zinc-300">{content}</p>
-            )
-          )}
+              <p className="text-sm text-zinc-300">{filteredContent}</p>
+            ))}
           {isEditing && (
             <>
               <form
