@@ -8,7 +8,8 @@
     "dev": "yarn prisma:setup && node --watch --env-file=.env index.js",
     "dev:docker": "yarn prisma:setup && node --watch index.js",
     "prisma:setup": "node setupDb.js",
-    "prisma:migrate": "prisma migrate dev --schema=db/prisma/schema.prisma"
+    "prisma:migrate": "prisma migrate dev --schema=db/prisma/schema.prisma",
+    "test": "jest"
   },
   "dependencies": {
     "@prisma/client": "^5.19.1",
@@ -22,6 +23,8 @@
     "socket.io": "^4.8.0"
   },
   "devDependencies": {
+    "@jest/globals": "^29.7.0",
+    "jest": "^29.7.0",
     "prisma": "^5.19.1"
   }
 }
