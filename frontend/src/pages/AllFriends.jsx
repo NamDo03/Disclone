@@ -4,7 +4,7 @@ import { PiMagnifyingGlass } from "react-icons/pi";
 import { IoChatbubbleSharp } from "react-icons/io5";
 import { getFriends } from "../api/userService";
 
-const AllFriends = () => {
+const AllFriends = ({ setActiveComponent }) => {
   const [searchTerm, setSearchTerm] = useState("");
   const [friends, setFriends] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -86,7 +86,13 @@ const AllFriends = () => {
             ))
           ) : (
             <div className="text-zinc-400 text-center h-[200px] flex items-center justify-center uppercase font-semibold">
-              No results found
+              <span> You don't have any friends yet.</span>
+              <button
+                className="ml-2 uppercase text-main"
+                onClick={() => setActiveComponent("addFriends")}
+              >
+                Add more
+              </button>
             </div>
           )}
         </div>
