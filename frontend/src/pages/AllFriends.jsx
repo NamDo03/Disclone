@@ -1,13 +1,49 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { useSelector } from "react-redux";
 import { PiMagnifyingGlass } from "react-icons/pi";
 import { IoChatbubbleSharp } from "react-icons/io5";
-import { listfriend } from "../fakeApi";
+import { getFriends } from "../api/userService";
 
 const AllFriends = () => {
   const [searchTerm, setSearchTerm] = useState("");
-  const filteredFriends = listfriend.filter((friend) =>
+  const [friends, setFriends] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const currentUser = useSelector((state) => state.user.currentUser);
+  const userId = currentUser?.id;
+
+  useEffect(() => {
+    const fetchFriends = async () => {
+      if (!userId) {
+        setError("User ID is not available");
+        setLoading(false);
+        return;
+      }
+
+      try {
+        const data = await getFriends(userId);
+        setFriends(data);
+        setLoading(false);
+      } catch (err) {
+        setError(err.message);
+        setLoading(false);
+      }
+    };
+
+    fetchFriends();
+  }, [userId]);
+  const filteredFriends = friends.filter((friend) =>
     friend.username.toLowerCase().includes(searchTerm.toLowerCase())
   );
+
+  if (loading) {
+    return <div className="text-center">Loading friends...</div>;
+  }
+
+  if (error) {
+    return <div className="text-center text-red-500">Error: {error}</div>;
+  }
+
   return (
     <div>
       <div className="flex items-center pl-10 pt-4">
@@ -28,17 +64,17 @@ const AllFriends = () => {
           Total Friends - {filteredFriends.length}
         </p>
         <div className="h-[1px] mt-5 bg-zinc-500" />
-        <div className=" overflow-y-auto">
+        <div className="overflow-y-auto">
           {filteredFriends.length > 0 ? (
             filteredFriends.map((friend) => (
               <div
                 key={friend.id}
-                className="flex justify-between items-center px-3 py-2 rounded-lg group hover:bg-zinc-700 "
+                className="flex justify-between items-center px-3 py-2 rounded-lg group hover:bg-zinc-700"
               >
                 <div className="flex items-center gap-3">
                   <img
                     className="w-9 h-9 object-cover rounded-full"
-                    src={friend.avatarUrl}
+                    src={friend.avatarUrl || "/default-avatar.png"}
                     alt={friend.username}
                   />
                   <p className="text-zinc-300">{friend.username}</p>

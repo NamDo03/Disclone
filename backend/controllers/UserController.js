@@ -293,8 +293,44 @@ class UserController {
       throw new Error(error.message);
     }
   }
-   
+  async getFriends(userId) {
+    try {
+        const parsedUserId = parseInt(userId);
+        if (isNaN(parsedUserId)) {
+            throw new Error("Invalid userId provided");
+        }
+
+        const friendships = await prisma.friendship.findMany({
+            where: {
+                OR: [
+                    { userId: parsedUserId },
+                    { friendId: parsedUserId }
+                ]
+            },
+            include: {
+                user: true,
+                friend: true
+            }
+        });
+
+        if (!friendships || friendships.length === 0) {
+            throw new Error("No friends found!");
+        }
+
+        const friends = friendships.map(f => f.userId === parsedUserId ? f.friend : f.user);
+        return friends;
+    } catch (error) {
+        console.error("Error in getFriends:", error);
+        throw new Error(error.message || "Error retrieving friends");
+    }
 }
+}
+
+
+
+
+
+
 
 
 
