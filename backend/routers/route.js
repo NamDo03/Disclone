@@ -420,9 +420,6 @@ router.get('/user/:id/friends', passport.authenticate('jwt', { session: false })
     }
 
     const friends = await userController.getFriends(userId);
-    if (!friends || friends.length === 0) {
-      return res.status(404).json({ message: 'No friends found' });
-    }
 
     res.status(200).json(friends);
   } catch (error) {

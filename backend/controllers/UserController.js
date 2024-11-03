@@ -280,7 +280,6 @@ class UserController {
         throw new Error("This invite has already been processed!");
       }
   
-      // Cập nhật trạng thái của lời mời thành 'REJECTED'
       await prisma.friendInvite.update({
         where: { id: invite.id },
         data: { status: 'REJECTED' }
@@ -313,10 +312,6 @@ class UserController {
             }
         });
 
-        if (!friendships || friendships.length === 0) {
-            throw new Error("No friends found!");
-        }
-
         const friends = friendships.map(f => f.userId === parsedUserId ? f.friend : f.user);
         return friends;
     } catch (error) {
@@ -325,13 +320,5 @@ class UserController {
     }
 }
 }
-
-
-
-
-
-
-
-
 
 export const userController = new UserController()
