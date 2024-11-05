@@ -1,6 +1,7 @@
 import bcrypt from 'bcryptjs';
 import { userController } from '../controllers/UserController.js'; 
 import prisma from '../db/prismaClient.js';
+import {jest} from '@jest/globals';
 
 jest.mock('../db/prismaClient.js');
 jest.mock('bcryptjs');

@@ -1,5 +1,6 @@
 import { channelController } from '../controllers/ChannelController.js';
 import prisma from "../db/prismaClient.js";
+import {jest} from '@jest/globals';
 
 jest.mock('../db/prismaClient.js'); 
 

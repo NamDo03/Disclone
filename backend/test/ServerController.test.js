@@ -1,5 +1,6 @@
 import { serverController } from '../controllers/ServerController.js';
 import prisma from '../db/prismaClient.js';
+import {jest} from '@jest/globals';
 
 jest.mock('../db/prismaClient.js');
 

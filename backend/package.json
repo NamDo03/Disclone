@@ -9,7 +9,7 @@
     "dev:docker": "yarn prisma:setup && node --watch index.js",
     "prisma:setup": "node setupDb.js",
     "prisma:migrate": "prisma migrate dev --schema=db/prisma/schema.prisma",
-    "test": "jest"
+    "test": "cross-env NODE_OPTIONS=--experimental-vm-modules jest"
   },
   "dependencies": {
     "@prisma/client": "^5.19.1",
@@ -24,6 +24,7 @@
   },
   "devDependencies": {
     "@jest/globals": "^29.7.0",
+    "cross-env": "^7.0.3",
     "jest": "^29.7.0",
     "prisma": "^5.19.1"
   }
