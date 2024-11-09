@@ -7,6 +7,7 @@ import MemberList from "../components/MemberList/MemberList";
 import { getServerById } from "../api/serverService";
 import { io } from "socket.io-client";
 import { getUserById } from "../api/userService";
+import * as crypto from '../utils/crypto';
 
 const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || "http://localhost:3000";
 export const socket = io(BACKEND_URL);
@@ -18,12 +19,22 @@ const ChannelPage = () => {
   const [memberList, setMemberList] = useState([]);
   const [channel, setChannel] = useState(null);
   const [messages, setMessages] = useState([]);
+  const [groupKey, setGroupKey] = useState(null);
   const [owner, setOwner] = useState({});
   useEffect(() => {
     if (!serverId || !channelId) {
       navigate("/page-not-found");
       return;
     }
+
+    const initializeGroupKey = async () => {
+      if (!groupKey) {
+        const newGroupKey = await crypto.generateSymmetricKey();
+        setGroupKey(newGroupKey);
+      }
+    };
+    initializeGroupKey();
+
     const fetchData = async () => {
       try {
         const serverData = await getServerById(serverId);
@@ -53,19 +64,34 @@ const ChannelPage = () => {
       socket.emit('joinServer', { serverId, channelId });
     }
 
-    socket.on('previousMessages', (msgs) => {
-      setMessages(msgs);
+    socket.on('previousMessages', async (msgs) => {
+      if (groupKey) {
+        const decryptedMessages = await Promise.all(
+          msgs.map(async (msg) => {
+            const decrypted = await crypto.decryptWithSymmetricKey(groupKey, msg.content, msg.iv);
+            return { ...msg, content: decrypted };
+          })
+        );
+        setMessages(decryptedMessages);
+      } else {
+        setMessages(msgs);
+      }
     });
 
-    socket.on('message', (msg) => {
-      setMessages(prevMessages => [msg, ...prevMessages]);
+    socket.on('message', async (msg) => {
+      if (groupKey) {
+        const decryptedMessage = await crypto.decryptWithSymmetricKey(groupKey, msg.content, msg.iv);
+        setMessages(prevMessages => [{ ...msg, content: decryptedMessage }, ...prevMessages]);
+      } else {
+        setMessages(prevMessages => [...msg, ...prevMessages]);
+      }
     });
 
     return () => {
       socket.off('previousMessages');
       socket.off('message');
     };
-  }, [serverId, channelId]);
+  }, [serverId, channelId, groupKey]);
 
   const handleMemberDeleted = (userId) => {
     setMemberList((prevMembers) =>
@@ -100,6 +126,7 @@ const ChannelPage = () => {
           channelId={channel.id}
           name={channel.channel_name}
           socket={socket}
+          groupKey={groupKey}
         />
       </div>
       {showMemberList && (

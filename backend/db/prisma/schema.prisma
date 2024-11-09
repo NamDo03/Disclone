@@ -100,6 +100,7 @@ model DirectMessage {
 model Message {
   id         Int       @id @default(autoincrement())
   content    String
+  iv         String
   edited_at  DateTime?
   channel_id Int?
   user_id    Int

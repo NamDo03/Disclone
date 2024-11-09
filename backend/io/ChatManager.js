@@ -60,6 +60,7 @@ export default class ChatManager {
       const newMessage = await this.prisma.message.create({
         data: {
           content: msg.content,
+          iv: msg.iv,
           channel_id: parseInt(msg.channelId),
           user_id: parseInt(msg.author_id),
         },
