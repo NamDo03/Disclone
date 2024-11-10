@@ -402,9 +402,6 @@ router.get('/user/pending-invites', passport.authenticate('jwt', { session: fals
     const userId = req.user.id; 
 
     const pendingInvites = await userController.getPendingInvites(userId);
-    if (!pendingInvites || pendingInvites.length === 0) {
-      return res.status(404).json({ message: 'No pending invites found' });
-    }
 
     res.status(200).json(pendingInvites);
 
