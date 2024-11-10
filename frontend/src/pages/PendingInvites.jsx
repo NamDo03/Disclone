@@ -79,8 +79,12 @@ const PendingInvites = () => {
                         className="w-10 h-10 rounded-full object-cover"
                       />
                       <div className="flex flex-col justify-start">
-                        <h2 className="font-semibold">{invite.sender.username}</h2>
-                        <span className="text-xs text-zinc-400">Incoming Friend Request</span>
+                        <h2 className="font-semibold">
+                          {invite.sender.username}
+                        </h2>
+                        <span className="text-xs text-zinc-400">
+                          Incoming Friend Request
+                        </span>
                       </div>
                     </div>
 

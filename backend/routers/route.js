@@ -427,6 +427,21 @@ router.get('/user/:id/friends', passport.authenticate('jwt', { session: false })
   }
 });
 
+router.delete('/user/remove-friend', passport.authenticate('jwt', { session: false }), async (req, res, next) => {
+  try {
+    const { friendId } = req.body;
+    const userId = req.user.id;
+
+    if (!friendId) {
+      return res.status(400).json({ message: "Friend ID is required!" });
+    }
+
+    await userController.removeFriend(userId, friendId);
+    res.status(200).json({ message: "Friendship deleted successfully" });
+  } catch (error) {
+    return next(error);
+  }
+});
 
 
 
