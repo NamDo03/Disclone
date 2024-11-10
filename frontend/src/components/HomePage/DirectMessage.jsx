@@ -1,32 +1,49 @@
-import React, { useState } from "react";
-import { FaPlus } from "react-icons/fa6";
+import React, { useEffect, useState } from "react";
 import { PiMagnifyingGlass } from "react-icons/pi";
 import UserControls from "../ServerSideBar/UserControls";
-import { directMessages } from "../../fakeApi";
 import DMList from "./DMList";
 import { useLocation, useNavigate } from "react-router-dom";
 import { FaUserFriends } from "react-icons/fa";
+import { getListDM } from "../../api/userService";
+import { useSelector } from "react-redux";
 
 const DirectMessage = () => {
+  const currentUser = useSelector((state) => state.user.currentUser);
+  const [directMessages, setDirectMessages] = useState([]);
+  const [error, setError] = useState(null);
   const navigate = useNavigate();
   const location = useLocation();
   const [searchTerm, setSearchTerm] = useState("");
-  const myId = "1";
-  const participantsList = directMessages
-    .map((conversation) => {
-      return conversation.participants
-        .filter((participant) => participant.id !== myId)
-        .map((participant) => ({
-          ...participant,
-          conversationId: conversation.id,
-        }));
-    })
 
-    .flat();
-  const filteredParticipants = participantsList.filter((participant) =>
-    participant.username?.toLowerCase().includes(searchTerm.toLowerCase())
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const messages = await getListDM(currentUser.id);
+
+        const filteredMessages = messages.map((dm) => {
+          const otherUser =
+            dm.sender.id === currentUser.id ? dm.receiver : dm.sender;
+          return {
+            id: dm.id,
+            user: otherUser,
+            created_at: dm.created_at,
+          };
+        });
+
+        setDirectMessages(filteredMessages);
+      } catch (error) {
+        setError(error.message);
+      }
+    };
+
+    if (currentUser?.id) {
+      fetchData();
+    }
+  }, [currentUser?.id]);
+
+  const filteredDM = directMessages.filter((dm) =>
+    dm.user.username.toLowerCase().includes(searchTerm.toLowerCase())
   );
-
   return (
     <div className="hidden md:flex h-full w-60 z-30 flex-col fixed inset-y-0">
       <div className="flex flex-col bg-primary-2 h-full w-full text-white">
@@ -61,12 +78,9 @@ const DirectMessage = () => {
             <p className="flex items-center gap-1 text-xs uppercase font-semibold text-zinc-400 group-hover:text-zinc-300">
               Direct Messages
             </p>
-            <button className="text-zinc-400 hover:text-zinc-300 ">
-              <FaPlus />
-            </button>
           </div>
           <div>
-            <DMList listFriend={filteredParticipants} />
+            <DMList listFriend={filteredDM} />
           </div>
         </div>
         <div className="mt-auto">

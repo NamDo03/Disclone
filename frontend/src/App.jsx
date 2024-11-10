@@ -40,7 +40,7 @@ function App() {
           }
         />
         <Route
-          path="/DM/:conversationId"
+          path="/DM/:directMessageId"
           element={
             <ProtectedRoute>
               <HomeLayout>

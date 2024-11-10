@@ -26,6 +26,9 @@ model User {
 
   sentInvites     FriendInvite[] @relation("SentInvites")
   receivedInvites FriendInvite[] @relation("ReceivedInvites")
+
+  sentDirectMessages     DirectMessage[] @relation("SentDirectMessages")
+  receivedDirectMessages DirectMessage[] @relation("ReceivedDirectMessages")
 }
 
 model Friendship {
@@ -83,16 +86,29 @@ model Channel {
   messages     Message[]
 }
 
+model DirectMessage {
+  id              Int             @id @default(autoincrement())
+  created_at      DateTime        @default(now())
+  sender_id       Int
+  receiver_id     Int
+  
+  sender          User            @relation("SentDirectMessages", fields: [sender_id], references: [id], onDelete: Cascade)
+  receiver        User            @relation("ReceivedDirectMessages", fields: [receiver_id], references: [id], onDelete: Cascade)
+  messages        Message[]       @relation("DirectMessages")
+}
+
 model Message {
   id         Int       @id @default(autoincrement())
   content    String
   edited_at  DateTime?
-  channel_id Int
+  channel_id Int?
   user_id    Int
   created_at DateTime  @default(now())
+  direct_message_id Int?          
 
-  channel    Channel   @relation(fields: [channel_id], references: [id], onDelete: Cascade)
+  channel    Channel?   @relation(fields: [channel_id], references: [id], onDelete: Cascade)
   user       User      @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  directMessage   DirectMessage?  @relation("DirectMessages", fields: [direct_message_id], references: [id], onDelete: Cascade)
 }
 
 model ServerMember {

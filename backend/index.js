@@ -4,6 +4,7 @@ import { router } from './routers/route.js';
 import { createServer } from 'http';
 import { Server } from "socket.io";
 import ChatManager from './io/ChatManager.js';
+import DirectMessageManager from './io/DirectMessageManager.js';
 
 
 
@@ -34,6 +35,9 @@ app.use((err, req, res, next) => {
 
 const chatManager = new ChatManager(io);
 chatManager.setupSocketEvents();
+
+const directMessageManager = new DirectMessageManager(io);
+directMessageManager.setupSocketEvents();
 
 server.listen(3000, () => {
   console.log('server is working on port 3000');

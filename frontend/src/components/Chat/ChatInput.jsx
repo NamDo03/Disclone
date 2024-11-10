@@ -9,7 +9,7 @@ const CLOUDINARY_URL =
   import.meta.env.VITE_CLOUDINARY_URL ||
   "https://api.cloudinary.com/v1_1/dyzlyiggq/image/upload";
 
-const ChatInput = ({ type, channelId, name, socket }) => {
+const ChatInput = ({ type, channelId, name, socket, directMessageId }) => {
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
   const [content, setContent] = useState("");
   const author_id = useSelector((state) => state.user.currentUser.id);
@@ -24,21 +24,43 @@ const ChatInput = ({ type, channelId, name, socket }) => {
       return;
     }
     const imageUrls = await uploadFiles();
-    if (content) {
-      const newMessage = {
-        content,
-        channelId,
-        author_id,
-      };
-      socket.emit("newMessage", newMessage);
-    }
-    for (const url of imageUrls) {
-      const imageMessage = {
-        content: url,
-        channelId,
-        author_id,
-      };
-      socket.emit("newMessage", imageMessage);
+
+    if (type === "DM") {
+      if (content) {
+        const newMessage = {
+          content,
+          direct_message_id: directMessageId,
+          author_id,
+        };
+        socket.emit("newDirectMessage", newMessage);
+      }
+
+      for (const url of imageUrls) {
+        const imageMessage = {
+          content: url,
+          direct_message_id: directMessageId,
+          author_id,
+        };
+        socket.emit("newDirectMessage", imageMessage);
+      }
+    } else if (type === "TEXT") {
+      if (content) {
+        const newMessage = {
+          content,
+          channelId,
+          author_id,
+        };
+        socket.emit("newMessage", newMessage);
+      }
+
+      for (const url of imageUrls) {
+        const imageMessage = {
+          content: url,
+          channelId,
+          author_id,
+        };
+        socket.emit("newMessage", imageMessage);
+      }
     }
 
     setContent("");
@@ -137,7 +159,9 @@ const ChatInput = ({ type, channelId, name, socket }) => {
         {/* Message Input */}
         <input
           type="text"
-          placeholder={`Message ${type === "TEXT" ? "#" + name : name}`}
+          placeholder={`Message ${
+            type === "TEXT" ? "#" + name : type === "DM" ? "DM" : name
+          }`}
           value={content}
           onChange={(e) => setContent(e.target.value)}
           className="w-full px-14 py-3 bg-zinc-700/75 border-none border-0 
