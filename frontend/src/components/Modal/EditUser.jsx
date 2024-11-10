@@ -8,12 +8,12 @@ import EditInfo from "./EditInfo";
 import useModal from "../../hooks/useModal";
 import { useParams } from "react-router-dom";
 import { RiPencilFill } from "react-icons/ri";
+import { useDispatch, useSelector } from "react-redux";
+import { toggleFilterBadWords } from "../../redux/filterSlice";
 
 const EditUserModal = ({ toggleModal, user }) => {
+  const dispatch = useDispatch();
   const { userId } = useParams();
-
-  // const [image] = useState(user.avatar_url || "");
-  // const [username, setUsername] = useState(user.username || "");
   const [loading, setLoading] = useState(false);
 
   const { isOpenModal: isOpenDeleteModal, toggleModal: toggleDeleteModal } =
@@ -24,6 +24,8 @@ const EditUserModal = ({ toggleModal, user }) => {
     useModal();
   const { isOpenModal: isOpenEditPassword, toggleModal: toggleEditPassword } =
     useModal();
+
+    const isChecked = useSelector((state) => state.filter.filterBadWords);
 
   useEffect(() => {
     const handleKeyDown = (event) => {
@@ -37,6 +39,10 @@ const EditUserModal = ({ toggleModal, user }) => {
     };
   }, [toggleModal]);
 
+  const handleToggle = () => {
+    dispatch(toggleFilterBadWords());
+  };
+  
   return createPortal(
     <div className="fixed inset-0 bg-black/50 z-[1000] flex items-center justify-center">
       <div className="bg-[#2f3136] rounded-lg p-6 w-[500px] max-w-full">
@@ -75,7 +81,7 @@ const EditUserModal = ({ toggleModal, user }) => {
                 <label className="text-sm text-gray-400 block mr-4">
                   Email
                 </label>
-                <p className="text-white text-zinc-400 mr-2">{user.email}</p>
+                <p className="text-zinc-400 mr-2">{user.email}</p>
               </div>
             </div>
             <div className="mb-4 flex items-center justify-between">
@@ -83,7 +89,7 @@ const EditUserModal = ({ toggleModal, user }) => {
                 <label className="text-sm text-gray-400 block mr-4">
                   Username
                 </label>
-                <p className="text-white text-zinc-400 mr-2">{user.username}</p>
+                <p className="text-zinc-400 mr-2">{user.username}</p>
               </div>
               <button
                 onClick={toggleEditUsername}
@@ -98,7 +104,7 @@ const EditUserModal = ({ toggleModal, user }) => {
                 <label className="text-sm text-gray-400 block mr-4">
                   Password
                 </label>
-                <p className="text-white text-zinc-400 mr-2">••••••••••</p>
+                <p className="text-zinc-400 mr-2">••••••••••</p>
               </div>
               <button
                 onClick={toggleEditPassword}
@@ -108,6 +114,21 @@ const EditUserModal = ({ toggleModal, user }) => {
                 Edit
               </button>
             </div>
+          </div>
+          <div className="flex justify-between items-center mb-4">
+            <span className="text-zinc-300 font-semibold text-sm">
+              Filter bad words
+            </span>
+            <label className="relative inline-flex items-center cursor-pointer">
+              <input
+                type="checkbox"
+                value=""
+                className="sr-only peer"
+                checked={isChecked}
+                onChange={handleToggle}
+              />
+              <div className="group peer ring-0 bg-rose-400  rounded-full outline-none duration-300 after:duration-300 w-20 h-10  shadow-md peer-checked:bg-emerald-500  peer-focus:outline-none  after:content-['✖️']  after:rounded-full after:absolute after:bg-gray-50 after:outline-none after:h-8 after:w-8 after:top-1 after:left-1 after:flex after:justify-center after:items-center peer-checked:after:translate-x-10 peer-checked:after:content-['✔️'] peer-hover:after:scale-95"></div>
+            </label>
           </div>
           <button
             onClick={toggleDeleteModal}

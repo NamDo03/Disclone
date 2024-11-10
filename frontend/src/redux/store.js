@@ -2,6 +2,7 @@ import { configureStore, combineReducers } from '@reduxjs/toolkit'
 import userReducer from "./userSlice"
 import serverReducer from "./serverSlice";
 import channelReducer from "./channelSlice";
+import filterReducer from "./filterSlice"
 import {
     persistStore,
     persistReducer,
@@ -24,6 +25,7 @@ const rootReducer = combineReducers({
     user: userReducer,
     servers: serverReducer,
     channels: channelReducer,
+    filter: filterReducer,
 });
 const persistedReducer = persistReducer(persistConfig, rootReducer)
 
