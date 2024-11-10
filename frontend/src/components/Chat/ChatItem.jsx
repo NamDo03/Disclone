@@ -5,6 +5,8 @@ import { Tooltip } from "react-tooltip";
 import { useSelector } from "react-redux";
 import { Filter } from 'bad-words'
 
+const filter = new Filter();
+
 const ChatItem = ({
   authorName,
   authorAvatar,
@@ -14,6 +16,9 @@ const ChatItem = ({
   timestamp,
 }) => {
   const currentUser = useSelector((state) => state.user.currentUser);
+  const shouldFilterBadWords = useSelector((state) => state.filter.filterBadWords);
+  const filteredContent = shouldFilterBadWords ? filter.clean(content) : content;
+
   const isAdmin = Number(currentUser.id) === Number(owner.id);
 
   const canEditMessage = authorId === currentUser.id;
@@ -22,8 +27,6 @@ const ChatItem = ({
   const [isEditing, setIsEditing] = useState(false);
   const [editedMessage, setEditedMessage] = useState(content);
 
-  const filter = new Filter();
-  const filteredContent = filter.clean(content);
 
   const handleSubmit = (e) => {
     e.preventDefault();
