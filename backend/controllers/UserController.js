@@ -233,7 +233,19 @@ class UserController {
         where: { id: invite.id },
         data: { status: 'ACCEPTED' }
       });
-  
+      
+      await prisma.directMessage.create({
+        data: {
+          sender: {
+            connect: { id: invite.senderId }
+          },
+          receiver: {
+            connect: { id: invite.receiverId }
+          },
+          created_at: new Date()
+        }
+      });
+
       return {
         message: "Friend invite accepted successfully!",
         friendship: newFriendship
@@ -359,6 +371,53 @@ async removeFriend(userId, friendId) {
     throw new Error(error.message || "Error removing friend and invites");
   }
 }
+async getDirectMessagesForUser(userId) {
+  try {
+    const directMessages = await prisma.directMessage.findMany({
+      where: {
+        OR: [
+          { sender_id: userId },
+          { receiver_id: userId }
+        ]
+      },
+      select: {
+        id: true,
+        created_at: true,
+        sender: {
+          select: {
+            id: true,
+            username: true,
+            avatar_url: true
+          }
+        },
+        receiver: {
+          select: {
+            id: true,
+            username: true,
+            avatar_url: true
+          }
+        }
+      }
+    });
+    return directMessages;
+  } catch (error) {
+    console.error("Error getting direct messages for user:", error);
+    throw error;
+  }
+}
+async getDirectMessageById (directMessageID) {
+  try {
+    const directMessage = await prisma.directMessage.findFirst({
+      where: {
+        id: directMessageID
+      }
+    });
+
+    return directMessage;
+  } catch (error) {
+    throw new Error('Error fetching direct message');
+  }
+};
 
 }
 

@@ -89,14 +89,6 @@ const Signin = () => {
               >
                 Sign In
               </button>
-              <div className="relative flex py-2 items-center">
-                <div className="flex-grow border-t border-gray-400"></div>
-                <span className="flex-shrink mx-4 text-gray-400">OR</span>
-                <div className="flex-grow border-t border-gray-400"></div>
-              </div>
-              <button className="bg-main rounded p-3 w-full mt-3 text-white hover:opacity-65">
-                Guest Mode
-              </button>
               <div className="text-sm">
                 <span className="text-gray-3 cursor-default">
                   Need an account? {"  "}

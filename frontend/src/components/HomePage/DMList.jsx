@@ -5,7 +5,12 @@ const DMList = ({ listFriend }) => {
   return (
     <div className=" overflow-y-auto px-2">
       {listFriend.map((friend) => (
-        <DMItem avatar={friend.avatar} name={friend.username} key={friend.id} id={friend.id} conversationId={friend.conversationId}/>
+        <DMItem
+          avatar={friend.user.avatar_url}
+          name={friend.user.username}
+          key={friend.user.id}
+          conversationId={friend.id}
+        />
       ))}
     </div>
   );

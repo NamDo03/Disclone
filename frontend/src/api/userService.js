@@ -342,3 +342,57 @@ export const removeFriend = async (friendId) => {
 };
 
 
+export const getListDM = async (userId) => {
+    try {
+        const token = getToken();
+        if (!token) {
+            throw new Error("Authorization token is missing");
+        }
+
+        const response = await fetch(`${API_URL}/user/${userId}/direct-messages`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            }
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+            throw new Error(data.message || 'Error fetching direct messages');
+        }
+
+        return data; 
+    } catch (error) {
+        console.error("Fetch direct messages error:", error);
+        throw error;
+    }
+};
+export const getDMById = async (conversationId) => {
+    try {
+        const token = getToken();
+        if (!token) {
+            throw new Error("Authorization token is missing");
+        }
+
+        const response = await fetch(`${API_URL}/user/direct-messages/get-by-id/${conversationId}`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            }
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+            throw new Error(data.message || 'Error fetching direct messages by Id');
+        }
+
+        return data; 
+    } catch (error) {
+        console.error("Fetch direct messages Id error:", error);
+        throw error;
+    }
+};

@@ -440,8 +440,40 @@ router.delete('/user/remove-friend', passport.authenticate('jwt', { session: fal
   }
 });
 
+router.get('/user/:id/direct-messages', passport.authenticate('jwt', { session: false }), async (req, res, next) => {
+  try {
+    const userId = parseInt(req.params.id);
+    if (isNaN(userId)) {
+      return res.status(400).json({ message: 'user ID not found' });
+    }
+
+    const directMessages = await userController.getDirectMessagesForUser(userId)
+    res.status(200).json(directMessages);
+  } catch (error) {
+    return next(error);
+  }
+});
 
 
+router.get('/user/direct-messages/get-by-id/:directMessageID', passport.authenticate('jwt', { session: false }), async (req, res, next) => {
+  try {
+    const directMessageID = parseInt(req.params.directMessageID);
+
+    if (isNaN(directMessageID)) {
+      return res.status(400).json({ message: 'Invalid direct message ID' });
+    }
+
+    const directMessage = await userController.getDirectMessageById(directMessageID);
+    
+    if (!directMessage) {
+      return res.status(404).json({ message: 'Direct message not found' });
+    }
+
+    res.status(200).json(directMessage);
+  } catch (error) {
+    return next(error);
+  }
+});
 
 
 export { router };

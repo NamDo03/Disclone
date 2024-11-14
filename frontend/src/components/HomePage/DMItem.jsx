@@ -1,7 +1,7 @@
 import React from "react";
 import { useNavigate, useParams } from "react-router-dom";
 
-const DMItem = ({ avatar, name, id, conversationId}) => {
+const DMItem = ({ avatar, name, conversationId}) => {
   const param = useParams();
   const navigate = useNavigate();
   return (
