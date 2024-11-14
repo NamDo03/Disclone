@@ -8,10 +8,17 @@ import { useDispatch, useSelector } from "react-redux";
 import { removeServer } from "../../redux/serverSlice";
 import { useNavigate } from "react-router-dom";
 import { removeChannel } from "../../redux/channelSlice";
-import { deleteUser } from "../../api/userService";
+import { deleteUser, removeFriend } from "../../api/userService";
 import { logout } from "../../redux/userSlice";
 
-const DeleteModal = ({ type, toggleModal, serverId, channelId }) => {
+const DeleteModal = ({
+  type,
+  toggleModal,
+  serverId,
+  channelId,
+  friendId,
+  onDeleteFriends,
+}) => {
   const currentUser = useSelector((state) => state.user.currentUser);
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -56,7 +63,11 @@ const DeleteModal = ({ type, toggleModal, serverId, channelId }) => {
       } else if (type.toLowerCase() === "user") {
         await deleteUser(currentUser.id);
         dispatch(logout());
+      } else if (type.toLowerCase() === "friends") {
+        await removeFriend(friendId);
+        onDeleteFriends(friendId);
       }
+
       toggleModal();
       toast.success(`Delete ${type} ${name} success`);
     } catch (error) {

@@ -1,19 +1,46 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { IoClose } from "react-icons/io5";
-import { PiHashBold } from "react-icons/pi";
-import { PiMagnifyingGlass } from "react-icons/pi";
-import { listfriend } from "../../fakeApi";
+import { PiHashBold, PiMagnifyingGlass } from "react-icons/pi";
 import { createPortal } from "react-dom";
 import { useParams } from "react-router-dom";
+import { useSelector } from "react-redux";
+import { getFriends } from "../../api/userService";
 
 const FRONTEND_URL =
   import.meta.env.VITE_FRONTEND_URL || "http://localhost:5173";
 
 const InviteMember = ({ toggleModal }) => {
+  const [copied, setCopied] = useState(false);
   const { serverId } = useParams();
   const [searchTerm, setSearchTerm] = useState("");
-  const [copied, setCopied] = useState(false);
-  const filteredFriends = listfriend.filter((friend) =>
+  const [friends, setFriends] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const currentUser = useSelector((state) => state.user.currentUser);
+  const userId = currentUser?.id;
+
+  useEffect(() => {
+    const fetchFriends = async () => {
+      if (!userId) {
+        setError("User ID is not available");
+        setLoading(false);
+        return;
+      }
+
+      try {
+        const data = await getFriends(userId);
+        setFriends(data);
+      } catch (err) {
+        setError(err.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchFriends();
+  }, [userId]);
+
+  const filteredFriends = friends.filter((friend) =>
     friend.username.toLowerCase().includes(searchTerm.toLowerCase())
   );
   const handleCopy = () => {
@@ -41,7 +68,7 @@ const InviteMember = ({ toggleModal }) => {
             </div>
             <div>
               <div
-                className={` flex items-center py-[3px] rounded-[4px] my-3 bg-zinc-700":"bg-primary-2"}`}
+                className={`flex items-center py-[3px] rounded-[4px] my-3 bg-zinc-700`}
               >
                 <PiHashBold size={20} className="text-zinc-400" />
                 <p className="text-zinc-400 text-xs ml-2">Channel name</p>
@@ -63,7 +90,13 @@ const InviteMember = ({ toggleModal }) => {
           </div>
           <div className="h-[1px] mt-5 bg-zinc-900" />
           <div className="m-4 overflow-y-auto max-h-[200px]">
-            {filteredFriends.length > 0 ? (
+            {loading ? (
+              <div className="text-zinc-400 text-center">
+                Loading friends...
+              </div>
+            ) : error ? (
+              <div className="text-zinc-400 text-center">Error: {error}</div>
+            ) : filteredFriends.length > 0 ? (
               filteredFriends.map((friend) => (
                 <div
                   key={friend.id}
@@ -72,7 +105,7 @@ const InviteMember = ({ toggleModal }) => {
                   <div className="flex items-center gap-3">
                     <img
                       className="w-9 h-9 object-cover rounded-full"
-                      src={friend.avatarUrl}
+                      src={friend.avatar_url}
                       alt={friend.username}
                     />
                     <p className="text-zinc-300">{friend.username}</p>
@@ -90,7 +123,7 @@ const InviteMember = ({ toggleModal }) => {
           </div>
         </div>
         <div className="w-full bg-primary-2 rounded-b-md p-4">
-          <h2 className=" uppercase text-zinc-300 font-semibold text-xs">
+          <h2 className="uppercase text-zinc-300 font-semibold text-xs">
             Or, send a server invite link to a friend
           </h2>
           <div className="w-full bg-primary-3 flex p-1 items-center justify-between mt-3">

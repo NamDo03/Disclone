@@ -319,6 +319,47 @@ class UserController {
         throw new Error(error.message || "Error retrieving friends");
     }
 }
+
+async removeFriend(userId, friendId) {
+  try {
+    const parsedUserId = parseInt(userId);
+    const parsedFriendId = parseInt(friendId);
+
+    if (isNaN(parsedUserId) || isNaN(parsedFriendId)) {
+      throw new Error("Invalid userId or friendId provided");
+    }
+
+
+    const deleteFriendship = await prisma.friendship.deleteMany({
+      where: {
+        OR: [
+          { userId: parsedUserId, friendId: parsedFriendId },
+          { userId: parsedFriendId, friendId: parsedUserId }
+        ]
+      }
+    });
+
+    if (deleteFriendship.count === 0) {
+      throw new Error("Friendship not found or already deleted!");
+    }
+
+   
+    await prisma.friendInvite.deleteMany({
+      where: {
+        OR: [
+          { senderId: parsedUserId, receiverId: parsedFriendId },
+          { senderId: parsedFriendId, receiverId: parsedUserId }
+        ]
+      }
+    });
+
+    return { message: "Friendship and related invites deleted successfully" };
+  } catch (error) {
+    console.error("Error in removeFriend:", error);
+    throw new Error(error.message || "Error removing friend and invites");
+  }
+}
+
 }
 
 export const userController = new UserController()

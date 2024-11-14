@@ -306,4 +306,39 @@ export const getFriends = async (userId) => {
         throw new Error(error.message || "Error retrieving friends");
     }
 };
+export const removeFriend = async (friendId) => {
+    if (!friendId || isNaN(friendId)) {
+        throw new Error("Invalid friendId provided");
+    }
+
+    const token = getToken(); 
+
+    if (!token) {
+        throw new Error("Token is not available");
+    }
+
+    try {
+        const response = await fetch(`${API_URL}/user/remove-friend`, {
+            method: 'DELETE',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            },
+            body: JSON.stringify({ friendId })
+        });
+
+        if (!response.ok) {
+            const errorData = await response.json();
+            console.error("Error removing friend:", errorData);
+            throw new Error(errorData.message || 'Error removing friend');
+        }
+
+        const data = await response.json();
+        return data;
+    } catch (error) {
+        console.error("Remove friend error:", error);
+        throw new Error(error.message || "Error removing friend");
+    }
+};
+
 

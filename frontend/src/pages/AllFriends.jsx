@@ -3,8 +3,12 @@ import { useSelector } from "react-redux";
 import { PiMagnifyingGlass } from "react-icons/pi";
 import { IoChatbubbleSharp } from "react-icons/io5";
 import { getFriends } from "../api/userService";
+import { TiUserDelete } from "react-icons/ti";
+import useModal from "../hooks/useModal";
+import DeleteModal from "../components/Modal/DeleteModal";
 
 const AllFriends = ({ setActiveComponent }) => {
+  const { isOpenModal, toggleModal } = useModal();
   const [searchTerm, setSearchTerm] = useState("");
   const [friends, setFriends] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -32,6 +36,13 @@ const AllFriends = ({ setActiveComponent }) => {
 
     fetchFriends();
   }, [userId]);
+
+  const handleDeleteFriend = (friendId) => {
+    setFriends((prevFriends) =>
+      prevFriends.filter((friend) => friend.id !== friendId)
+    );
+  };
+
   const filteredFriends = friends.filter((friend) =>
     friend.username.toLowerCase().includes(searchTerm.toLowerCase())
   );
@@ -79,9 +90,25 @@ const AllFriends = ({ setActiveComponent }) => {
                   />
                   <p className="text-zinc-300">{friend.username}</p>
                 </div>
-                <button className="px-4 py-2 rounded-[16px] hover:bg-primary-3 text-white">
-                  <IoChatbubbleSharp />
-                </button>
+                {isOpenModal && (
+                  <DeleteModal
+                    onDeleteFriends={handleDeleteFriend}
+                    toggleModal={toggleModal}
+                    type="friends"
+                    friendId={friend.id}
+                  />
+                )}
+                <div className="flex gap-2">
+                  <button className="px-4 py-2 rounded-[16px] hover:bg-primary-3 text-white">
+                    <IoChatbubbleSharp size={24} />
+                  </button>
+                  <button
+                    className="px-4 py-2 rounded-[16px] hover:bg-primary-3  hover:text-red-500  text-white flex items-center justify-center "
+                    onClick={toggleModal}
+                  >
+                    <TiUserDelete size={27} />
+                  </button>
+                </div>
               </div>
             ))
           ) : (
