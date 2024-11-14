@@ -1,0 +1,27 @@
+.str-video__search-input__container {
+    display: none !important;
+}
+
+.str-video__participant-list .str-video__participant-list-header {
+    display: none !important;
+}
+
+.str-video__participant-listing {
+    margin-left: 30px;
+}
+
+.str-video__participant-listing-item__media-indicator-group {
+    display: none !important;
+}
+
+.str-video__participant-listing-item {
+    gap: 10px !important;
+}
+
+.str-video__avatar {
+    border-radius: 100% !important;
+}
+
+.str-video__tooltip {
+    display: none !important;
+} 

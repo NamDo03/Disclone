@@ -13,15 +13,16 @@ import { useEffect, useState, useRef } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { socket } from "../../pages/ChannelPage";
 import { getServerById } from "../../api/serverService";
+import { useCall } from "../../redux/callContext";
 
 export default function VideoCall() {
+  const { setCallVideo, setClient, setChannelId } = useCall();
   const currentUser = useSelector((state) => state.user.currentUser);
   const clientRef = useRef(null);
   const hasJoinedCall = useRef(false);
   const [call, setCall] = useState(null);
   const navigate = useNavigate();
   const { serverId, channelId } = useParams();
-
   useEffect(() => {
     if (!serverId || !channelId) {
       navigate("/page-not-found");
@@ -46,6 +47,7 @@ export default function VideoCall() {
         }
       }
     };
+    setChannelId(channelId);
     fetchData();
     return () => {
       if (call) {
@@ -60,6 +62,7 @@ export default function VideoCall() {
     if (!clientRef.current) {
       clientRef.current = new StreamVideoClient({ apiKey, user, token });
     }
+    setClient(clientRef.current);
     return clientRef.current;
   };
 
@@ -67,46 +70,49 @@ export default function VideoCall() {
     const handleGetCall = ({ apiKey, callId, token, user }) => {
       if (!hasJoinedCall.current) {
         const client = getOrCreateInstance(apiKey, token, user);
-        const callInstance = client.call('default', callId);
+        const callInstance = client.call("default", callId);
         callInstance.join({ create: true });
         setCall(callInstance);
+        setCallVideo(callInstance);
         hasJoinedCall.current = true;
       }
     };
 
     socket.on("getCall", handleGetCall);
-    socket.emit('joinCall', { serverId, channelId, currentUser });
-
+    socket.emit("joinCall", { serverId, channelId, currentUser });
+    console.log(123);
     return () => {
       if (call) {
         call.leave();
       }
       socket.off("getCall", handleGetCall);
       setCall(null);
+      setCallVideo(null);
       hasJoinedCall.current = false;
+      clientRef.current = null;
     };
   }, [currentUser, serverId, channelId]);
 
-  return (
-    clientRef.current && call ? (
-      <StreamVideo client={clientRef.current}>
-        <StreamTheme>
-          <StreamCall call={call}>
-            <SpeakerLayout participantsBarPosition='bottom' />
-            <CallControls onLeave={() => {
+  return clientRef.current && call ? (
+    <StreamVideo client={clientRef.current}>
+      <StreamTheme>
+        <StreamCall call={call}>
+          <SpeakerLayout participantsBarPosition="bottom" />
+          <CallControls
+            onLeave={() => {
               if (call) {
                 call.leave();
               }
               setCall(null);
               clientRef.current = null;
               hasJoinedCall.current = false;
-              navigate('/');
-            }}/>
-          </StreamCall>
-        </StreamTheme>
-      </StreamVideo>
-    ) : (
-      <div>Loading Call...</div>
-    )
+              navigate("/");
+            }}
+          />
+        </StreamCall>
+      </StreamTheme>
+    </StreamVideo>
+  ) : (
+    <div>Loading Call...</div>
   );
 }
