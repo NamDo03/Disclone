@@ -32,17 +32,20 @@ const ChatInput = ({ type, channelId, name, socket, directMessageId, groupKey })
 
     if (type === "DM") {
       if (content) {
+        const { iv, ciphertext } = await crypto.encryptWithSymmetricKey(groupKey, content);
         const newMessage = {
-          content,
+          content: ciphertext,
+          iv,
           direct_message_id: directMessageId,
           author_id,
         };
         socket.emit("newDirectMessage", newMessage);
       }
-
       for (const url of imageUrls) {
+        const { iv, ciphertext } = await crypto.encryptWithSymmetricKey(groupKey, url);
         const imageMessage = {
-          content: url,
+          content: ciphertext,
+          iv,
           direct_message_id: directMessageId,
           author_id,
         };
