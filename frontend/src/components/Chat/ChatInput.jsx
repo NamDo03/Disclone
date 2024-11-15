@@ -1,15 +1,17 @@
-import React, { useRef, useState } from "react";
+import React, { useState } from "react";
 import { useSelector } from "react-redux";
 import { BsEmojiSmile } from "react-icons/bs";
 import { FaTrash } from "react-icons/fa6";
 import { ImAttachment } from "react-icons/im";
 import EmojiPicker from "emoji-picker-react";
+import * as crypto from '../../utils/crypto.js';
+import { toast } from "react-toastify";
 
 const CLOUDINARY_URL =
   import.meta.env.VITE_CLOUDINARY_URL ||
   "https://api.cloudinary.com/v1_1/dyzlyiggq/image/upload";
 
-const ChatInput = ({ type, channelId, name, socket, directMessageId }) => {
+const ChatInput = ({ type, channelId, name, socket, directMessageId, groupKey }) => {
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
   const [content, setContent] = useState("");
   const author_id = useSelector((state) => state.user.currentUser.id);
@@ -23,21 +25,27 @@ const ChatInput = ({ type, channelId, name, socket, directMessageId }) => {
     if (!content && uploadedFiles.length === 0) {
       return;
     }
+    if (!groupKey) {
+      toast.error("Missing group key! Can't send message");
+    }
     const imageUrls = await uploadFiles();
 
     if (type === "DM") {
       if (content) {
+        const { iv, ciphertext } = await crypto.encryptWithSymmetricKey(groupKey, content);
         const newMessage = {
-          content,
+          content: ciphertext,
+          iv,
           direct_message_id: directMessageId,
           author_id,
         };
         socket.emit("newDirectMessage", newMessage);
       }
-
       for (const url of imageUrls) {
+        const { iv, ciphertext } = await crypto.encryptWithSymmetricKey(groupKey, url);
         const imageMessage = {
-          content: url,
+          content: ciphertext,
+          iv,
           direct_message_id: directMessageId,
           author_id,
         };
@@ -45,17 +53,20 @@ const ChatInput = ({ type, channelId, name, socket, directMessageId }) => {
       }
     } else if (type === "TEXT") {
       if (content) {
+        const { iv, ciphertext } = await crypto.encryptWithSymmetricKey(groupKey, content);
         const newMessage = {
-          content,
+          content: ciphertext,
+          iv,
           channelId,
           author_id,
         };
         socket.emit("newMessage", newMessage);
       }
-
       for (const url of imageUrls) {
+        const { iv, ciphertext } = await crypto.encryptWithSymmetricKey(groupKey, url);
         const imageMessage = {
-          content: url,
+          content: ciphertext,
+          iv,
           channelId,
           author_id,
         };

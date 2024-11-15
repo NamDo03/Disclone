@@ -1,5 +1,5 @@
 -- AlterTable
-ALTER TABLE `message` ADD COLUMN `direct_message_id` INTEGER NULL;
+ALTER TABLE `Message` ADD COLUMN `direct_message_id` INTEGER NULL;
 
 -- CreateTable
 CREATE TABLE `DirectMessage` (

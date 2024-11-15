@@ -61,6 +61,7 @@ export default class DirectMessageManager {
       const newMessage = await this.prisma.message.create({
         data: {
           content: msg.content,
+          iv: msg.iv,
           direct_message_id: parseInt(msg.direct_message_id),
           user_id: parseInt(msg.author_id),
         },

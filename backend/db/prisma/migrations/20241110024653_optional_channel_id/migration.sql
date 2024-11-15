@@ -1,2 +1,2 @@
 -- AlterTable
-ALTER TABLE `message` MODIFY `channel_id` INTEGER NULL;
+ALTER TABLE `Message` MODIFY `channel_id` INTEGER NULL;

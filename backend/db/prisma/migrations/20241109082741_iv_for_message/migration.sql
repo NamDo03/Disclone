@@ -1,0 +1,2 @@
+-- AlterTable
+ALTER TABLE `Message` ADD COLUMN `iv` VARCHAR(191) NOT NULL;
