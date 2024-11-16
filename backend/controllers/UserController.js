@@ -365,6 +365,15 @@ async removeFriend(userId, friendId) {
       }
     });
 
+    await prisma.directMessage.deleteMany({
+      where: {
+        OR: [
+          { sender_id: parsedUserId, receiver_id: parsedFriendId },
+          { sender_id: parsedFriendId, receiver_id: parsedUserId }
+        ]
+      }
+    })
+
     return { message: "Friendship and related invites deleted successfully" };
   } catch (error) {
     console.error("Error in removeFriend:", error);
