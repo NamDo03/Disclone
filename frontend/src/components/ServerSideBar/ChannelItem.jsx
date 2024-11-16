@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { FaTrashCan } from "react-icons/fa6";
 import { FiEdit } from "react-icons/fi";
 import { useNavigate, useParams } from "react-router-dom";
@@ -7,8 +7,16 @@ import useModal from "../../hooks/useModal";
 import EditModal from "../Modal/EditModal";
 import DeleteModal from "../Modal/DeleteModal";
 import useServerOwner from "../../hooks/useServerOwner";
+import {
+  StreamVideo,
+  CallParticipantsList,
+  StreamCall,
+} from "@stream-io/video-react-sdk";
+import { useCall } from "../../redux/callContext";
+import "./style.css"
 
 const ChannelItem = ({ index, id, name, Icon, type }) => {
+  const { callVideo, client ,channelId} = useCall();
   const navigate = useNavigate();
   const params = useParams();
   const { isOpenModal: isOpenEditModal, toggleModal: toggleEditModal } =
@@ -29,6 +37,7 @@ const ChannelItem = ({ index, id, name, Icon, type }) => {
   const isOwner = useServerOwner();
 
   return (
+    <>
     <div
       onClick={() =>
         navigate(
@@ -103,6 +112,14 @@ const ChannelItem = ({ index, id, name, Icon, type }) => {
         </>
       )}
     </div>
+    {type === "VOICE" && callVideo && id == channelId && (
+        <StreamVideo client={client}>
+          <StreamCall call={callVideo}>
+            <CallParticipantsList />
+          </StreamCall>
+        </StreamVideo>
+      )}
+    </>
   );
 };
 
