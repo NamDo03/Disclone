@@ -35,6 +35,7 @@ const PendingInvites = () => {
         prevInvites.filter((invite) => invite.id !== inviteId)
       );
       setMessage("Friend invite accepted successfully!");
+      window.location.reload();
     } catch (error) {
       setMessage(error.message);
     }

@@ -23,7 +23,6 @@ const DeleteModal = ({
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const [name, setName] = useState();
-  const channels = useSelector((state) => state.channels);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -58,6 +57,9 @@ const DeleteModal = ({
         dispatch(logout());
       } else if (type.toLowerCase() === "friends") {
         await removeFriend(friendId);
+        setTimeout(() => {
+          window.location.reload();
+        }, 1000)
         onDeleteFriends(friendId);
       }
 
