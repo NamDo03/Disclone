@@ -24,7 +24,7 @@ export default function VideoCall() {
   const navigate = useNavigate();
   const { serverId, channelId } = useParams();
   useEffect(() => {
-    if (!serverId || !channelId) {
+    if (!serverId) {
       navigate("/page-not-found");
       return;
     }
@@ -36,7 +36,7 @@ export default function VideoCall() {
           (channel) => channel.id === Number(channelId)
         );
         if (!foundChannel) {
-          navigate("/page-not-found");
+          navigate(`/servers/${serverId}/channels/1`);
           return;
         }
       } catch (err) {

@@ -52,14 +52,7 @@ const DeleteModal = ({
       } else if (type.toLowerCase() === "channel" && channelId) {
         await deleteChannel(channelId);
         dispatch(removeChannel({ id: channelId }));
-        const remainingChannels = channels.filter(
-          (channel) => channel.id !== channelId
-        );
-        if (remainingChannels.length > 0) {
-          navigate(`/servers/${serverId}/channels/${remainingChannels[0].id}`);
-        } else {
-          navigate("/");
-        }
+        navigate(`/servers/${serverId}/channels/1`);
       } else if (type.toLowerCase() === "user") {
         await deleteUser(currentUser.id);
         dispatch(logout());
