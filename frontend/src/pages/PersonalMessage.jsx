@@ -73,7 +73,7 @@ const PersonalMessage = () => {
 
   return (
     <div className="flex flex-col flex-grow pr-1 bg-primary-1 h-screen text-white">
-      <ChatHeader type="TEXT" name={friend.username} />
+      <ChatHeader type="DM" name={friend.username} />
       <ChatMessages
         type="TEXT"
         name={friend.username}
