@@ -170,12 +170,11 @@ class UserController {
      
       const existingInvite = await prisma.friendInvite.findFirst({
         where: {
-          senderId: parseInt(userId),
-          receiverId: parseInt(friend.id),
-          status: {
-            in: ['PENDING', 'REJECTED'],
-          },
-        }
+          OR: [
+            { senderId: Number(userId), receiverId: friend.id, status: { in: ["PENDING", "REJECTED"] } },
+            { senderId: friend.id, receiverId: Number(userId), status: { in: ["PENDING", "REJECTED"] } },
+          ],
+        },
       });
   
       if (existingInvite) {
