@@ -42,6 +42,16 @@ function App() {
             }
           />
           <Route
+            path="/servers/:serverId"
+            element={
+              <ProtectedRoute>
+                <MainLayout>
+                  <ChannelPage />
+                </MainLayout>
+              </ProtectedRoute>
+            }
+          />
+          <Route
             path="/DM/:directMessageId"
             element={
               <ProtectedRoute>

@@ -80,7 +80,6 @@ export default function VideoCall() {
 
     socket.on("getCall", handleGetCall);
     socket.emit("joinCall", { serverId, channelId, currentUser });
-    console.log(123);
     return () => {
       if (call) {
         call.leave();
@@ -106,7 +105,7 @@ export default function VideoCall() {
               setCall(null);
               clientRef.current = null;
               hasJoinedCall.current = false;
-              navigate("/");
+              navigate(`/servers/${serverId}/channels/1`);
             }}
           />
         </StreamCall>

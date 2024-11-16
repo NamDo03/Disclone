@@ -22,7 +22,7 @@ const ChannelPage = () => {
   const [groupKey, setGroupKey] = useState(null);
   const [owner, setOwner] = useState({});
   useEffect(() => {
-    if (!serverId || !channelId) {
+    if (!serverId) {
       navigate("/page-not-found");
       return;
     }
@@ -42,7 +42,7 @@ const ChannelPage = () => {
           (channel) => channel.id === Number(channelId)
         );
         if (!foundChannel) {
-          navigate("/page-not-found");
+          navigate(`/servers/${serverId}/channels/1`);
           return;
         }
         const ownerServer = await getUserById(serverData.user_id);
