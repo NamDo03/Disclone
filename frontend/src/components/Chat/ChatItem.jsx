@@ -1,12 +1,17 @@
 import React, { useEffect, useState } from "react";
+import { useParams } from "react-router-dom";
 import { MdEdit } from "react-icons/md";
 import { FaTrashCan } from "react-icons/fa6";
 import { Tooltip } from "react-tooltip";
 import { useSelector } from "react-redux";
-import { Filter } from 'bad-words'
+import { deleteMessageById, updateMessageById } from "../../api/userService";
+import { Filter } from "bad-words";
+import useModal from "../../hooks/useModal";
+import DeleteModal from "../Modal/DeleteModal";
+import * as crypto from "../../utils/crypto.js";
+import { socket } from "../../pages/ChannelPage.jsx";
 
 const filter = new Filter();
-
 const ChatItem = ({
   authorName,
   authorAvatar,
@@ -14,32 +19,62 @@ const ChatItem = ({
   content,
   owner,
   timestamp,
+  messageId,
+  onMessageUpdated,
+  onMessageDeleted,
+  groupKey,
 }) => {
   const currentUser = useSelector((state) => state.user.currentUser);
-  const shouldFilterBadWords = useSelector((state) => state.filter.filterBadWords);
-  const filteredContent = shouldFilterBadWords ? filter.clean(content) : content;
+  const shouldFilterBadWords = useSelector(
+    (state) => state.filter.filterBadWords
+  );
+  const filteredContent = shouldFilterBadWords
+    ? filter.clean(content)
+    : content;
 
   const isAdmin = Number(currentUser.id) === Number(owner.id);
-
   const canEditMessage = authorId === currentUser.id;
   const canDeleteMessage = isAdmin || authorId === currentUser.id;
 
   const [isEditing, setIsEditing] = useState(false);
   const [editedMessage, setEditedMessage] = useState(content);
+  const [isLoading, setIsLoading] = useState(false);
+  const { isOpenModal, toggleModal } = useModal();
+  const { channelId } = useParams();
 
-
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log("Updated message:", editedMessage);
-    setIsEditing(false);
+    if (!editedMessage.trim()) return;
+
+    setIsLoading(true);
+    try {
+      const { iv, ciphertext } = await crypto.encryptWithSymmetricKey(
+        groupKey,
+        editedMessage
+      );
+      await updateMessageById(messageId, ciphertext, iv);
+      onMessageUpdated(messageId, editedMessage);
+      socket.emit("messagesUpdated", channelId);
+      setIsEditing(false);
+    } catch (error) {
+      console.error("Error updating message:", error);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
-  const handleInputChange = (e) => {
-    setEditedMessage(e.target.value);
-  };
-
-  const handleDelete = () => {
-    console.log("Delete message success");
+  const handleDelete = async () => {
+    setIsLoading(true);
+    try {
+      await deleteMessageById(messageId);
+      console.log("Delete message success");
+      onMessageDeleted(messageId);
+      socket.emit("messageDeleted", { messageId });
+    } catch (error) {
+      console.error("Error deleting message:", error);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   useEffect(() => {
@@ -50,7 +85,7 @@ const ChatItem = ({
     };
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
-  }, []); // Added dependency array to prevent memory leaks
+  }, []);
 
   const isCloudinaryImageUrl = (string) => {
     return (
@@ -58,6 +93,7 @@ const ChatItem = ({
       /\.(jpg|jpeg|png|gif)$/.test(string)
     );
   };
+
   return (
     <div className="relative group flex items-center hover:bg-black/5 p-4 transition w-full">
       <div className="group flex gap-x-2 items-start w-full">
@@ -99,11 +135,16 @@ const ChatItem = ({
                     className="p-2 w-full bg-zinc-700/75 border-none border-0 focus-visible:ring-0 focus-visible:ring-offset-0 outline-none text-zinc-200 rounded-md"
                     placeholder="Edit message"
                     value={editedMessage}
-                    onChange={handleInputChange}
+                    onChange={(e) => setEditedMessage(e.target.value)}
+                    disabled={isLoading}
                   />
                 </div>
-                <button className="bg-main py-2 px-5 rounded-md hover:bg-main/80">
-                  Save
+                <button
+                  type="submit"
+                  className="bg-main py-2 px-5 rounded-md hover:bg-main/80"
+                  disabled={isLoading}
+                >
+                  {isLoading ? "Saving..." : "Save"}
                 </button>
               </form>
               <span className="text-[10px] mt-1 text-zinc-400">
@@ -139,7 +180,7 @@ const ChatItem = ({
                 data-tooltip-id="delete"
                 data-tooltip-content="Delete"
                 data-tooltip-place="top"
-                onClick={handleDelete}
+                onClick={toggleModal}
                 className="cursor-pointer ml-auto hover:bg-zinc-700 p-2 transition text-zinc-300 hover:text-zinc-100 border-0 rounded-md"
               >
                 <FaTrashCan className="w-5 h-5" />
@@ -152,6 +193,13 @@ const ChatItem = ({
             </>
           )}
         </div>
+      )}
+      {isOpenModal && (
+        <DeleteModal
+          onMessageDeleted={handleDelete}
+          toggleModal={toggleModal}
+          type="message"
+        />
       )}
     </div>
   );

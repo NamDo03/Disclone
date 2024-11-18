@@ -16,15 +16,15 @@ export default class ChatManager {
   setupSocketEvents() {
     this.io.on('connection', (socket) => {
       console.log('a user connected:', socket.id);
-
+  
       socket.on('joinServer', async ({ serverId, channelId }) => {
         await this.joinServer(socket, serverId, channelId);
       });
-
-      socket.on('joinCall', async({ serverId, channelId, currentUser }) => {
+  
+      socket.on('joinCall', async ({ serverId, channelId, currentUser }) => {
         await this.joinCall(socket, serverId, channelId, currentUser);
       });
-
+  
       socket.on('newMessage', async (msg) => {
         await this.handleNewMessage(msg);
       });
@@ -41,6 +41,11 @@ export default class ChatManager {
         await this.handleDeleteChannel(channelData);
       });
 
+  
+      socket.on('messagesUpdated', async (channelId) => {
+        await this.handleUpdateMessages(socket, channelId);
+      });
+  
       socket.on('disconnect', () => {
         console.log('user disconnected');
       });
@@ -110,6 +115,7 @@ export default class ChatManager {
       console.error("Error creating channel:", error);
     }
   }
+
   async handleUpdateChannel(channelData) {
     const { serverId, updatedChannel } = channelData;
     try {
@@ -127,4 +133,19 @@ export default class ChatManager {
        console.error("Error deleting channel:", error);
     }
   }
-}
+  
+  async handleUpdateMessages(socket, channelId) {
+    try {
+      const messages = await this.prisma.message.findMany({
+        where: { channel_id: parseInt(channelId) },
+        include: { user: true },
+        orderBy: { created_at: 'desc' },
+      });
+
+      socket.emit('previousMessages', messages);
+    } catch (error) {
+      console.error('Error updating message:', error);
+    }
+  }
+}  
+

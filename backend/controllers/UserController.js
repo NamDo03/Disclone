@@ -427,6 +427,60 @@ async getDirectMessageById (directMessageID) {
   }
 };
 
+async deleteMessage(userId, messageId) {
+  try {
+    const message = await prisma.message.findUnique({
+      where: { id: messageId },
+    });
+
+    if (!message) {
+      throw new Error("Message not found!");
+    }
+
+    if (message.user_id !== userId) {
+      throw new Error("You are not authorized to delete this message!");
+    }
+    
+    await prisma.message.delete({
+      where: { id: messageId },
+    });
+
+    return { message: "Message deleted successfully" };
+  } catch (error) {
+    console.error("Error deleting message:", error);
+    throw error;
+  }
+}
+
+async updateMessage(userId, messageId, content, iv) {
+  try {
+    
+    const message = await prisma.message.findUnique({
+      where: { id: messageId },
+    });
+    
+    if (!message) {
+      throw new Error("Message not found!");
+    }
+   
+    if (message.user_id !== userId) {
+      throw new Error("You are not authorized to edit this message!");
+    }
+    
+    const updatedMessage = await prisma.message.update({
+      where: { id: messageId },
+      data: { 
+        content,
+        iv,
+        edited_at: new Date() 
+      }
+    });
+
+  } catch (error) {
+    console.error("Error updating message:", error);
+    throw error;
+  }
+}
 }
 
 export const userController = new UserController()
