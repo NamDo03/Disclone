@@ -5,11 +5,13 @@ import { createPortal } from "react-dom";
 import { useParams } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { getFriends } from "../../api/userService";
+import * as crypto from '../../utils/crypto.js';
+import { toast } from "react-toastify";
 
 const FRONTEND_URL =
   import.meta.env.VITE_FRONTEND_URL || "http://localhost:5173";
 
-const InviteMember = ({ toggleModal }) => {
+const InviteMember = ({ toggleModal, socket, groupKey, directMessageId }) => {
   const [copied, setCopied] = useState(false);
   const { serverId } = useParams();
   const [searchTerm, setSearchTerm] = useState("");
@@ -49,6 +51,27 @@ const InviteMember = ({ toggleModal }) => {
     setTimeout(() => {
       setCopied(false);
     }, 2000);
+  };
+  const handleInvite = async (friendId) => {
+    if (!serverId || !userId) {
+      toast.error("Missing server ID or user ID!");
+      return;
+    }
+    const content = `${FRONTEND_URL}/invite/${serverId}`;
+    try {
+      const { iv, ciphertext } = await crypto.encryptWithSymmetricKey(groupKey, content);
+      const newMessage = {
+        content: ciphertext,
+        iv,
+        direct_message_id: directMessageId, 
+        author_id: userId,
+      };
+      socket.emit("newDirectMessage", newMessage);
+      toast.success(`Invite sent to ${friendId}!`);
+    } catch (error) {
+      console.error("Error sending invite:", error);
+      toast.error("Failed to send invite!");
+    }
   };
   return createPortal(
     <div className="fixed inset-0 bg-black/70 flex justify-center items-center z-[999]">
@@ -110,7 +133,10 @@ const InviteMember = ({ toggleModal }) => {
                     />
                     <p className="text-zinc-300">{friend.username}</p>
                   </div>
-                  <button className="border border-green px-4 py-2 rounded-[4px] hover:bg-green group-hover:bg-green text-white">
+                  <button
+                    onClick={() => handleInvite(friend.id)}
+                    className="border border-green px-4 py-2 rounded-[4px] hover:bg-green group-hover:bg-green text-white"
+                  >
                     Invite
                   </button>
                 </div>
