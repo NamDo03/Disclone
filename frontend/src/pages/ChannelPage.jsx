@@ -42,7 +42,7 @@ const ChannelPage = () => {
           (channel) => channel.id === Number(channelId)
         );
         if (!foundChannel) {
-          navigate(`/servers/${serverId}/channels/1`);
+          navigate(`/servers/${serverId}/channels/${serverData.channels[0].id}`);
           return;
         }
         const ownerServer = await getUserById(serverData.user_id);

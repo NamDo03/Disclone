@@ -21,6 +21,7 @@ export default function VideoCall() {
   const clientRef = useRef(null);
   const hasJoinedCall = useRef(false);
   const [call, setCall] = useState(null);
+  const [firstChannelId, setFirstChannelId] = useState(null);
   const navigate = useNavigate();
   const { serverId, channelId } = useParams();
   useEffect(() => {
@@ -28,15 +29,15 @@ export default function VideoCall() {
       navigate("/page-not-found");
       return;
     }
-
     const fetchData = async () => {
       try {
         const serverData = await getServerById(serverId);
+        setFirstChannelId(serverData.channels[0].id)
         const foundChannel = serverData.channels.find(
           (channel) => channel.id === Number(channelId)
         );
         if (!foundChannel) {
-          navigate(`/servers/${serverId}/channels/1`);
+          navigate(`/servers/${serverId}/channels/${firstChannelId}`);
           return;
         }
       } catch (err) {
@@ -105,7 +106,7 @@ export default function VideoCall() {
               setCall(null);
               clientRef.current = null;
               hasJoinedCall.current = false;
-              navigate(`/servers/${serverId}/channels/1`);
+              navigate(`/servers/${serverId}/channels/${firstChannelId}`);
             }}
           />
         </StreamCall>

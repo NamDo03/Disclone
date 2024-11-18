@@ -1,32 +1,34 @@
-import React, { useState } from "react";
-import { FaMicrophone, FaMicrophoneSlash } from "react-icons/fa";
-import { TbHeadphonesFilled, TbHeadphonesOff } from "react-icons/tb";
+import React, { useEffect } from "react";
+import { FaMicrophone } from "react-icons/fa";
+import { HiVideoCamera } from "react-icons/hi2";
 import { IoMdSettings } from "react-icons/io";
 import { Tooltip } from "react-tooltip";
 import useModal from "../../hooks/useModal";
 import EditUserModal from "../Modal/EditUser";
 import { useSelector } from "react-redux";
-
+import { useCall } from "../../redux/callContext";
+import { useLocation } from "react-router-dom";
+import { StreamCall } from "@stream-io/video-react-sdk";
+import { CustomToggleAudioPublishingButton } from "./CustomToggleAudioPublishingButton";
+import { CustomToggleVideoPublishingButton } from "./CustomToggleVideoPublishingButton";
 
 const UserControls = () => {
   const currentUser = useSelector((state) => state.user.currentUser);
-  const [micOn, setMicOn] = useState(true);
-  const [headphonesOn, setHeadphonesOn] = useState(true);
-  const { isOpenModal: isOpenEditUser, toggleModal: toggleEditUser } = useModal();
+  const { isOpenModal: isOpenEditUser, toggleModal: toggleEditUser } =
+    useModal();
 
-  const handleMicToggle = () => {
-    if (!headphonesOn) {
-      setHeadphonesOn(true);
+  const location = useLocation();
+  const { pathname } = location;
+  const shouldFetchCallContext = pathname.match(
+    /^\/servers\/\d+\/channels\/\d+$/
+  );
+  const { callVideo, setCallVideo } = useCall() || {};
+  useEffect(() => {
+    if (shouldFetchCallContext) {
+      setCallVideo(callVideo);
     }
-    setMicOn(!micOn);
-  };
-
-  const handleHeadphonesToggle = () => {
-    if (headphonesOn) {
-      setMicOn(false);
-    }
-    setHeadphonesOn(!headphonesOn);
-  };
+    setCallVideo(null);
+  }, [pathname, shouldFetchCallContext, setCallVideo]);
 
   return (
     <div className="px-2 py-3 flex items-center justify-between bg-[#232428]">
@@ -41,35 +43,32 @@ const UserControls = () => {
           <p className="text-green text-xs">Online</p>
         </div>
       </div>
-      <div className="">
-        <button
-          onClick={handleMicToggle}
-          className="p-1.5 hover:bg-zinc-700 rounded"
-          data-tooltip-id="microphone"
-          data-tooltip-content={
-            micOn ? "Turn Off Microphone" : "Turn On Microphone"
-          }
-          data-tooltip-place="top"
-        >
-          {micOn ? (
-            <FaMicrophone size={18} className="text-zinc-300" />
-          ) : (
-            <FaMicrophoneSlash size={20} className="text-red-500" />
-          )}
-        </button>
-        <button
-          onClick={handleHeadphonesToggle}
-          className="p-1.5 hover:bg-zinc-700 rounded"
-          data-tooltip-id="headphone"
-          data-tooltip-content={headphonesOn ? "Deafen" : "Undeafen"}
-          data-tooltip-place="top"
-        >
-          {headphonesOn ? (
-            <TbHeadphonesFilled size={22} className="text-zinc-300" />
-          ) : (
-            <TbHeadphonesOff size={22} className="text-red-500" />
-          )}
-        </button>
+      <div className="flex flex-row gap-2">
+        {callVideo ? (
+          <StreamCall call={callVideo}>
+            <CustomToggleAudioPublishingButton />
+            <CustomToggleVideoPublishingButton />
+          </StreamCall>
+        ) : (
+          <>
+            <button
+              className="p-1.5 hover:bg-zinc-700 rounded"
+              data-tooltip-id="microphone"
+              data-tooltip-content={"You not in call yet"}
+              data-tooltip-place="top"
+            >
+              <FaMicrophone size={18} className="text-zinc-300" />
+            </button>
+            <button
+              className="p-1.5 hover:bg-zinc-700 rounded"
+              data-tooltip-id="video"
+              data-tooltip-content={"You not in call yet"}
+              data-tooltip-place="top"
+            >
+              <HiVideoCamera size={22} className="text-zinc-300" />
+            </button>
+          </>
+        )}
         <button
           onClick={toggleEditUser}
           className="p-1.5 hover:bg-zinc-700 rounded"
@@ -85,7 +84,7 @@ const UserControls = () => {
           style={{ backgroundColor: "#111214", color: "#fff" }}
         />
         <Tooltip
-          id="headphone"
+          id="video"
           className="text-xs"
           style={{ backgroundColor: "#111214", color: "#fff" }}
         />
@@ -95,12 +94,9 @@ const UserControls = () => {
           style={{ backgroundColor: "#111214", color: "#fff" }}
         />
       </div>
-        {isOpenEditUser && (
-        <EditUserModal
-          toggleModal={toggleEditUser} 
-          user={currentUser}         
-        />
-        )}
+      {isOpenEditUser && (
+        <EditUserModal toggleModal={toggleEditUser} user={currentUser} />
+      )}
     </div>
   );
 };
