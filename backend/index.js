@@ -6,8 +6,6 @@ import { Server } from "socket.io";
 import ChatManager from './io/ChatManager.js';
 import DirectMessageManager from './io/DirectMessageManager.js';
 
-
-
 const app = express();
 const server = createServer(app);
 const io = new Server(server, {

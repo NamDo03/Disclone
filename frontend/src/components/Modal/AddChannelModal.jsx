@@ -8,6 +8,7 @@ import { createChannel } from "../../api/channelService";
 import { useParams } from "react-router-dom";
 import { addChannel } from "../../redux/channelSlice";
 import { createPortal } from "react-dom";
+import { socket } from "../../pages/ChannelPage";
 
 const AddChannelModal = ({ toggleModal }) => {
   const dispatch = useDispatch();
@@ -22,15 +23,16 @@ const AddChannelModal = ({ toggleModal }) => {
         channelName,
         channelType.toUpperCase()
       );
-      dispatch(addChannel(newChannel.channel));
       toast.success("Success to create channel");
 
+      socket.emit("createChannel", { channel: newChannel.channel, serverId: serverId});
       toggleModal();
     } catch (error) {
       console.log(error);
       toast.error("Failed to create channel:", error.message);
     }
   };
+  
   return createPortal(
     <div className="fixed inset-0 bg-black/70 flex justify-center items-center z-[999]">
       <div className="max-w-[400px] w-full bg-primary-1 rounded-md">
@@ -50,8 +52,9 @@ const AddChannelModal = ({ toggleModal }) => {
                 Channel Type
               </p>
               <div
-                className={`text-zinc-300 flex gap-x-3 items-center justify-between px-3 py-[10px]  rounded-[4px] hover:bg-[#393c41] mb-1 ${channelType === "text" ? " bg-zinc-700" : "bg-primary-2"
-                  }`}
+                className={`text-zinc-300 flex gap-x-3 items-center justify-between px-3 py-[10px]  rounded-[4px] hover:bg-[#393c41] mb-1 ${
+                  channelType === "text" ? " bg-zinc-700" : "bg-primary-2"
+                }`}
               >
                 <PiHashBold size={24} />
                 <div>
@@ -79,8 +82,9 @@ const AddChannelModal = ({ toggleModal }) => {
                 </div>
               </div>
               <div
-                className={`text-zinc-300 flex gap-x-3 items-center justify-between px-3 py-[10px]  rounded-[4px] hover:bg-[#393c41] mb-1 ${channelType === "voice" ? " bg-zinc-700" : "bg-primary-2"
-                  }`}
+                className={`text-zinc-300 flex gap-x-3 items-center justify-between px-3 py-[10px]  rounded-[4px] hover:bg-[#393c41] mb-1 ${
+                  channelType === "voice" ? " bg-zinc-700" : "bg-primary-2"
+                }`}
               >
                 <BiSolidVolumeFull size={24} />
                 <div>

@@ -29,6 +29,10 @@ export default class ChatManager {
         await this.handleNewMessage(msg);
       });
 
+      socket.on("createChannel", async (channelData) => {
+        await this.handleCreateChannel(socket, channelData);
+      });
+
       socket.on('disconnect', () => {
         console.log('user disconnected');
       });
@@ -38,10 +42,10 @@ export default class ChatManager {
   async joinServer(socket, serverId, channelId) {
     try {
       socket.join(`server_${serverId}`);
-      console.log(`User ${socket.id} joined server ${serverId}`);
+      console.log(`User ${socket.id} joined server_${serverId}`);
 
       socket.join(`channel_${channelId}`);
-      console.log(`User ${socket.id} joined channel ${channelId}`);
+      console.log(`User ${socket.id} joined channel_${channelId}`);
 
       const messages = await this.prisma.message.findMany({
         where: { channel_id: parseInt(channelId) },
@@ -87,6 +91,15 @@ export default class ChatManager {
       socket.emit('getCall', { apiKey, callId, token, user });
     } catch (error) {
       console.error('Error get video call', error);
+    }
+  }
+
+  async handleCreateChannel(socket, channelData) {
+    const { serverId, channel } = channelData;
+    try {
+      this.io.to(`server_${serverId}`).emit("channelCreated", channel);
+    } catch (error) {
+      console.error("Error creating channel:", error);
     }
   }
 }

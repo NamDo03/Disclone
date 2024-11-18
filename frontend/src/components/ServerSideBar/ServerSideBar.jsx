@@ -9,6 +9,8 @@ import ChannelItem from "./ChannelItem";
 import { getServerById } from "../../api/serverService";
 import { useDispatch, useSelector } from "react-redux";
 import { setChannels } from "../../redux/channelSlice";
+import { socket } from "../../pages/ChannelPage";
+import { addChannel } from "../../redux/channelSlice";
 
 const ServerSideBar = () => {
   const { serverId } = useParams();
@@ -32,8 +34,25 @@ const ServerSideBar = () => {
       }
     };
     fetchServerById();
-  }, [serverId]);
 
+    socket.on("channelCreated", (newChannel) => {
+      dispatch(addChannel(newChannel));
+    });
+
+    socket.on("channelUpdated", (updatedChannel) => {
+      dispatch(updateChannel(updatedChannel));
+    });
+
+    socket.on("channelDeleted", (channelId) => {
+      dispatch(removeChannel(channelId));
+    });
+
+    return () => {
+      socket.off("channelCreated");
+      socket.off("channelUpdated");
+      socket.off("channelDeleted");
+    };
+  }, [serverId]);
 
   return (
     <div className="flex flex-col bg-primary-2 h-full w-full text-white">
@@ -49,7 +68,7 @@ const ServerSideBar = () => {
             <>
               {channels
                 .filter((channel) => channel.type === "TEXT")
-                .map((channel,index) => (
+                .map((channel, index) => (
                   <ChannelItem
                     key={channel.id}
                     index={index}
@@ -72,7 +91,7 @@ const ServerSideBar = () => {
             <>
               {channels
                 .filter((channel) => channel.type === "VOICE")
-                .map((channel,index) => (
+                .map((channel, index) => (
                   <ChannelItem
                     key={channel.id}
                     id={channel.id}

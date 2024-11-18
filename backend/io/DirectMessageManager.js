@@ -13,8 +13,6 @@ export default class DirectMessageManager {
 
   setupSocketEvents() {
     this.io.on('connection', (socket) => {
-      console.log('A user connected to DM messaging:', socket.id);
-
       socket.on('joinDirectMessage', async ({ directMessageId }) => {
         await this.joinDirectMessage(socket, directMessageId);
       });
