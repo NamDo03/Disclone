@@ -10,6 +10,7 @@ import { useNavigate } from "react-router-dom";
 import { removeChannel } from "../../redux/channelSlice";
 import { deleteUser, removeFriend } from "../../api/userService";
 import { logout } from "../../redux/userSlice";
+import { socket } from "../../pages/ChannelPage";
 
 const DeleteModal = ({
   type,
@@ -52,7 +53,7 @@ const DeleteModal = ({
         setTimeout(() => navigate("/"), 100);
       } else if (type.toLowerCase() === "channel" && channelId) {
         await deleteChannel(channelId);
-        dispatch(removeChannel({ id: channelId }));
+        socket.emit("deleteChannel", { serverId: serverId, channelId });
         navigate(`/servers/${serverId}/channels/${firstChannel}`);
       } else if (type.toLowerCase() === "user") {
         await deleteUser(currentUser.id);
@@ -64,11 +65,11 @@ const DeleteModal = ({
         }, 1000);
         onDeleteFriends(friendId);
       }
-
       toggleModal();
-      toast.success(`Delete ${type} ${name} success`);
+      toast.success(`Successfully deleted ${type} ${name}`);
     } catch (error) {
-      toast.error("Failed to load data:" + error.message);
+      console.error("Error deleting:", error);
+      toast.error("Failed to delete data: " + error.message);
     }
   };
 

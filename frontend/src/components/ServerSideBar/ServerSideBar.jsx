@@ -8,9 +8,13 @@ import UserControls from "./UserControls";
 import ChannelItem from "./ChannelItem";
 import { getServerById } from "../../api/serverService";
 import { useDispatch, useSelector } from "react-redux";
-import { setChannels } from "../../redux/channelSlice";
+import {
+  removeChannel,
+  setChannels,
+  addChannel,
+  updateChannelDetails,
+} from "../../redux/channelSlice";
 import { socket } from "../../pages/ChannelPage";
-import { addChannel } from "../../redux/channelSlice";
 
 const ServerSideBar = () => {
   const { serverId } = useParams();
@@ -40,11 +44,11 @@ const ServerSideBar = () => {
     });
 
     socket.on("channelUpdated", (updatedChannel) => {
-      dispatch(updateChannel(updatedChannel));
+      dispatch(updateChannelDetails(updatedChannel));
     });
 
     socket.on("channelDeleted", (channelId) => {
-      dispatch(removeChannel(channelId));
+      dispatch(removeChannel({ id: channelId }));
     });
 
     return () => {

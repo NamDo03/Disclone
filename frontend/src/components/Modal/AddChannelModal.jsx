@@ -6,7 +6,6 @@ import { useDispatch } from "react-redux";
 import { toast } from "react-toastify";
 import { createChannel } from "../../api/channelService";
 import { useParams } from "react-router-dom";
-import { addChannel } from "../../redux/channelSlice";
 import { createPortal } from "react-dom";
 import { socket } from "../../pages/ChannelPage";
 
@@ -24,15 +23,17 @@ const AddChannelModal = ({ toggleModal }) => {
         channelType.toUpperCase()
       );
       toast.success("Success to create channel");
-
-      socket.emit("createChannel", { channel: newChannel.channel, serverId: serverId});
+      socket.emit("createChannel", {
+        channel: newChannel.channel,
+        serverId: serverId,
+      });
       toggleModal();
     } catch (error) {
       console.log(error);
       toast.error("Failed to create channel:", error.message);
     }
   };
-  
+
   return createPortal(
     <div className="fixed inset-0 bg-black/70 flex justify-center items-center z-[999]">
       <div className="max-w-[400px] w-full bg-primary-1 rounded-md">

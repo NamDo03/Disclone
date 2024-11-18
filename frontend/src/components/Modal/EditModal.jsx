@@ -9,6 +9,7 @@ import { toast } from "react-toastify";
 import { useDispatch, useSelector } from "react-redux";
 import { updateServerDetails } from "../../redux/serverSlice";
 import { updateChannelDetails } from "../../redux/channelSlice";
+import { socket } from "../../pages/ChannelPage";
 
 const EditModal = ({ type, toggleModal, serverId, channelId }) => {
   const currentUser = useSelector((state) => state.user.currentUser);
@@ -59,20 +60,34 @@ const EditModal = ({ type, toggleModal, serverId, channelId }) => {
 
     try {
       if (type.toLowerCase() === "server") {
-        const updatedServer =await updateServer(serverId, name, image, currentUser.id);
+        const updatedServer = await updateServer(
+          serverId,
+          name,
+          image,
+          currentUser.id
+        );
         dispatch(updateServerDetails(updatedServer.server));
         toast.success("Server updated successfully");
       } else if (type.toLowerCase() === "channel") {
-        const updatedChannel = await updateChannel(channelId, name, currentUser.id);
-        dispatch(updateChannelDetails(updatedChannel.channel));
+        const updatedChannel = await updateChannel(
+          channelId,
+          name,
+          currentUser.id
+        );
         toast.success("Channel updated successfully");
+
+        socket.emit("updateChannel", {
+          updatedChannel: updatedChannel.channel,
+          serverId: serverId,
+        });
       }
+
       setTimeout(() => {
         setLoading(toggleModal());
       }, 1000);
     } catch (error) {
       toast.error(error.message);
-      throw error.message;
+      console.error("Error updating:", error);
     } finally {
       setTimeout(() => {
         setLoading(false);

@@ -30,7 +30,15 @@ export default class ChatManager {
       });
 
       socket.on("createChannel", async (channelData) => {
-        await this.handleCreateChannel(socket, channelData);
+        await this.handleCreateChannel(channelData);
+      });
+
+      socket.on("updateChannel", async (channelData) => { 
+        await this.handleUpdateChannel(channelData);
+      });
+
+      socket.on("deleteChannel", async (channelData) => {
+        await this.handleDeleteChannel(channelData);
       });
 
       socket.on('disconnect', () => {
@@ -94,12 +102,29 @@ export default class ChatManager {
     }
   }
 
-  async handleCreateChannel(socket, channelData) {
+  async handleCreateChannel(channelData) {
     const { serverId, channel } = channelData;
     try {
       this.io.to(`server_${serverId}`).emit("channelCreated", channel);
     } catch (error) {
       console.error("Error creating channel:", error);
+    }
+  }
+  async handleUpdateChannel(channelData) {
+    const { serverId, updatedChannel } = channelData;
+    try {
+        this.io.to(`server_${serverId}`).emit("channelUpdated",  updatedChannel );
+    } catch (error) {
+        console.error("Error updating channel:", error);
+    }
+  }
+
+  async handleDeleteChannel(channelData) {
+    const { serverId, channelId } = channelData;
+    try {
+        this.io.to(`server_${serverId}`).emit("channelDeleted",  channelId );
+    } catch (error) {
+       console.error("Error deleting channel:", error);
     }
   }
 }
