@@ -21,7 +21,7 @@ const ChannelItem = ({ index, id, name, Icon, type }) => {
   const params = useParams();
   const { isOpenModal: isOpenEditModal, toggleModal: toggleEditModal } =
     useModal();
-  const { isOpenModal: isOpenDeleteModal, toggleModal: toggleDeleteModel } =
+  const { isOpenModal: isOpenDeleteModal, toggleModal: toggleDeleteModal } =
     useModal();
 
   const handleEdit = (event) => {
@@ -31,7 +31,7 @@ const ChannelItem = ({ index, id, name, Icon, type }) => {
 
   const handleDelete = (event) => {
     event.stopPropagation();
-    toggleDeleteModel();
+    toggleDeleteModal();
   };
 
   const isOwner = useServerOwner();
@@ -103,7 +103,7 @@ const ChannelItem = ({ index, id, name, Icon, type }) => {
           )}
           {isOpenDeleteModal && (
             <DeleteModal
-              toggleModal={toggleDeleteModel}
+              toggleModal={toggleDeleteModal}
               type="channel"
               serverId={params.serverId}
               channelId={id}

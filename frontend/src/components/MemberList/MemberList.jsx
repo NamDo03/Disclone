@@ -1,20 +1,7 @@
 import React from "react";
 import MemberItem from "./MemberItem";
-import { deleteMember } from "../../api/serverService";
-import { useParams } from "react-router-dom";
-import { toast } from "react-toastify";
 
 const MemberList = ({ owner, members, onMemberDeleted }) => {
-  const { serverId } = useParams();
-  const handleDeleteMember = async (userId) => {
-    try {
-      const result = await deleteMember(serverId, userId);
-      toast.success(result.message);
-      onMemberDeleted(userId);
-    } catch (error) {
-      toast.error(error.message);
-    }
-  };
   return (
     <div className="pt-6 pl-4 pr-2">
       <h1 className="text-sm uppercase font-semibold text-zinc-400">Members</h1>
@@ -33,7 +20,7 @@ const MemberList = ({ owner, members, onMemberDeleted }) => {
           <MemberItem
             key={member.id}
             member={member.user}
-            onDelete={handleDeleteMember}
+            onDelete={onMemberDeleted}
           />
         ))}
       </div>
