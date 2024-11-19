@@ -24,14 +24,12 @@ const DeleteModal = ({
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const [name, setName] = useState();
-  const [firstChannel, setFirstChannel] = useState(null);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
         if (type.toLowerCase() === "server" && serverId) {
           const serverData = await getServerById(serverId);
-          setFirstChannel(serverData.channels[0].id);
           setName(serverData.server_name);
         } else if (type.toLowerCase() === "channel" && channelId) {
           const channelData = await getChannelById(channelId);
@@ -54,7 +52,6 @@ const DeleteModal = ({
       } else if (type.toLowerCase() === "channel" && channelId) {
         await deleteChannel(channelId);
         socket.emit("deleteChannel", { serverId: serverId, channelId });
-        navigate(`/servers/${serverId}/channels/${firstChannel}`);
       } else if (type.toLowerCase() === "user") {
         await deleteUser(currentUser.id);
         dispatch(logout());

@@ -3,7 +3,7 @@ import ServerHeader from "./ServerHeader";
 import ServerSection from "./ServerSection";
 import { PiHashBold } from "react-icons/pi";
 import { BiSolidVolumeFull } from "react-icons/bi";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import UserControls from "./UserControls";
 import ChannelItem from "./ChannelItem";
 import { getServerById } from "../../api/serverService";
@@ -18,10 +18,12 @@ import { socket } from "../../pages/ChannelPage";
 
 const ServerSideBar = () => {
   const { serverId } = useParams();
+  const navigate = useNavigate();
   const dispatch = useDispatch();
   const channels = useSelector((state) => state.channels);
   const [isTextChannelsExpanded, setTextChannelsExpanded] = useState(true);
   const [isVoiceChannelsExpanded, setVoiceChannelsExpanded] = useState(true);
+  const [firstChannel, setFirstChannel] = useState(null);
 
   const toggleTextChannels = () =>
     setTextChannelsExpanded(!isTextChannelsExpanded);
@@ -32,6 +34,7 @@ const ServerSideBar = () => {
     const fetchServerById = async () => {
       try {
         const serverData = await getServerById(serverId);
+        setFirstChannel(serverData.channels[0].id);
         dispatch(setChannels(serverData.channels));
       } catch (error) {
         console.error("Error fetching server:", error);
@@ -49,6 +52,7 @@ const ServerSideBar = () => {
 
     socket.on("channelDeleted", (channelId) => {
       dispatch(removeChannel({ id: channelId }));
+      navigate(`/servers/${serverId}/channels/${firstChannel}`);
     });
 
     return () => {
