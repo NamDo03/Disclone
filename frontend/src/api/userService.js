@@ -396,3 +396,66 @@ export const getDMById = async (conversationId) => {
         throw error;
     }
 };
+
+export const deleteMessageById = async (messageId) => {
+    try {
+        const token = getToken(); 
+        if (!token) {
+            throw new Error("Authorization token is missing");
+        }
+
+        const response = await fetch(`${API_URL}/message/delete`, {
+            method: 'DELETE',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            },
+            body: JSON.stringify({ messageId }) 
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+            throw new Error(data.message || 'Error deleting the message');
+        }
+
+        return data;
+    } catch (error) {
+        console.error("Error deleting message:", error);
+        throw error;
+    }
+};
+
+export const updateMessageById = async (messageId, content, iv) => {
+    if (!messageId || !content) {
+      throw new Error("Message ID and new content are required!");
+    }
+  
+    try {
+      const token = getToken(); 
+      if (!token) {
+        throw new Error("Authorization token is missing");
+      }
+  
+      const response = await fetch(`${API_URL}/message/update`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({ messageId, content, iv }) 
+      });
+  
+      const data = await response.json();
+  
+      if (!response.ok) {
+        throw new Error(data.message || 'Error updating the message');
+      }
+  
+      return data; 
+    } catch (error) {
+      console.error("Error updating message:", error);
+      throw error;
+    }
+  };
+  

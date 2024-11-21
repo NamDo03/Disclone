@@ -16,15 +16,15 @@ export default class ChatManager {
   setupSocketEvents() {
     this.io.on('connection', (socket) => {
       console.log('a user connected:', socket.id);
-
+  
       socket.on('joinServer', async ({ serverId, channelId }) => {
         await this.joinServer(socket, serverId, channelId);
       });
-
-      socket.on('joinCall', async({ serverId, channelId, currentUser }) => {
+  
+      socket.on('joinCall', async ({ serverId, channelId, currentUser }) => {
         await this.joinCall(socket, serverId, channelId, currentUser);
       });
-
+  
       socket.on('newMessage', async (msg) => {
         await this.handleNewMessage(msg);
       });
@@ -41,6 +41,14 @@ export default class ChatManager {
         await this.handleDeleteChannel(channelData);
       });
 
+      socket.on('messageUpdated', async (data) => {
+        await this.handleUpdateMessages(data);
+      });
+
+      socket.on('messageDeleted', async (data) => {
+        await this.handleDeleteMessages(data);
+      });
+  
       socket.on('disconnect', () => {
         console.log('user disconnected');
       });
@@ -110,6 +118,7 @@ export default class ChatManager {
       console.error("Error creating channel:", error);
     }
   }
+
   async handleUpdateChannel(channelData) {
     const { serverId, updatedChannel } = channelData;
     try {
@@ -127,4 +136,23 @@ export default class ChatManager {
        console.error("Error deleting channel:", error);
     }
   }
-}
+  
+  async handleUpdateMessages(data) {
+    const { channelId, messageId, editedMessage } = data;
+    try {
+      this.io.to(`channel_${channelId}`).emit("onMessageUpdated", { messageId, editedMessage });
+    } catch (error) {
+      console.error('Error updating message:', error);
+    }
+  }
+
+  async handleDeleteMessages(data) {
+    const { channelId, messageId } = data;
+    try {
+      this.io.to(`channel_${channelId}`).emit("onMessageDeleted", messageId);
+    } catch (error) {
+      console.error('Error deleting message:', error);
+    }
+  }
+}  
+

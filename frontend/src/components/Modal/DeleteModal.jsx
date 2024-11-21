@@ -19,6 +19,7 @@ const DeleteModal = ({
   channelId,
   friendId,
   onDeleteFriends,
+  onMessageDeleted,
 }) => {
   const currentUser = useSelector((state) => state.user.currentUser);
   const dispatch = useDispatch();
@@ -61,6 +62,8 @@ const DeleteModal = ({
           window.location.reload();
         }, 1000);
         onDeleteFriends(friendId);
+      } else if (type.toLowerCase() === "message") {
+        onMessageDeleted();
       }
       toggleModal();
       toast.success(`Successfully deleted ${type} ${name}`);

@@ -475,5 +475,41 @@ router.get('/user/direct-messages/get-by-id/:directMessageID', passport.authenti
   }
 });
 
+router.delete('/message/delete', passport.authenticate('jwt', { session: false }), async (req, res, next) => {
+  try {
+    const { messageId } = req.body;
+    const userId = req.user.id;
+
+    if (!messageId) {
+      return res.status(400).json({ message: "Message ID is required!" });
+    }
+
+ 
+    await userController.deleteMessage(userId, messageId);
+
+    res.status(200).json({ message: "Message deleted successfully" });
+  } catch (error) {
+    return next(error);
+  }
+});
+
+router.put('/message/update', passport.authenticate('jwt', { session: false }), async (req, res, next) => {
+  try {
+    const { messageId, content, iv } = req.body;
+    const userId = req.user.id;
+
+    if (!messageId || !content) {
+      return res.status(400).json({ message: "Message ID and new content are required!" });
+    }
+
+    await userController.updateMessage(userId, messageId, content, iv);
+
+    res.status(200).json({ message: "Message updated successfully" });
+  } catch (error) {
+    return next(error);
+  }
+});
+
+
 
 export { router };

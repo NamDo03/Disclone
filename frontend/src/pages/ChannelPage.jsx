@@ -7,12 +7,11 @@ import MemberList from "../components/MemberList/MemberList";
 import { getServerById } from "../api/serverService";
 import { io } from "socket.io-client";
 import { getUserById } from "../api/userService";
-import * as crypto from '../utils/crypto';
+import * as crypto from "../utils/crypto";
 
 const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || "http://localhost:3000";
 export const socket = io(BACKEND_URL);
 const ChannelPage = () => {
-
   const { serverId, channelId } = useParams();
   const navigate = useNavigate();
   const [showMemberList, setShowMemberList] = useState(false);
@@ -61,14 +60,18 @@ const ChannelPage = () => {
     fetchData();
 
     if (serverId && channelId) {
-      socket.emit('joinServer', { serverId, channelId });
+      socket.emit("joinServer", { serverId, channelId });
     }
 
-    socket.on('previousMessages', async (msgs) => {
+    socket.on("previousMessages", async (msgs) => {
       if (groupKey) {
         const decryptedMessages = await Promise.all(
           msgs.map(async (msg) => {
-            const decrypted = await crypto.decryptWithSymmetricKey(groupKey, msg.content, msg.iv);
+            const decrypted = await crypto.decryptWithSymmetricKey(
+              groupKey,
+              msg.content,
+              msg.iv
+            );
             return { ...msg, content: decrypted };
           })
         );
@@ -78,18 +81,25 @@ const ChannelPage = () => {
       }
     });
 
-    socket.on('message', async (msg) => {
+    socket.on("message", async (msg) => {
       if (groupKey) {
-        const decryptedMessage = await crypto.decryptWithSymmetricKey(groupKey, msg.content, msg.iv);
-        setMessages(prevMessages => [{ ...msg, content: decryptedMessage }, ...prevMessages]);
+        const decryptedMessage = await crypto.decryptWithSymmetricKey(
+          groupKey,
+          msg.content,
+          msg.iv
+        );
+        setMessages((prevMessages) => [
+          { ...msg, content: decryptedMessage },
+          ...prevMessages,
+        ]);
       } else {
-        setMessages(prevMessages => [...msg, ...prevMessages]);
+        setMessages((prevMessages) => [...msg, ...prevMessages]);
       }
     });
 
     return () => {
-      socket.off('previousMessages');
-      socket.off('message');
+      socket.off("previousMessages");
+      socket.off("message");
     };
   }, [serverId, channelId, groupKey]);
 
@@ -120,6 +130,7 @@ const ChannelPage = () => {
           name={channel.channel_name}
           messages={messages}
           owner={owner}
+          groupKey={groupKey}
         />
         <ChatInput
           type={channel.type}
