@@ -510,6 +510,25 @@ router.put('/message/update', passport.authenticate('jwt', { session: false }), 
   }
 });
 
+router.get('/user/get-directmsg-id/:friendId/:userId', passport.authenticate('jwt', { session: false }), async (req, res, next) => {
+  try {
+    const { friendId, userId } = req.params;
+
+    if (!friendId || !userId || isNaN(parseInt(friendId)) || isNaN(parseInt(userId))) {
+      return res.status(400).json({ message: 'Invalid friendId or userId' });
+    }
+
+    const directmsgId = await userController.getDirectmsgId(parseInt(friendId), parseInt(userId))
+
+    if (!directmsgId) {
+      return res.status(404).json({ message: 'Direct message not found' });
+    }
+    res.status(200).json({ id: directmsgId });
+  } catch (error) {
+    return next(error);
+  }
+});
+
 
 
 export { router };

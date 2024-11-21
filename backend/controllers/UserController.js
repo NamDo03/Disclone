@@ -481,6 +481,26 @@ async updateMessage(userId, messageId, content, iv) {
     throw error;
   }
 }
+
+async getDirectmsgId (friendId, userId) {
+  try {
+    const directMessage = await prisma.directMessage.findFirst({
+      where: {
+        OR: [
+          { sender_id: userId, receiver_id: friendId },
+          { sender_id: friendId, receiver_id: userId }
+        ]
+      },
+      select: {
+        id: true, 
+      },
+    });
+
+    return directMessage.id;
+  } catch (error) {
+    throw new Error('Error fetching direct message');
+  }
+};
 }
 
 export const userController = new UserController()

@@ -4,14 +4,17 @@ import { PiHashBold, PiMagnifyingGlass } from "react-icons/pi";
 import { createPortal } from "react-dom";
 import { useParams } from "react-router-dom";
 import { useSelector } from "react-redux";
-import { getFriends } from "../../api/userService";
-import * as crypto from '../../utils/crypto.js';
+import { getDirectmsgId, getFriends } from "../../api/userService";
+import * as crypto from "../../utils/crypto.js";
 import { toast } from "react-toastify";
 
 const FRONTEND_URL =
   import.meta.env.VITE_FRONTEND_URL || "http://localhost:5173";
+import { io } from "socket.io-client";
 
-const InviteMember = ({ toggleModal, socket, groupKey, directMessageId }) => {
+const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || "http://localhost:3000";
+export const socket = io(BACKEND_URL);
+const InviteMember = ({ toggleModal }) => {
   const [copied, setCopied] = useState(false);
   const { serverId } = useParams();
   const [searchTerm, setSearchTerm] = useState("");
@@ -20,8 +23,17 @@ const InviteMember = ({ toggleModal, socket, groupKey, directMessageId }) => {
   const [error, setError] = useState(null);
   const currentUser = useSelector((state) => state.user.currentUser);
   const userId = currentUser?.id;
+  const [groupKey, setGroupKey] = useState(null);
 
   useEffect(() => {
+    const initializeGroupKey = async () => {
+      if (!groupKey) {
+        const newGroupKey = await crypto.generateSymmetricKey();
+        setGroupKey(newGroupKey);
+      }
+    };
+    initializeGroupKey();
+
     const fetchFriends = async () => {
       if (!userId) {
         setError("User ID is not available");
@@ -57,17 +69,18 @@ const InviteMember = ({ toggleModal, socket, groupKey, directMessageId }) => {
       toast.error("Missing server ID or user ID!");
       return;
     }
+    const directmsgId = await getDirectmsgId(friendId, userId);
     const content = `${FRONTEND_URL}/invite/${serverId}`;
     try {
       const { iv, ciphertext } = await crypto.encryptWithSymmetricKey(groupKey, content);
       const newMessage = {
         content: ciphertext,
         iv,
-        direct_message_id: directMessageId, 
+        direct_message_id: directmsgId.id, 
         author_id: userId,
       };
       socket.emit("newDirectMessage", newMessage);
-      toast.success(`Invite sent to ${friendId}!`);
+      toast.success(`Successto send invite!`);
     } catch (error) {
       console.error("Error sending invite:", error);
       toast.error("Failed to send invite!");
