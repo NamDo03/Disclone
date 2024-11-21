@@ -30,6 +30,11 @@ export default class DirectMessageManager {
   async joinDirectMessage(socket, directMessageId) {
     try {
       const roomName = `direct_message_${directMessageId}`;
+      socket.rooms.forEach(room => {
+        if (room !== roomName) {
+          socket.leave(room);
+        }
+      });
       socket.join(roomName);
       console.log(`User ${socket.id} joined direct message room ${roomName}`);
   
