@@ -105,7 +105,7 @@ const ChannelPage = () => {
 
   const handleMemberDeleted = (userId) => {
     setMemberList((prevMembers) =>
-      prevMembers.filter((member) => member.id !== userId)
+      prevMembers.filter((member) => {member.id !== userId})
     );
   };
   if (!channel) {

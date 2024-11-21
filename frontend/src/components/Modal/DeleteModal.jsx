@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { IoClose } from "react-icons/io5";
 import { createPortal } from "react-dom";
-import { deleteServer, getServerById } from "../../api/serverService";
+import { deleteMember, deleteServer, getServerById } from "../../api/serverService";
 import { deleteChannel, getChannelById } from "../../api/channelService";
 import { toast } from "react-toastify";
 import { useDispatch, useSelector } from "react-redux";
@@ -18,8 +18,10 @@ const DeleteModal = ({
   serverId,
   channelId,
   friendId,
+  memberId,
   onDeleteFriends,
   onMessageDeleted,
+  onDeleteMember
 }) => {
   const currentUser = useSelector((state) => state.user.currentUser);
   const dispatch = useDispatch();
@@ -64,6 +66,9 @@ const DeleteModal = ({
         onDeleteFriends(friendId);
       } else if (type.toLowerCase() === "message") {
         onMessageDeleted();
+      } else if (type.toLowerCase() === "member") {
+        await deleteMember(serverId, memberId);
+        onDeleteMember(memberId);
       }
       toggleModal();
       toast.success(`Successfully deleted ${type} ${name}`);
