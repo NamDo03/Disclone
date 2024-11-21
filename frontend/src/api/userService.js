@@ -459,3 +459,30 @@ export const updateMessageById = async (messageId, content, iv) => {
     }
   };
   
+export const getDirectmsgId = async (friendId,userId) => {
+    try {
+        const token = getToken();
+        if (!token) {
+            throw new Error("Authorization token is missing");
+        }
+
+        const response = await fetch(`${API_URL}/user/get-directmsg-id/${friendId}/${userId}`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            }
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+            throw new Error(data.message || 'Error fetching direct messages by Id');
+        }
+
+        return data; 
+    } catch (error) {
+        console.error("Fetch direct messages Id error:", error);
+        throw error;
+    }
+};

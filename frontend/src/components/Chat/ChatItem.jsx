@@ -12,6 +12,9 @@ import * as crypto from "../../utils/crypto.js";
 import { socket } from "../../pages/ChannelPage.jsx";
 
 const filter = new Filter();
+const FRONTEND_URL =
+  import.meta.env.VITE_FRONTEND_URL || "http://localhost:5173";
+
 const ChatItem = ({
   authorName,
   authorAvatar,
@@ -104,6 +107,11 @@ const ChatItem = ({
     );
   };
 
+  const isInviteLink = (url) => {
+    const inviteRegex = new RegExp(`${FRONTEND_URL}\/invite\/\\d+$`);
+    return inviteRegex.test(url);
+  };
+
   return (
     <div className="relative group flex items-center hover:bg-black/5 p-4 transition w-full">
       <div className="group flex gap-x-2 items-start w-full">
@@ -124,15 +132,25 @@ const ChatItem = ({
             <span className="text-xs text-zinc-400">{timestamp}</span>
           </div>
           {!isEditing &&
-            (isCloudinaryImageUrl(content) ? (
-              <img
-                src={content}
-                alt="uploaded"
-                className="max-w-[300px] mt-4 h-auto rounded-md object-cover"
-              />
-            ) : (
-              <p className="text-sm text-zinc-300">{filteredContent}</p>
-            ))}
+             <>
+             {isCloudinaryImageUrl(content) ? (
+               <img
+                 src={content}
+                 alt="uploaded"
+                 className="max-w-[300px] mt-4 h-auto rounded-md object-cover"
+               />
+             ) : isInviteLink(content) ? (
+               <a
+                 href={content}
+                 className="text-blue-500 underline text-sm"
+                 rel="noopener noreferrer"
+               >
+                 {content}
+               </a>
+             ) : (
+               <p className="text-sm text-zinc-300">{filteredContent}</p>
+             )}
+           </>}
           {isEditing && (
             <>
               <form
