@@ -57,6 +57,11 @@ export default class ChatManager {
 
   async joinServer(socket, serverId, channelId) {
     try {
+      socket.rooms.forEach(room => {
+        if (room !== `channel_${channelId}` || room !== `server_${channelId}`) {
+          socket.leave(room);
+        }
+      });
       socket.join(`server_${serverId}`);
       console.log(`User ${socket.id} joined server_${serverId}`);
 
