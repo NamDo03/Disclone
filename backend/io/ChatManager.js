@@ -41,9 +41,12 @@ export default class ChatManager {
         await this.handleDeleteChannel(channelData);
       });
 
-  
-      socket.on('messagesUpdated', async (channelId) => {
-        await this.handleUpdateMessages(socket, channelId);
+      socket.on('messageUpdated', async (data) => {
+        await this.handleUpdateMessages(data);
+      });
+
+      socket.on('messageDeleted', async (data) => {
+        await this.handleDeleteMessages(data);
       });
   
       socket.on('disconnect', () => {
@@ -134,17 +137,21 @@ export default class ChatManager {
     }
   }
   
-  async handleUpdateMessages(socket, channelId) {
+  async handleUpdateMessages(data) {
+    const { channelId, messageId, editedMessage } = data;
     try {
-      const messages = await this.prisma.message.findMany({
-        where: { channel_id: parseInt(channelId) },
-        include: { user: true },
-        orderBy: { created_at: 'desc' },
-      });
-
-      socket.emit('previousMessages', messages);
+      this.io.to(`channel_${channelId}`).emit("onMessageUpdated", { messageId, editedMessage });
     } catch (error) {
       console.error('Error updating message:', error);
+    }
+  }
+
+  async handleDeleteMessages(data) {
+    const { channelId, messageId } = data;
+    try {
+      this.io.to(`channel_${channelId}`).emit("onMessageDeleted", messageId);
+    } catch (error) {
+      console.error('Error deleting message:', error);
     }
   }
 }  

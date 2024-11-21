@@ -53,8 +53,7 @@ const ChatItem = ({
         editedMessage
       );
       await updateMessageById(messageId, ciphertext, iv);
-      onMessageUpdated(messageId, editedMessage);
-      socket.emit("messagesUpdated", channelId);
+      socket.emit("messageUpdated", { channelId, messageId, editedMessage });
       setIsEditing(false);
     } catch (error) {
       console.error("Error updating message:", error);
@@ -67,9 +66,7 @@ const ChatItem = ({
     setIsLoading(true);
     try {
       await deleteMessageById(messageId);
-      console.log("Delete message success");
-      onMessageDeleted(messageId);
-      socket.emit("messageDeleted", { messageId });
+      socket.emit("messageDeleted", { channelId, messageId });
     } catch (error) {
       console.error("Error deleting message:", error);
     } finally {
@@ -78,13 +75,26 @@ const ChatItem = ({
   };
 
   useEffect(() => {
+    socket.on("onMessageUpdated", ({ messageId, editedMessage }) => {
+      onMessageUpdated(messageId, editedMessage);
+    })
+  
+    socket.on("onMessageDeleted", (messageId) => {
+      onMessageDeleted(messageId);
+    })
+
     const handleKeyDown = (e) => {
       if (e.key === "Escape" || e.keyCode === 27) {
         setIsEditing(false);
       }
     };
     window.addEventListener("keydown", handleKeyDown);
-    return () => window.removeEventListener("keydown", handleKeyDown);
+
+    return () => {
+      window.removeEventListener("keydown", handleKeyDown);
+      socket.off("onMessageUpdated");
+      socket.off("onMessageDeleted")
+    }
   }, []);
 
   const isCloudinaryImageUrl = (string) => {
