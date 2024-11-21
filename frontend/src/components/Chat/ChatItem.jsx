@@ -26,6 +26,7 @@ const ChatItem = ({
   onMessageUpdated,
   onMessageDeleted,
   groupKey,
+  directMessageId
 }) => {
   const currentUser = useSelector((state) => state.user.currentUser);
   const shouldFilterBadWords = useSelector(
@@ -56,7 +57,11 @@ const ChatItem = ({
         editedMessage
       );
       await updateMessageById(messageId, ciphertext, iv);
-      socket.emit("messageUpdated", { channelId, messageId, editedMessage });
+      if (directMessageId) {
+        socket.emit("messageUpdated", { directMessageId, messageId, editedMessage });
+      } else {
+        socket.emit("messageUpdated", { channelId, messageId, editedMessage });
+      }
       setIsEditing(false);
     } catch (error) {
       console.error("Error updating message:", error);
@@ -69,7 +74,11 @@ const ChatItem = ({
     setIsLoading(true);
     try {
       await deleteMessageById(messageId);
-      socket.emit("messageDeleted", { channelId, messageId });
+      if (directMessageId) {
+        socket.emit("messageDeleted", { directMessageId, messageId });
+      } else {
+        socket.emit("messageDeleted", { channelId, messageId });
+      }
     } catch (error) {
       console.error("Error deleting message:", error);
     } finally {
@@ -95,8 +104,6 @@ const ChatItem = ({
 
     return () => {
       window.removeEventListener("keydown", handleKeyDown);
-      socket.off("onMessageUpdated");
-      socket.off("onMessageDeleted")
     }
   }, []);
 

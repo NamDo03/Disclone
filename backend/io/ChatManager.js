@@ -143,18 +143,20 @@ export default class ChatManager {
   }
   
   async handleUpdateMessages(data) {
-    const { channelId, messageId, editedMessage } = data;
+    const roomName = data.directMessageId ? `direct_message_${data.directMessageId}` : `channel_${data.channelId}`
+    const { messageId, editedMessage } = data;
     try {
-      this.io.to(`channel_${channelId}`).emit("onMessageUpdated", { messageId, editedMessage });
+      this.io.to(roomName).emit("onMessageUpdated", { messageId, editedMessage });
     } catch (error) {
       console.error('Error updating message:', error);
     }
   }
 
   async handleDeleteMessages(data) {
-    const { channelId, messageId } = data;
+    const roomName = data.directMessageId ? `direct_message_${data.directMessageId}` : `channel_${data.channelId}`
+    const { messageId } = data;
     try {
-      this.io.to(`channel_${channelId}`).emit("onMessageDeleted", messageId);
+      this.io.to(roomName).emit("onMessageDeleted", messageId);
     } catch (error) {
       console.error('Error deleting message:', error);
     }

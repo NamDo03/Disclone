@@ -71,7 +71,7 @@ const DeleteModal = ({
         onDeleteMember(memberId);
       }
       toggleModal();
-      toast.success(`Successfully deleted ${type} ${name}`);
+      toast.success(`Successfully deleted ${type} ${name || ""}`);
     } catch (error) {
       console.error("Error deleting:", error);
       toast.error("Failed to delete data: " + error.message);

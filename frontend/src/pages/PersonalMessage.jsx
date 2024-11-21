@@ -75,10 +75,12 @@ const PersonalMessage = () => {
     <div className="flex flex-col flex-grow pr-1 bg-primary-1 h-screen text-white">
       <ChatHeader type="DM" name={friend.username} />
       <ChatMessages
-        type="TEXT"
+        type="DM"
         name={friend.username}
         messages={messages}
         owner={currentUser.id}
+        directMessageId={directMessageId}
+        groupKey={directKey}
       />
       <ChatInput
         type="DM"

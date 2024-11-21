@@ -80,5 +80,4 @@ export default class DirectMessageManager {
       console.error('Error saving direct message:', error);
     }
   }
-  
 }

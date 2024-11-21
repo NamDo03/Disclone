@@ -9,6 +9,7 @@ const ChatMessages = ({
   name,
   messages: initialMessages,
   owner,
+  directMessageId,
   groupKey,
 }) => {
   const [messages, setMessages] = useState(initialMessages);
@@ -71,6 +72,7 @@ const ChatMessages = ({
               authorAvatar={message.user.avatar_url}
               content={message.content}
               owner={owner}
+              directMessageId={directMessageId}
               groupKey={groupKey}
               timestamp={new Date(message.created_at).toLocaleString("vi-VN", {
                 timeZone: "Asia/Ho_Chi_Minh",
