@@ -10,6 +10,7 @@ import useModal from "../../hooks/useModal";
 import DeleteModal from "../Modal/DeleteModal";
 import * as crypto from "../../utils/crypto.js";
 import { socket } from "../../pages/ChannelPage.jsx";
+import ImageWithBlur from "../ImageWithBlur.jsx"
 
 const filter = new Filter();
 const FRONTEND_URL =
@@ -141,11 +142,7 @@ const ChatItem = ({
           {!isEditing &&
              <>
              {isCloudinaryImageUrl(content) ? (
-               <img
-                 src={content}
-                 alt="uploaded"
-                 className="max-w-[300px] mt-4 h-auto rounded-md object-cover"
-               />
+               <ImageWithBlur content={content} />
              ) : isInviteLink(content) ? (
                <a
                  href={content}
